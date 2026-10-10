@@ -1,0 +1,49 @@
+import { doc, writeBatch } from 'firebase/firestore';
+import { db } from '../firebase';
+import { CATEGORY_PALETTE, ORDER_STEP, OTHER_ID } from '../lib/categories';
+import { recategorise } from './expenses';
+import { commit } from './pockets';
+import { categoriesCol, categoryRef } from './refs';
+import type { Category } from './types';
+
+/** New categories go just above Other and take the next palette colour in turn. */
+export async function addCategory(pid: string, existing: Category[], name: string, icon: string): Promise<string> {
+  const sorted = [...existing].sort((a, b) => a.order - b.order);
+  const other = sorted.find((c) => c.id === OTHER_ID);
+  const nonOther = sorted.filter((c) => c.id !== OTHER_ID);
+  const prev = nonOther[nonOther.length - 1]?.order ?? 0;
+  const next = other ? other.order : prev + 2 * ORDER_STEP;
+  let order = (prev + next) / 2;
+  const batch = writeBatch(db);
+  if (other && next - prev < 2) {
+    // Ran out of room between the last category and Other: push Other down.
+    order = prev + ORDER_STEP;
+    batch.update(categoryRef(pid, OTHER_ID), { order: prev + 2 * ORDER_STEP });
+  }
+  const custom = existing.filter((c) => !c.system).length;
+  const ref = doc(categoriesCol(pid));
+  batch.set(ref, {
+    name: name.trim().slice(0, 40),
+    icon,
+    colour: CATEGORY_PALETTE[custom % CATEGORY_PALETTE.length],
+    order,
+    system: false,
+  });
+  await commit(batch);
+  return ref.id;
+}
+
+/** Moves the category's expenses to Other, then deletes it. */
+export async function deleteCategory(pid: string, cid: string, hasExpenses: boolean): Promise<void> {
+  if (cid === OTHER_ID) throw new Error("Other can't be deleted");
+  if (hasExpenses) await recategorise(pid, cid, OTHER_ID);
+  const batch = writeBatch(db);
+  batch.delete(categoryRef(pid, cid));
+  await commit(batch);
+}
+
+export async function reorderCategories(pid: string, orderedIds: string[]): Promise<void> {
+  const batch = writeBatch(db);
+  orderedIds.forEach((id, i) => batch.update(categoryRef(pid, id), { order: (i + 1) * ORDER_STEP }));
+  await commit(batch);
+}

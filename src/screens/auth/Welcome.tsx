@@ -1,0 +1,48 @@
+import { useNavigate } from 'react-router-dom';
+import { Icon } from '../../lib/icons';
+import { Logo } from './Logo';
+
+const CARDS = [
+  { icon: 'lightning', title: 'Log in seconds', sub: 'Amount, category, done.', rot: 'rotate(-4deg)', mt: 0, z: 3 },
+  { icon: 'coins', title: 'Any currency', sub: 'Each expense keeps its own currency.', rot: 'none', mt: -4, z: 2 },
+  { icon: 'users-three', title: 'Share a Pocket', sub: 'Invite someone by QR code, link or code.', rot: 'rotate(4deg)', mt: -2, z: 1 },
+];
+
+/** 01 · Welcome */
+export function Welcome() {
+  const navigate = useNavigate();
+  return (
+    <div className="screen">
+      <div className="welcome">
+        <Logo />
+        <div className="welcome-hero">
+          Spend
+          <br />
+          together.
+          <br />
+          See clearly.
+        </div>
+        <div className="welcome-sub">Track your own spending, and share a Pocket with the people you live with. In any currency.</div>
+        <div className="welcome-cards">
+          {CARDS.map((c) => (
+            <div key={c.title} className="welcome-card" style={{ transform: c.rot, marginTop: c.mt, zIndex: c.z }}>
+              <div className="welcome-tile">
+                <Icon name={c.icon} />
+              </div>
+              <div className="welcome-card-text">
+                <span className="welcome-card-title">{c.title}</span>
+                <span className="welcome-card-sub">{c.sub}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      <button className="primary-btn bottom-primary raised press" onClick={() => navigate('/signup')}>
+        Create account
+      </button>
+      <button className="bottom-link welcome-login press" onClick={() => navigate('/login')}>
+        Log in
+      </button>
+    </div>
+  );
+}

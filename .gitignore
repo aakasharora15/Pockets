@@ -147,3 +147,11 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+
+# Pockets
+src/firebase.config.ts
+.firebase/
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+dev-dist/
