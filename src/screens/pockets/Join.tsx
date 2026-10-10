@@ -62,7 +62,8 @@ export function Join() {
       setCurrent(invite.pocketId);
       showToast(`You joined ${invite.pocketName}`);
       navigate('/', { replace: true });
-    } catch {
+    } catch (e) {
+      console.error('Join failed', e);
       setProblem('used');
       setBusy(false);
     }

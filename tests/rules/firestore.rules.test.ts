@@ -5,6 +5,7 @@ import {
   type RulesTestEnvironment,
 } from '@firebase/rules-unit-testing';
 import {
+  arrayUnion,
   collection,
   collectionGroup,
   deleteDoc,
@@ -12,6 +13,7 @@ import {
   getDoc,
   getDocs,
   query,
+  serverTimestamp,
   setDoc,
   Timestamp,
   updateDoc,
@@ -113,6 +115,7 @@ function joinBatch(db: Firestore, uid: string, code = 'K7PQ2M', pid = HOME) {
   b.set(doc(db, 'pockets', pid, 'members', uid), {
     uid, name: 'Trina', initials: 'TR', role: 'member', joinedAt: Timestamp.now(), inviteCode: code,
   });
+  if (uid === STRANGER) b.update(doc(db, 'users', uid), { pocketIds: arrayUnion(pid) });
   return b;
 }
 
@@ -270,12 +273,18 @@ describe('invites', () => {
   });
 
   it('only members can create invites', async () => {
-    await assertSucceeds(setDoc(doc(as(MEMBER), 'invites', 'ABCDEF'), invite({ code: 'ABCDEF', createdByUid: MEMBER })));
-    await assertFails(setDoc(doc(as(STRANGER), 'invites', 'ABCDE2'), invite({ code: 'ABCDE2', createdByUid: STRANGER })));
+    await assertSucceeds(setDoc(doc(as(MEMBER), 'invites', 'ABCDEF'), invite({ code: 'ABCDEF', createdByUid: MEMBER, createdAt: serverTimestamp() })));
+    await assertFails(setDoc(doc(as(STRANGER), 'invites', 'ABCDE2'), invite({ code: 'ABCDE2', createdByUid: STRANGER, createdAt: serverTimestamp() })));
+  });
+
+  it('invites must be stamped with the server time', async () => {
+    await assertFails(
+      setDoc(doc(as(MEMBER), 'invites', 'ABCDE3'), invite({ code: 'ABCDE3', createdByUid: MEMBER, createdAt: Timestamp.fromMillis(Date.now() + 30 * 24 * hour) })),
+    );
   });
 
   it('rejects codes with ambiguous characters', async () => {
-    await assertFails(setDoc(doc(as(OWNER), 'invites', 'ABC0O1'), invite({ code: 'ABC0O1' })));
+    await assertFails(setDoc(doc(as(OWNER), 'invites', 'ABC0O1'), invite({ code: 'ABC0O1', createdAt: serverTimestamp() })));
   });
 
   it('joining with a valid invite works and makes you a member', async () => {
@@ -290,8 +299,9 @@ describe('invites', () => {
 
   it('an expired invite does not work', async () => {
     await env.withSecurityRulesDisabled(async (ctx) => {
+      // Created 49 hours ago: expired by the server's clock, whatever expiresAt says.
       await setDoc(doc(ctx.firestore(), 'invites', 'QLDQLD'), invite({
-        code: 'QLDQLD', expiresAt: Timestamp.fromMillis(Date.now() - hour),
+        code: 'QLDQLD', createdAt: Timestamp.fromMillis(Date.now() - 49 * hour), expiresAt: Timestamp.fromMillis(Date.now() + hour),
       }));
     });
     await assertFails(joinBatch(as(STRANGER), STRANGER, 'QLDQLD').commit());

@@ -7,6 +7,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:emulators": "VITE_EMULATORS=1 vite",
+    "emulators": "firebase emulators:start --only auth,firestore --project demo-pockets",
+    "seed": "node scripts/seed-emulator.mjs",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "typecheck": "tsc -b",
