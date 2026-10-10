@@ -1,8 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { OfflineToast, PlusButton, TabBar, Toast } from './components/Chrome';
 import { HomeSkeleton } from './components/Skeletons';
 import { configMissing } from './firebase';
+import { firstName } from './lib/initials';
 import { AuthForm } from './screens/auth/AuthForm';
 import { Welcome } from './screens/auth/Welcome';
 import { Calendar } from './screens/Calendar';
@@ -107,6 +108,7 @@ function MainRoutes() {
 
   return (
     <>
+      <JoinWatcher />
       <Routes>
         <Route element={<Tabs />}>
           <Route path="/" element={<Home />} />
@@ -127,6 +129,27 @@ function MainRoutes() {
       <Overlays />
     </>
   );
+}
+
+/** Tells existing members when someone new joins one of their shared Pockets. */
+function JoinWatcher() {
+  const { pockets } = usePockets();
+  const { user } = useSession();
+  const { showToast } = useUi();
+  const seen = useRef<Map<string, Set<string>>>(new Map());
+  useEffect(() => {
+    for (const p of pockets) {
+      if (p.type !== 'shared' || p.members.length === 0) continue;
+      const uids = new Set(p.members.map((m) => m.uid));
+      const before = seen.current.get(p.id);
+      if (before && before.has(user?.uid ?? '')) {
+        const fresh = p.members.find((m) => !before.has(m.uid) && m.uid !== user?.uid);
+        if (fresh) showToast(`${firstName(fresh.name)} joined ${p.name}`);
+      }
+      seen.current.set(p.id, uids);
+    }
+  }, [pockets, user?.uid, showToast]);
+  return null;
 }
 
 /** Main tabs share the tab bar, plus button and offline toast. */

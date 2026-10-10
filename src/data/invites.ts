@@ -37,6 +37,11 @@ export async function cancelInvite(code: string): Promise<void> {
   await commit(batch);
 }
 
+/** Invites last 48 hours from when the server stored them. */
+export function expiryOf(inv: Pick<Invite, 'createdAt' | 'expiresAt'>): number {
+  return inv.createdAt ? inv.createdAt.toMillis() + INVITE_TTL_MS : inv.expiresAt.toMillis();
+}
+
 export type InviteProblem = 'not-found' | 'expired' | 'used' | 'already-member';
 
 export async function lookupInvite(code: string, uid: string): Promise<Invite | InviteProblem> {
@@ -45,7 +50,7 @@ export async function lookupInvite(code: string, uid: string): Promise<Invite | 
   const inv = { ...(snap.data() as Omit<Invite, 'code'>), code } as Invite;
   if (inv.usedByUid === uid) return 'already-member';
   if (inv.usedByUid) return 'used';
-  if (inv.expiresAt.toMillis() < Date.now()) return 'expired';
+  if (expiryOf(inv) < Date.now()) return 'expired';
   return inv;
 }
 

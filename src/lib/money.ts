@@ -27,9 +27,14 @@ export function formatMoney(minor: number, code: string): string {
   return currency(code).symbol + formatNumber(minor, code);
 }
 
-/** Rounded to whole units: "£2,486", "₹18,299". */
+/** Rounded to whole units: "£714", "₹18,299". */
 export function formatWhole(minor: number, code: string): string {
   return currency(code).symbol + formatNumber(Math.round(minor / minorFactor(code)) * minorFactor(code), code, 0);
+}
+
+/** Whole units, rounded down so spending is never overstated: £2,486.50 → "£2,486". */
+export function formatWholeDown(minor: number, code: string): string {
+  return currency(code).symbol + formatNumber(Math.floor(minor / minorFactor(code)) * minorFactor(code), code, 0);
 }
 
 /** Short label for chart bars: "£653", "₹4.5k". */

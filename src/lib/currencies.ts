@@ -10,7 +10,7 @@ export interface Currency {
   short: string;
   /** Plural used on Home cards ("Pounds · September"). */
   plural: string;
-  /** Number of decimal places shown and stored as minor units. */
+  /** Decimal places shown and accepted when typing (0 for ₹). */
   dp: number;
   locale: string;
 }
@@ -36,7 +36,10 @@ export function isCurrencyCode(code: string): code is CurrencyCode {
   return BY_CODE.has(code as CurrencyCode);
 }
 
-/** Minor units per major unit (100 for pence, 1 for rupees as stored with 0 dp). */
-export function minorFactor(code: string): number {
-  return 10 ** currency(code).dp;
+/**
+ * Minor units per major unit. Every supported currency has 100 (pence, paise, cents), so amounts
+ * are stored the same way whatever is shown: ₹4,500 is stored as 450000 paise.
+ */
+export function minorFactor(_code: string): number {
+  return 100;
 }

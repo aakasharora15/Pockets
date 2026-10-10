@@ -4,7 +4,7 @@ import { Navigate, useNavigate } from 'react-router-dom';
 import { Avatar } from '../../components/Avatar';
 import { BackButton } from '../../components/Chrome';
 import { ActionSheet } from '../../components/Sheet';
-import { cancelInvite } from '../../data/invites';
+import { cancelInvite, expiryOf } from '../../data/invites';
 import { deletePocket, leavePocket, removeMember } from '../../data/pockets';
 import { invitesCol, personalPocketId } from '../../data/refs';
 import type { Invite, Member } from '../../data/types';
@@ -37,8 +37,8 @@ export function People() {
         setInvites(
           snap.docs
             .map((d) => ({ ...(d.data() as Invite), code: d.id }))
-            .filter((i) => !i.usedByUid && i.expiresAt.toMillis() > Date.now())
-            .sort((a, b) => a.expiresAt.toMillis() - b.expiresAt.toMillis()),
+            .filter((i) => !i.usedByUid && expiryOf(i) > Date.now())
+            .sort((a, b) => expiryOf(a) - expiryOf(b)),
         ),
       () => setInvites([]),
     );
@@ -115,7 +115,7 @@ export function People() {
                 <div className="member-text">
                   <span className="member-name">Invite pending</span>
                   <span className="member-sub">
-                    {formatCode(inv.code)} · expires in {Math.max(1, Math.round((inv.expiresAt.toMillis() - Date.now()) / 3600000))} h
+                    {formatCode(inv.code)} · expires in {Math.max(1, Math.round((expiryOf(inv) - Date.now()) / 3600000))} h
                   </span>
                 </div>
                 <button className="cancel-invite press" onClick={() => run(() => cancelInvite(inv.code))}>

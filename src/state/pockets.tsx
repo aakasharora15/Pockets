@@ -1,8 +1,9 @@
-import { collectionGroup, onSnapshot, orderBy, query, where } from 'firebase/firestore';
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
+import { collectionGroup, onSnapshot, orderBy, query, where, type DocumentSnapshot, type QuerySnapshot } from 'firebase/firestore';
+import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { categoriesCol, membersCol, personalPocketId, pocketRef } from '../data/refs';
 import type { Category, Member, Pocket, PocketWithMembers } from '../data/types';
 import { db } from '../firebase';
+import { listen } from '../data/listen';
 import { useSession } from './session';
 
 interface PocketsState {
@@ -62,19 +63,19 @@ export function PocketsProvider({ children }: { children: ReactNode }) {
     const unsubs: (() => void)[] = [];
     for (const pid of ids) {
       unsubs.push(
-        onSnapshot(
-          pocketRef(pid),
+        listen<DocumentSnapshot>(
+          (next, fail) => onSnapshot(pocketRef(pid), next, fail),
           (s) => setDocs((d) => ({ ...d, [pid]: s.exists() ? { id: pid, ...(s.data() as Omit<Pocket, 'id'>) } : null })),
           // Removed from the Pocket, or it was deleted.
           () => setDocs((d) => ({ ...d, [pid]: null })),
         ),
-        onSnapshot(
-          membersCol(pid),
+        listen<QuerySnapshot>(
+          (next, fail) => onSnapshot(membersCol(pid), next, fail),
           (s) => setMembers((m) => ({ ...m, [pid]: s.docs.map((x) => ({ ...(x.data() as Member), uid: x.id })) })),
           () => {},
         ),
-        onSnapshot(
-          query(categoriesCol(pid), orderBy('order')),
+        listen<QuerySnapshot>(
+          (next, fail) => onSnapshot(query(categoriesCol(pid), orderBy('order')), next, fail),
           (s) => setCats((c) => ({ ...c, [pid]: s.docs.map((x) => ({ id: x.id, ...(x.data() as Omit<Category, 'id'>) })) })),
           () => {},
         ),
@@ -95,7 +96,12 @@ export function PocketsProvider({ children }: { children: ReactNode }) {
     });
   }, [ids, docs, members, uid]);
 
-  const loading = !!profile && !error && (ids === null || ids.some((id) => !(id in docs)));
+  // Only the first load shows skeletons; a Pocket appearing later (create, join) loads in place.
+  const loadedOnce = useRef(false);
+  const stillLoading = !!profile && !error && (ids === null || ids.some((id) => !(id in docs)));
+  if (!stillLoading && profile) loadedOnce.current = true;
+  if (!profile) loadedOnce.current = false;
+  const loading = stillLoading && !loadedOnce.current;
 
   const current = useMemo(() => {
     if (!uid || pockets.length === 0) return null;

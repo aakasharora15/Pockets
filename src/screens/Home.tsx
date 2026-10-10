@@ -11,7 +11,7 @@ import { currency, type CurrencyCode } from '../lib/currencies';
 import { addMonths, monthName, monthShort } from '../lib/dates';
 import { Icon } from '../lib/icons';
 import { firstName } from '../lib/initials';
-import { formatMoney, formatNumber, formatShort, formatWhole } from '../lib/money';
+import { formatMoney, formatNumber, formatShort, formatWhole, formatWholeDown } from '../lib/money';
 import { byCategory, inMonth, totalIn, trend, weeklyBars } from '../lib/stats';
 import { useCurrentPocket, usePockets } from '../state/pockets';
 import { useSession } from '../state/session';
@@ -199,7 +199,7 @@ function CurrencyCards({
                   <span className="budget-text">
                     {empty
                       ? `${formatWhole(0, code)} of ${formatWhole(budget, code)} budget`
-                      : `${formatWhole(total, code)} of ${formatWhole(budget, code)} · ${formatWhole(Math.abs(left), code)} ${left >= 0 ? 'left' : 'over'}`}
+                      : `${formatWholeDown(total, code)} of ${formatWhole(budget, code)} · ${formatWhole(Math.abs(left), code)} ${left >= 0 ? 'left' : 'over'}`}
                   </span>
                 </div>
               ) : null}
