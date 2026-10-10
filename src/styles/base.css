@@ -1,0 +1,151 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+*::-webkit-scrollbar {
+  display: none;
+}
+html,
+body,
+#root {
+  height: 100%;
+}
+html {
+  background: #05080f;
+}
+body {
+  font-family: Involve, -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  color: var(--text);
+  background: #05080f;
+  overscroll-behavior: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: inherit;
+}
+input,
+textarea {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  outline: none;
+  -webkit-user-select: text;
+  user-select: text;
+  caret-color: #ffffff;
+  min-width: 0;
+}
+input::placeholder,
+textarea::placeholder {
+  color: var(--text2);
+}
+.num {
+  font-family: Involve, sans-serif;
+  font-variant-numeric: tabular-nums;
+}
+
+/* The phone: full screen on phones, a centred 390px column on larger screens. */
+.app {
+  position: relative;
+  width: 100%;
+  max-width: 390px;
+  height: 100%;
+  margin: 0 auto;
+  overflow: hidden;
+  color: var(--text);
+  background: var(--bg);
+}
+.screen {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+
+/* Press feedback everywhere */
+.press {
+  transition: var(--spring);
+  cursor: pointer;
+}
+.press:active {
+  transform: scale(0.96);
+}
+
+/* Liquid glass */
+.glass,
+.glass-pref {
+  background: var(--glass-classic);
+  border: 1px solid transparent;
+  backdrop-filter: var(--glass-filter);
+  -webkit-backdrop-filter: var(--glass-filter);
+  box-shadow: var(--glass-shadow);
+}
+.glass-pref {
+  background: var(--glass-pref);
+}
+
+/* Scrollable page body used by most screens */
+.scroll {
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  padding: 114px 20px 140px;
+  display: flex;
+  flex-direction: column;
+  -webkit-overflow-scrolling: touch;
+}
+.scroll > * {
+  flex: none;
+}
+.fade-top {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  z-index: 10;
+  pointer-events: none;
+  background: linear-gradient(180deg, var(--edge-top) 35%, transparent);
+  -webkit-mask-image: linear-gradient(180deg, #000 50%, transparent);
+  mask-image: linear-gradient(180deg, #000 50%, transparent);
+}
+.fade-top.blur {
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+}
+.fade-bottom {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 130px;
+  z-index: 10;
+  pointer-events: none;
+  background: linear-gradient(0deg, var(--edge-bot) 30%, transparent);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  -webkit-mask-image: linear-gradient(0deg, #000 45%, transparent);
+  mask-image: linear-gradient(0deg, #000 45%, transparent);
+}
+
+.text2 {
+  color: var(--text2);
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
