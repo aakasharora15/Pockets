@@ -2,9 +2,9 @@ import QRCode from 'qrcode';
 import { getDocs, query, where } from 'firebase/firestore';
 import { useEffect, useMemo, useState } from 'react';
 import { Sheet } from '../../components/Sheet';
-import { createInvite } from '../../data/invites';
+import { createInvite, expiryOf } from '../../data/invites';
 import { invitesCol } from '../../data/refs';
-import type { Invite } from '../../data/types';
+import type { Invite, PocketWithMembers } from '../../data/types';
 import { Icon } from '../../lib/icons';
 import { formatCode, inviteLink } from '../../lib/inviteCode';
 import { usePockets } from '../../state/pockets';
@@ -17,12 +17,25 @@ async function openInvite(pocketId: string, uid: string): Promise<Invite | null>
     const snap = await getDocs(query(invitesCol(), where('pocketId', '==', pocketId)));
     const open = snap.docs
       .map((d) => ({ ...(d.data() as Invite), code: d.id }))
-      .filter((i) => !i.usedByUid && i.createdByUid === uid && i.expiresAt.toMillis() > Date.now() + 60 * 60 * 1000)
-      .sort((a, b) => b.expiresAt.toMillis() - a.expiresAt.toMillis());
+      .filter((i) => !i.usedByUid && i.createdByUid === uid && expiryOf(i) > Date.now() + 60 * 60 * 1000)
+      .sort((a, b) => expiryOf(b) - expiryOf(a));
     return open[0] ?? null;
   } catch {
     return null;
   }
+}
+
+// One request per Pocket at a time, so opening the sheet twice quickly doesn't make two invites.
+const inflight = new Map<string, Promise<Invite>>();
+
+function getOrCreateInvite(pocket: PocketWithMembers, me: { uid: string; name: string }): Promise<Invite> {
+  let p = inflight.get(pocket.id);
+  if (!p) {
+    p = (async () => (await openInvite(pocket.id, me.uid)) ?? (await createInvite(pocket, me)))();
+    inflight.set(pocket.id, p);
+    p.finally(() => setTimeout(() => inflight.delete(pocket.id), 2000));
+  }
+  return p;
 }
 
 /** 26 · Invite to a Pocket (QR, code, link) */
@@ -39,7 +52,7 @@ export function InviteSheet({ pocketId, onClose }: { pocketId: string; onClose: 
     let live = true;
     (async () => {
       try {
-        const inv = (await openInvite(pocket.id, user.uid)) ?? (await createInvite(pocket, { uid: user.uid, name: profile.name }));
+        const inv = await getOrCreateInvite(pocket, { uid: user.uid, name: profile.name });
         if (live) setInvite(inv);
       } catch {
         if (live) setError("Couldn't make an invite. You need to be online to invite someone.");

@@ -1,4 +1,5 @@
-import { onSnapshot, orderBy, query, where } from 'firebase/firestore';
+import { onSnapshot, orderBy, query, where, type QuerySnapshot } from 'firebase/firestore';
+import { listen } from './listen';
 import { useEffect, useState } from 'react';
 import { monthEnd, monthStart } from '../lib/dates';
 import { expensesCol } from './refs';
@@ -26,9 +27,8 @@ export function useExpenses(pid: string | undefined, fromMonth: string, toMonth:
       where('date', '<', monthEnd(toMonth)),
       orderBy('date', 'desc'),
     );
-    return onSnapshot(
-      q,
-      { includeMetadataChanges: true },
+    return listen<QuerySnapshot>(
+      (next, fail) => onSnapshot(q, { includeMetadataChanges: true }, next, fail),
       (snap) => {
         const list = snap.docs.map((d) => ({
           id: d.id,
