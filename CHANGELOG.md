@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- New app icon (the glass pocket). Home-screen and install icons at 1024, 512, 192, 180, 167, 152 and 120 px, plus a maskable 512 px icon for Android. The same icon now sits next to the wordmark on Welcome and PIN unlock. Theme colour is now #05080F. On iPhone, remove an existing Spendr shortcut and add it again to see the new icon.
+
 ## 1.0.0 (2026-10-10)
 
 First release of Spendr.
