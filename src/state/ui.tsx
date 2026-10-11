@@ -1,6 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
+import { subscribeOutbox } from '../data/outbox';
 import { subscribePending } from '../data/pending';
 import type { Expense } from '../data/types';
+import { isCurrencyCode, type CurrencyCode } from '../lib/currencies';
 import { currentMonth } from '../lib/dates';
 
 export type GlassStyle = 'tinted' | 'classic' | 'clear';
@@ -22,6 +24,9 @@ interface Ui {
   sheet: ExpenseSheetRequest | null;
   openExpenseSheet: (r: ExpenseSheetRequest) => void;
   closeExpenseSheet: () => void;
+  /** Combined total currency per Pocket on this phone (null = off). */
+  combinedFor: (pid: string) => CurrencyCode | null;
+  setCombined: (pid: string, code: CurrencyCode | null) => void;
   /** Shared Pocket to show the Invite sheet for (after creating one). */
   invitePocketId: string | null;
   setInvitePocketId: (id: string | null) => void;
@@ -30,6 +35,16 @@ interface Ui {
 const Ctx = createContext<Ui | null>(null);
 
 const GLASS_KEY = 'spendr.glass';
+const combinedKey = (pid: string) => `spendr.combined.${pid}`;
+
+function readCombined(pid: string): CurrencyCode | null {
+  try {
+    const v = localStorage.getItem(combinedKey(pid));
+    return v && isCurrencyCode(v) ? v : null;
+  } catch {
+    return null;
+  }
+}
 
 function readGlass(): GlassStyle {
   try {
@@ -47,9 +62,24 @@ export function UiProvider({ children }: { children: ReactNode }) {
   const [month, setMonth] = useState(currentMonth());
   const [glass, setGlassState] = useState<GlassStyle>(readGlass);
   const [online, setOnline] = useState(navigator.onLine);
-  const [pendingExpenses, setPending] = useState(0);
+  const [inFlight, setInFlight] = useState(0);
+  const [inOutbox, setInOutbox] = useState(0);
+  // Writes sent this session, or saved on the phone from an earlier one, whichever is more.
+  const pendingExpenses = Math.max(inFlight, inOutbox);
   const [sheet, setSheet] = useState<ExpenseSheetRequest | null>(null);
   const [invitePocketId, setInvitePocketId] = useState<string | null>(null);
+  const [combined, setCombinedState] = useState<Record<string, CurrencyCode | null>>({});
+
+  const combinedFor = useCallback((pid: string) => (pid in combined ? combined[pid] : readCombined(pid)), [combined]);
+  const setCombined = useCallback((pid: string, code: CurrencyCode | null) => {
+    setCombinedState((c) => ({ ...c, [pid]: code }));
+    try {
+      if (code) localStorage.setItem(combinedKey(pid), code);
+      else localStorage.removeItem(combinedKey(pid));
+    } catch {
+      /* storage unavailable */
+    }
+  }, []);
 
   const showToast = useCallback((message: string) => {
     window.clearTimeout(timer.current);
@@ -75,11 +105,13 @@ export function UiProvider({ children }: { children: ReactNode }) {
     const off = () => setOnline(false);
     window.addEventListener('online', on);
     window.addEventListener('offline', off);
-    const unsub = subscribePending(setPending);
+    const unsub = subscribePending(setInFlight);
+    const unsubOutbox = subscribeOutbox((list) => setInOutbox(list.filter((e) => e.kind === 'expense').length));
     return () => {
       window.removeEventListener('online', on);
       window.removeEventListener('offline', off);
       unsub();
+      unsubOutbox();
     };
   }, []);
 
@@ -97,6 +129,8 @@ export function UiProvider({ children }: { children: ReactNode }) {
         sheet,
         openExpenseSheet: setSheet,
         closeExpenseSheet: () => setSheet(null),
+        combinedFor,
+        setCombined,
         invitePocketId,
         setInvitePocketId,
       }}

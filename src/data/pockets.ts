@@ -25,6 +25,8 @@ import {
   membersCol,
   personalPocketId,
   pocketRef,
+  receiptsCol,
+  recurringCol,
   userRef,
 } from './refs';
 import type { PocketType } from './types';
@@ -137,7 +139,7 @@ export async function leavePocket(pid: string, uid: string) {
 
 /** Deletes everything under a Pocket in chunks, then the Pocket and finally the owner's membership. */
 export async function deletePocket(pid: string, ownerUid: string) {
-  for (const col of [expensesCol(pid), categoriesCol(pid)]) {
+  for (const col of [expensesCol(pid), categoriesCol(pid), recurringCol(pid), receiptsCol(pid)]) {
     await deleteAll((await getDocs(col)).docs.map((d) => d.ref));
   }
   const invites = await getDocs(query(invitesCol(), where('pocketId', '==', pid)));

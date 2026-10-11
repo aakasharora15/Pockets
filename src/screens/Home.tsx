@@ -5,6 +5,7 @@ import { Fades } from '../components/Chrome';
 import { categoryOf, ExpenseRow } from '../components/ExpenseRow';
 import { ListSkeleton } from '../components/Skeletons';
 import type { Expense, PocketWithMembers } from '../data/types';
+import { useCombined } from '../data/useCombined';
 import { useExpenses } from '../data/useExpenses';
 import { OTHER_ID } from '../lib/categories';
 import { currency, type CurrencyCode } from '../lib/currencies';
@@ -148,15 +149,20 @@ function CurrencyCards({
 }) {
   const track = useRef<HTMLDivElement>(null);
   const [index, setIndex] = useState(0);
+  const { combinedFor } = useUi();
+  // Optional extra card: everything converted into one currency (Settings › Combined total).
+  const combinedCode = pocket.currencies.length > 1 ? combinedFor(pocket.id) : null;
   const many = pocket.currencies.length > 1;
+  const slides = pocket.currencies.length + (combinedCode ? 1 : 0);
 
   const onScroll = () => {
     const el = track.current;
     if (!el) return;
     const i = Math.round(el.scrollLeft / (326 + 12));
-    if (i !== index && pocket.currencies[i]) {
+    if (i !== index && i < slides) {
       setIndex(i);
-      onSelect(pocket.currencies[i]);
+      // The cards below keep following the last single currency.
+      if (pocket.currencies[i]) onSelect(pocket.currencies[i]);
     }
   };
 
@@ -206,14 +212,40 @@ function CurrencyCards({
             </div>
           );
         })}
+        {combinedCode && <CombinedCard code={combinedCode} month={month} expenses={expenses} empty={empty} />}
       </div>
       {many && (
         <div className="dots">
-          {pocket.currencies.map((code, i) => (
-            <span key={code} className={`dot${i === index ? ' on' : ''}`} />
+          {Array.from({ length: slides }, (_, i) => (
+            <span key={i} className={`dot${i === index ? ' on' : ''}`} />
           ))}
         </div>
       )}
+    </div>
+  );
+}
+
+/** "All in pounds": every currency converted at each expense's own day's rate. */
+function CombinedCard({ code, month, expenses, empty }: { code: CurrencyCode; month: string; expenses: Expense[]; empty: boolean }) {
+  const c = currency(code);
+  const { total, missing, loading, error } = useCombined(expenses, code);
+  const others = expenses.some((e) => e.currency !== code);
+  let note = 'Each expense at its own day’s rate';
+  if (error) note = 'Needs a connection to get exchange rates';
+  else if (missing) note = `${missing} not included yet: no rate for their date`;
+  else if (!others && !empty) note = `Everything this month is in ${c.plural.toLowerCase()}`;
+  return (
+    <div className="cur-card combined-card" style={{ width: 326 }}>
+      <div className="cur-card-head">
+        <span className="cur-card-label">
+          All in {c.plural.toLowerCase()} · {monthName(month)}
+        </span>
+      </div>
+      <div className={`cur-card-amount num${loading && !empty ? ' loading' : ''}`}>
+        <span className="cur-card-sym">≈{c.symbol}</span>
+        <span className="cur-card-num">{empty || error ? '0' : formatNumber(total, code)}</span>
+      </div>
+      <span className="budget-text">{note}</span>
     </div>
   );
 }

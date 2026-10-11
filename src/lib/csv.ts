@@ -8,11 +8,11 @@ function cell(v: string): string {
   return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 }
 
-/** CSV per Pocket: date, name, category, currency, amount (major units), added by, note. */
+/** CSV: date, name, category, currency, amount (major units), added by, note, tag, repeats. */
 export function expensesToCsv(expenses: Expense[], categories: Category[], members: Member[]): string {
   const catName = new Map(categories.map((c) => [c.id, c.name]));
   const memberName = new Map(members.map((m) => [m.uid, m.name]));
-  const rows = [['date', 'name', 'category', 'currency', 'amount', 'added by', 'note']];
+  const rows = [['date', 'name', 'category', 'currency', 'amount', 'added by', 'note', 'tag', 'repeats monthly']];
   for (const e of [...expenses].sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0))) {
     rows.push([
       e.date,
@@ -22,14 +22,22 @@ export function expensesToCsv(expenses: Expense[], categories: Category[], membe
       formatPlain(e.amountMinor, e.currency),
       memberName.get(e.byUid) ?? e.byInitials,
       e.note ?? '',
+      e.tag ?? '',
+      e.recurringId ? 'yes' : '',
     ]);
   }
   return rows.map((r) => r.map(cell).join(',')).join('\r\n') + '\r\n';
 }
 
-export async function shareOrDownload(filename: string, text: string): Promise<void> {
-  const blob = new Blob(['﻿', text], { type: 'text/csv;charset=utf-8' });
-  const file = new File([blob], filename, { type: 'text/csv' });
+/** File-name-safe slug: "India Dec 2026" → "india-dec-2026". */
+export function slug(s: string, fallback = 'pocket'): string {
+  return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || fallback;
+}
+
+export async function shareOrDownload(filename: string, text: string, type: 'text/csv' | 'application/json' = 'text/csv'): Promise<void> {
+  // CSV gets a byte order mark so Excel reads ₹ and £ correctly.
+  const blob = new Blob(type === 'text/csv' ? ['﻿', text] : [text], { type: `${type};charset=utf-8` });
+  const file = new File([blob], filename, { type });
   if (navigator.canShare?.({ files: [file] })) {
     try {
       await navigator.share({ files: [file], title: filename });

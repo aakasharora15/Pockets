@@ -53,6 +53,12 @@ service cloud.firestore {
     function currencyCodes() {
       return ['GBP', 'INR', 'USD', 'EUR', 'AUD', 'CAD', 'SGD', 'NZD'];
     }
+    function isTag(v) {
+      return v is string && v.size() > 0 && v.size() <= 40;
+    }
+    function isDay(v) {
+      return v is string && v.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$');
+    }
 
     // ---------- users ----------
 
@@ -68,13 +74,14 @@ service cloud.firestore {
     // ---------- pockets ----------
 
     function validPocket(d) {
-      return d.keys().hasOnly(['name', 'type', 'ownerUid', 'currencies', 'budgets', 'createdAt'])
+      return d.keys().hasOnly(['name', 'type', 'ownerUid', 'currencies', 'budgets', 'tags', 'createdAt'])
         && isName(d.name)
         && d.type in ['personal', 'shared']
         && d.currencies is list && d.currencies.size() > 0 && d.currencies.size() <= 8
         && d.currencies.toSet().difference(currencyCodes().toSet()).size() == 0
         && d.budgets is map
-        && d.budgets.keys().toSet().difference(currencyCodes().toSet()).size() == 0;
+        && d.budgets.keys().toSet().difference(currencyCodes().toSet()).size() == 0
+        && (!('tags' in d) || (d.tags is list && d.tags.size() <= 200));
     }
 
     match /pockets/{pid} {
@@ -90,8 +97,8 @@ service cloud.firestore {
       allow update: if validPocket(request.resource.data)
         && request.resource.data.type == resource.data.type
         && (
-          // Anyone in the Pocket can set budgets.
-          (isMember(pid) && changes().hasOnly(['budgets']))
+          // Anyone in the Pocket can set budgets and add or remove tags.
+          (isMember(pid) && changes().hasOnly(['budgets', 'tags']))
           // Only the owner can rename, change currencies or hand over ownership.
           || (isOwner(pid)
               && (request.resource.data.ownerUid == me()
@@ -171,7 +178,8 @@ service cloud.firestore {
 
       function validExpense(d) {
         return d.keys().hasOnly(['currency', 'amountMinor', 'name', 'categoryId', 'byUid', 'byInitials',
-                                 'editedByUid', 'date', 'note', 'createdAt', 'updatedAt'])
+                                 'editedByUid', 'date', 'note', 'tag', 'recurringId', 'receipt',
+                                 'createdAt', 'updatedAt'])
           && d.currency in currencyCodes()
           && d.amountMinor is int && d.amountMinor > 0 && d.amountMinor < 1000000000
           && isText(d.name, 100)
@@ -180,13 +188,54 @@ service cloud.firestore {
           && isInitials(d.byInitials)
           && (!('editedByUid' in d) || d.editedByUid is string)
           && d.date is string && d.date.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
-          && (!('note' in d) || isText(d.note, 500));
+          && (!('note' in d) || isText(d.note, 500))
+          && (!('tag' in d) || isTag(d.tag))
+          && (!('recurringId' in d) || isText(d.recurringId, 40))
+          && (!('receipt' in d) || d.receipt is bool);
       }
 
       match /expenses/{eid} {
         allow read: if isMember(pid);
         allow create, update: if isMemberAfter(pid) && validExpense(request.resource.data);
         allow delete: if isMember(pid);
+      }
+
+      // ---------- recurring expenses ----------
+      // A monthly template. Whoever opens the app first after nextDate logs the expense and moves
+      // nextDate on, in one transaction, so it's logged once however many phones are open.
+
+      function validRecurring(d) {
+        return d.keys().hasOnly(['currency', 'amountMinor', 'name', 'categoryId', 'byUid', 'byInitials',
+                                 'note', 'tag', 'day', 'nextDate', 'createdByUid', 'createdAt', 'updatedAt'])
+          && d.currency in currencyCodes()
+          && d.amountMinor is int && d.amountMinor > 0 && d.amountMinor < 1000000000
+          && isText(d.name, 100)
+          && isText(d.categoryId, 40)
+          && d.byUid is string
+          && isInitials(d.byInitials)
+          && (!('note' in d) || isText(d.note, 500))
+          && (!('tag' in d) || isTag(d.tag))
+          && d.day is int && d.day >= 1 && d.day <= 31
+          && isDay(d.nextDate);
+      }
+
+      match /recurring/{rid} {
+        allow read, delete: if isMember(pid);
+        allow create, update: if isMember(pid) && validRecurring(request.resource.data);
+      }
+
+      // ---------- receipt photos ----------
+      // One compressed JPEG per expense, kept out of the expense document so lists stay light.
+
+      match /receipts/{eid} {
+        allow read, delete: if isMember(pid);
+        allow create, update: if isMemberAfter(pid)
+          && request.resource.data.keys().hasOnly(['data', 'type', 'width', 'height', 'byUid', 'createdAt'])
+          && request.resource.data.data is bytes
+          && request.resource.data.data.size() <= 900000
+          && request.resource.data.type == 'image/jpeg'
+          && request.resource.data.width is int
+          && request.resource.data.height is int;
       }
     }
 

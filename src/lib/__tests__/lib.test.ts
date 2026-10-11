@@ -127,15 +127,15 @@ describe('csv', () => {
     const members: Member[] = [{ uid: 'u', name: 'Prernaa Singh', initials: 'PS', role: 'owner', joinedAt: null }];
     const csv = expensesToCsv(
       [
-        ex({ name: 'Tesco, weekly', categoryId: 'groceries', amountMinor: 8640, date: '2026-09-18', note: 'Big "shop"' }),
+        ex({ name: 'Tesco, weekly', categoryId: 'groceries', amountMinor: 8640, date: '2026-09-18', note: 'Big "shop"', tag: 'Goa trip', recurringId: 'r1' }),
         ex({ name: '=SUM(A1)', currency: 'INR', amountMinor: 450000, byUid: 'gone', byInitials: 'TR' }),
       ],
       cats,
       members,
     );
     const lines = csv.trim().split('\r\n');
-    expect(lines[0]).toBe('date,name,category,currency,amount,added by,note');
-    expect(lines[1]).toBe("2026-09-01,'=SUM(A1),Other,INR,4500,TR,");
-    expect(lines[2]).toBe('2026-09-18,"Tesco, weekly",Groceries,GBP,86.40,Prernaa Singh,"Big ""shop"""');
+    expect(lines[0]).toBe('date,name,category,currency,amount,added by,note,tag,repeats monthly');
+    expect(lines[1]).toBe("2026-09-01,'=SUM(A1),Other,INR,4500,TR,,,");
+    expect(lines[2]).toBe('2026-09-18,"Tesco, weekly",Groceries,GBP,86.40,Prernaa Singh,"Big ""shop""",Goa trip,yes');
   });
 });
