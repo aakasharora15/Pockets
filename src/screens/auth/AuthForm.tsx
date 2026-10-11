@@ -29,7 +29,7 @@ const COPY = {
     title: 'Welcome back',
     sub: 'Log in to see your Pockets.',
     cta: 'Log in',
-    switchText: 'New to Pockets?',
+    switchText: 'New to Spendr?',
     switchCta: 'Create account',
     switchTo: '/signup',
   },

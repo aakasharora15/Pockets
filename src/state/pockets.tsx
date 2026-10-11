@@ -21,7 +21,7 @@ interface PocketsState {
 
 const Ctx = createContext<PocketsState | null>(null);
 
-const currentKey = (uid: string) => `pockets.current.${uid}`;
+const currentKey = (uid: string) => `spendr.current.${uid}`;
 
 function readCurrent(uid: string): string | null {
   try {

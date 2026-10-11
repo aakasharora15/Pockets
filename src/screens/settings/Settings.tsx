@@ -52,7 +52,7 @@ export function Settings() {
       const list = await allExpenses(pocket.id);
       const csv = expensesToCsv(list, categories, pocket.members);
       const slug = pocket.name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'pocket';
-      await shareOrDownload(`pockets-${slug}-${todayKey()}.csv`, csv);
+      await shareOrDownload(`spendr-${slug}-${todayKey()}.csv`, csv);
     } catch {
       showToast("Couldn't export. Try again");
     } finally {
@@ -117,22 +117,22 @@ export function Settings() {
         </Group>
         <Group>
           {!standalone && <SettingsRow first icon="device-mobile" label="Add to Home Screen" onClick={install} />}
-          <SettingsRow first={!!standalone} icon="info" label="About Pockets" onClick={() => setSheet('about')} />
+          <SettingsRow first={!!standalone} icon="info" label="About Spendr" onClick={() => setSheet('about')} />
         </Group>
-        <div className="settings-footer">Pockets · Version 1.0</div>
+        <div className="settings-footer">Spendr · Version 1.0</div>
       </div>
       <Fades topHeight={70} />
       {sheet === 'install' && (
         <ActionSheet
           title="Add to Home Screen"
-          message="In Safari, tap the Share button, then Add to Home Screen. Pockets opens full screen and works offline."
+          message="In Safari, tap the Share button, then Add to Home Screen. Spendr opens full screen and works offline."
           actions={[]}
           onCancel={() => setSheet(null)}
         />
       )}
       {sheet === 'about' && (
         <ActionSheet
-          title="Pockets · Version 1.0"
+          title="Spendr · Version 1.0"
           message="Open-source expense tracker for you and the people you share costs with. MIT licence."
           actions={[{ label: 'View source on GitHub', onClick: () => window.open(REPO_URL, '_blank', 'noopener') }]}
           onCancel={() => setSheet(null)}

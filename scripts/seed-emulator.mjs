@@ -4,7 +4,7 @@
 import { initializeTestEnvironment } from '@firebase/rules-unit-testing';
 import { doc, setDoc, Timestamp } from 'firebase/firestore';
 
-const PROJECT = 'demo-pockets';
+const PROJECT = 'demo-spendr';
 const AUTH = 'http://127.0.0.1:9099';
 const month = process.env.SEED_MONTH ?? new Date().toISOString().slice(0, 7);
 const prev = (() => {

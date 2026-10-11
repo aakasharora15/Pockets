@@ -2,7 +2,7 @@
 
 ## 1.0.0 (2026-10-10)
 
-First release.
+First release of Spendr.
 
 - Accounts with Google or email and password, and password reset.
 - Setup: name, currencies, app PIN, then just you or a shared Pocket.

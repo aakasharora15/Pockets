@@ -12,8 +12,8 @@ export function SetupNeeded({ offline }: { offline?: boolean }) {
           <span className="flow-title">{offline ? "Can't load your account" : 'Almost there'}</span>
           <span className="flow-sub">
             {offline
-              ? 'Check your connection and open Pockets again.'
-              : "This copy of Pockets has no Firebase project yet. Copy src/firebase.config.example.ts to src/firebase.config.ts and add your project's web config. See Run your own Pockets in the README."}
+              ? 'Check your connection and open Spendr again.'
+              : "This copy of Spendr has no Firebase project yet. Copy src/firebase.config.example.ts to src/firebase.config.ts and add your project's web config. See Run your own Spendr in the README."}
           </span>
         </div>
         {offline && (

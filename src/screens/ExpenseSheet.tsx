@@ -11,7 +11,7 @@ import { usePockets } from '../state/pockets';
 import { useMe } from '../state/session';
 import { useUi, type ExpenseSheetRequest } from '../state/ui';
 
-const lastCurrencyKey = (pid: string) => `pockets.lastCurrency.${pid}`;
+const lastCurrencyKey = (pid: string) => `spendr.lastCurrency.${pid}`;
 
 function lastCurrency(p: PocketWithMembers): CurrencyCode | null {
   try {

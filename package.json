@@ -1,5 +1,5 @@
 {
-  "name": "pockets",
+  "name": "spendr",
   "private": true,
   "version": "1.0.0",
   "description": "Open-source expense tracker for you and the people you share costs with.",
@@ -8,13 +8,13 @@
   "scripts": {
     "dev": "vite",
     "dev:emulators": "VITE_EMULATORS=1 vite",
-    "emulators": "firebase emulators:start --only auth,firestore --project demo-pockets",
+    "emulators": "firebase emulators:start --only auth,firestore --project demo-spendr",
     "seed": "node scripts/seed-emulator.mjs",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
     "typecheck": "tsc -b",
     "test": "vitest run src",
-    "test:rules": "firebase emulators:exec --only firestore --project demo-pockets \"vitest run tests/rules\"",
+    "test:rules": "firebase emulators:exec --only firestore --project demo-spendr \"vitest run tests/rules\"",
     "deploy": "npm run build && firebase deploy --only hosting,firestore"
   },
   "dependencies": {
