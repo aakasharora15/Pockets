@@ -28,6 +28,15 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ['**/*.{js,css,html,ttf,png,svg,webmanifest}'],
+        // The receipt reader is large and optional: fetched the first time it's used, then cached.
+        globIgnores: ['ocr/**'],
+        runtimeCaching: [
+          {
+            urlPattern: ({ url }) => url.pathname.startsWith('/ocr/'),
+            handler: 'CacheFirst',
+            options: { cacheName: 'spendr-ocr', expiration: { maxEntries: 10 } },
+          },
+        ],
         navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/__\//],
         maximumFileSizeToCacheInBytes: 4 * 1024 * 1024,

@@ -20,6 +20,8 @@ export interface Pocket {
   currencies: CurrencyCode[];
   /** Monthly budget per currency, in minor units. Missing = no budget. */
   budgets: Partial<Record<CurrencyCode, number>>;
+  /** Tags used in this Pocket (trips, events), in the order they were first used. */
+  tags?: string[];
   createdAt: Timestamp | null;
 }
 
@@ -54,10 +56,36 @@ export interface Expense {
   /** 'YYYY-MM-DD' */
   date: string;
   note?: string;
+  /** One tag, such as a trip ("India Dec 2026"). */
+  tag?: string;
+  /** Set when the expense was logged by, or set up, a monthly repeat. */
+  recurringId?: string;
+  /** A receipt photo is stored at pockets/{pid}/receipts/{id}. */
+  receipt?: boolean;
   createdAt: Timestamp | null;
   updatedAt: Timestamp | null;
   /** Local only: write not yet synced to the server. */
   pending?: boolean;
+}
+
+/** A monthly repeat: logged on `day` each month (the last day in shorter months). */
+export interface Recurring {
+  id: string;
+  currency: CurrencyCode;
+  amountMinor: number;
+  name: string;
+  categoryId: string;
+  byUid: string;
+  byInitials: string;
+  note?: string;
+  tag?: string;
+  /** Day of the month, 1–31. */
+  day: number;
+  /** Next date to log, 'YYYY-MM-DD'. */
+  nextDate: string;
+  createdByUid: string;
+  createdAt: Timestamp | null;
+  updatedAt: Timestamp | null;
 }
 
 export interface InvitePreviewMember {

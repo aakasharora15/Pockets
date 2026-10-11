@@ -1,12 +1,19 @@
-import { useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { AmountPad } from '../components/Keypads';
 import { ActionSheet, Sheet, SheetHeader } from '../components/Sheet';
-import { addExpense, deleteExpense, saveExpenseEdit } from '../data/expenses';
+import { Switch } from '../components/Switch';
+import { addExpense, deleteExpense, newExpenseId, saveExpenseEdit, type ExpenseInput } from '../data/expenses';
+import { compressPhoto, deleteReceipt, loadReceipt, saveReceipt, type Photo } from '../data/receipts';
+import { newRecurringId, startRecurring, stopRecurring, updateRecurring, useRecurring } from '../data/recurring';
+import { rememberTag } from '../data/tags';
 import type { Category, PocketWithMembers } from '../data/types';
 import { currency, type CurrencyCode } from '../lib/currencies';
 import { sheetDateLabel, todayKey } from '../lib/dates';
 import { Icon } from '../lib/icons';
 import { displayTyped, minorToTyped, pressKey, typedToMinor } from '../lib/money';
+import { dayOf, repeatLabel } from '../lib/recurring';
+import { useObjectUrl } from '../lib/useObjectUrl';
+import { ReceiptViewer } from './ReceiptViewer';
 import { usePockets } from '../state/pockets';
 import { useMe } from '../state/session';
 import { useUi, type ExpenseSheetRequest } from '../state/ui';
@@ -54,6 +61,37 @@ export function ExpenseSheet({ request }: { request: ExpenseSheetRequest }) {
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [busy, setBusy] = useState(false);
   const dateInput = useRef<HTMLInputElement>(null);
+  const [newId] = useState(() => newExpenseId(current!.id));
+  const [tag, setTag] = useState(original?.tag ?? '');
+
+  // Repeat monthly: on when the expense is linked to a repeat that still exists.
+  const { list: repeats } = useRecurring(editing?.pocketId ?? pocket.id);
+  const linkedRepeat = original?.recurringId ? repeats.find((r) => r.id === original.recurringId) : undefined;
+  const [repeat, setRepeat] = useState<boolean | null>(editing ? null : false);
+  const repeatOn = repeat ?? !!linkedRepeat;
+
+  // Receipt photo: kept, added, replaced or removed.
+  const [photo, setPhoto] = useState<Photo | null>(null);
+  const [photoState, setPhotoState] = useState<'none' | 'loading' | 'saved' | 'new' | 'removed'>(original?.receipt ? 'loading' : 'none');
+  const [viewing, setViewing] = useState(false);
+  const [reading, setReading] = useState<number | null>(null);
+
+  useEffect(() => {
+    if (!original?.receipt || !editing) return;
+    let live = true;
+    loadReceipt(editing.pocketId, original.id)
+      .then((p) => {
+        if (!live) return;
+        setPhoto(p);
+        setPhotoState(p ? 'saved' : 'none');
+      })
+      .catch(() => live && setPhotoState('saved'));
+    return () => {
+      live = false;
+    };
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const hasPhoto = photoState === 'saved' || photoState === 'new' || photoState === 'loading';
 
   const amountMinor = cur ? typedToMinor(typed, cur) : 0;
   const canSave = !!cur && amountMinor > 0 && !busy;
@@ -82,7 +120,11 @@ export function ExpenseSheet({ request }: { request: ExpenseSheetRequest }) {
     }
     setBusy(true);
     const by = members.find((m) => m.uid === (editing ? original!.byUid : who));
-    const input = {
+    const moving = !!editing && editing.pocketId !== pocket.id;
+    // A repeat lives in its Pocket: moving the expense starts a new one there.
+    const keepRepeat = repeatOn && !!linkedRepeat && !moving;
+    const rid = repeatOn ? (keepRepeat ? linkedRepeat!.id : newRecurringId(pocket.id)) : undefined;
+    const input: ExpenseInput = {
       currency: cur,
       amountMinor,
       name: name.trim() || category.name,
@@ -91,15 +133,30 @@ export function ExpenseSheet({ request }: { request: ExpenseSheetRequest }) {
       byInitials: editing ? original!.byInitials : by?.initials ?? '?',
       date,
       note,
+      tag: rememberTag(pocket, tag),
+      // Keep the link on an expense a stopped repeat logged; drop it when you switch repeat off here.
+      recurringId: rid ?? (linkedRepeat ? undefined : original?.recurringId),
+      receipt: (photoState === 'new' || photoState === 'saved' || photoState === 'loading') && !(moving && !photo),
     };
     try {
+      let id = newId;
       if (editing) {
-        await saveExpenseEdit(original!, editing.pocketId, pocket.id, input, shared ? who : user.uid);
+        id = await saveExpenseEdit(original!, editing.pocketId, pocket.id, input, shared ? who : user.uid);
         showToast('Expense updated');
       } else {
-        await addExpense(pocket.id, input);
+        await addExpense(pocket.id, input, newId);
         showToast(pocket.id === current?.id ? 'Expense saved' : `Saved to ${pocket.name}`);
       }
+      // Repeat: start, update or stop. Failures here don't undo the saved expense.
+      const sideEffects: Promise<unknown>[] = [];
+      if (rid && keepRepeat) sideEffects.push(updateRecurring(pocket.id, rid, input));
+      else if (rid) sideEffects.push(startRecurring(pocket.id, rid, input, user.uid));
+      if (linkedRepeat && (!repeatOn || moving)) sideEffects.push(stopRecurring(editing!.pocketId, linkedRepeat.id));
+      // Receipt photo: save a new one (or carry it to the new Pocket), delete a removed one.
+      if (photo && (photoState === 'new' || (moving && photoState === 'saved'))) sideEffects.push(saveReceipt(pocket.id, id, photo));
+      if (photoState === 'removed' && original?.receipt && !moving) sideEffects.push(deleteReceipt(editing!.pocketId, original.id));
+      const results = await Promise.allSettled(sideEffects);
+      if (results.some((r) => r.status === 'rejected')) showToast('Saved, but the photo or repeat needs another try');
       try {
         localStorage.setItem(lastCurrencyKey(pocket.id), cur);
       } catch {
@@ -116,11 +173,45 @@ export function ExpenseSheet({ request }: { request: ExpenseSheetRequest }) {
     if (!editing) return;
     setConfirmDelete(false);
     try {
-      await deleteExpense(editing.pocketId, original!.id);
+      await deleteExpense(editing.pocketId, original!.id, !!original!.receipt);
       showToast('Expense deleted');
       closeExpenseSheet();
     } catch {
       showToast("Couldn't delete. Try again");
+    }
+  };
+
+  const pickPhoto = async (file: File | undefined) => {
+    if (!file) return;
+    try {
+      const p = await compressPhoto(file);
+      setPhoto(p);
+      setPhotoState('new');
+    } catch {
+      showToast("Couldn't use that photo");
+    }
+  };
+
+  const fillFromPhoto = async () => {
+    if (!photo || reading !== null) return;
+    setReading(0);
+    try {
+      const { readReceipt } = await import('../lib/ocr');
+      const guess = await readReceipt(photo.blob, (p) => setReading(p));
+      let code = cur;
+      if (guess.currency && pocket.currencies.includes(guess.currency) && (!cur || !typed)) code = guess.currency;
+      code = code ?? pocket.currencies[0];
+      if (guess.amount !== undefined) {
+        setCur(code);
+        const dp = currency(code).dp;
+        setTyped(String(dp ? guess.amount.toFixed(dp) : Math.round(guess.amount)).replace(/^0+(?=\d)/, ''));
+      }
+      if (guess.merchant) setName(guess.merchant);
+      showToast(guess.amount !== undefined || guess.merchant ? 'Filled in from the receipt' : "Couldn't read the receipt");
+    } catch {
+      showToast(navigator.onLine ? "Couldn't read the receipt" : 'Reading a receipt the first time needs a connection');
+    } finally {
+      setReading(null);
     }
   };
 
@@ -259,6 +350,89 @@ export function ExpenseSheet({ request }: { request: ExpenseSheetRequest }) {
                     <Icon name="caret-right" weight="bold" size={13} color="#5A5A5E" />
                   </div>
                 </label>
+
+                <label className="detail-row tag-row">
+                  <span className="detail-icon">
+                    <Icon name="tag" size={19} />
+                  </span>
+                  <div className="detail-body sep">
+                    <span className="detail-label">Add tag</span>
+                    <input
+                      className="note-input"
+                      placeholder="Trip, event"
+                      aria-label="Tag"
+                      maxLength={40}
+                      list="pocket-tags"
+                      value={tag}
+                      onChange={(e) => setTag(e.target.value)}
+                    />
+                    <datalist id="pocket-tags">
+                      {(pocket.tags ?? []).map((t) => (
+                        <option key={t} value={t} />
+                      ))}
+                    </datalist>
+                    <Icon name="caret-right" weight="bold" size={13} color="#5A5A5E" />
+                  </div>
+                </label>
+
+                <div className="detail-row">
+                  <span className="detail-icon">
+                    <Icon name="repeat" size={19} />
+                  </span>
+                  <div className="detail-body sep">
+                    <div className="detail-stack">
+                      <span className="detail-label">Repeat monthly</span>
+                      {repeatOn && <span className="detail-sub">{repeatLabel(linkedRepeat && repeat === null ? linkedRepeat.day : dayOf(date))}</span>}
+                    </div>
+                    <Switch on={repeatOn} onChange={setRepeat} label="Repeat monthly" />
+                  </div>
+                </div>
+
+                {hasPhoto ? (
+                  <>
+                    <button className="detail-row" onClick={() => setViewing(true)}>
+                      <span className="detail-icon">
+                        <Icon name="receipt" size={19} />
+                      </span>
+                      <div className="detail-body sep">
+                        <span className="detail-label">Receipt</span>
+                        {photo ? <Thumb photo={photo} /> : <span className="detail-value">Loading</span>}
+                        <Icon name="caret-right" weight="bold" size={13} color="#5A5A5E" />
+                      </div>
+                    </button>
+                    {photo && (
+                      <button className="detail-row" onClick={fillFromPhoto} disabled={reading !== null}>
+                        <span className="detail-icon">
+                          <Icon name="scan" size={19} />
+                        </span>
+                        <div className="detail-body sep">
+                          <span className="detail-label">Fill in from receipt</span>
+                          {reading !== null && <span className="detail-value">Reading {Math.round(reading * 100)}%</span>}
+                        </div>
+                      </button>
+                    )}
+                  </>
+                ) : (
+                  <label className="detail-row">
+                    <span className="detail-icon">
+                      <Icon name="camera" size={19} />
+                    </span>
+                    <div className="detail-body sep">
+                      <span className="detail-label">Add receipt photo</span>
+                      <Icon name="caret-right" weight="bold" size={13} color="#5A5A5E" />
+                    </div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="date-input"
+                      aria-label="Add receipt photo"
+                      onChange={(e) => {
+                        void pickPhoto(e.target.files?.[0]);
+                        e.target.value = '';
+                      }}
+                    />
+                  </label>
+                )}
               </div>
 
               {menu && <div className="menu-catcher" onClick={() => setMenu(null)} />}
@@ -296,6 +470,21 @@ export function ExpenseSheet({ request }: { request: ExpenseSheetRequest }) {
           Save expense
         </button>
       </Sheet>
+      {viewing && (
+        <ReceiptViewer
+          photo={photo}
+          onClose={() => setViewing(false)}
+          onRemove={() => {
+            setViewing(false);
+            setPhoto(null);
+            setPhotoState(original?.receipt ? 'removed' : 'none');
+          }}
+          onFill={() => {
+            setViewing(false);
+            void fillFromPhoto();
+          }}
+        />
+      )}
       {confirmDelete && (
         <div className="sheet-layer">
           <ActionSheet
@@ -308,6 +497,11 @@ export function ExpenseSheet({ request }: { request: ExpenseSheetRequest }) {
       )}
     </>
   );
+}
+
+function Thumb({ photo }: { photo: Photo }) {
+  const url = useObjectUrl(photo.blob);
+  return url ? <img className="receipt-thumb" src={url} alt="" /> : <span className="receipt-thumb" />;
 }
 
 function CategoryMenu({ categories, selected, onPick }: { categories: Category[]; selected: string | null; onPick: (c: Category) => void }) {

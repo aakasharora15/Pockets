@@ -66,6 +66,7 @@ await env.withSecurityRulesDisabled(async (ctx) => {
   await pocket(`personal_${ps}`, 'Personal', 'personal', ps, [[ps, 'Prernaa Singh', 'PS', 'owner']], ['GBP'], {});
   await pocket(`personal_${aa}`, 'Personal', 'personal', aa, [[aa, 'Aakash', 'AA', 'owner']], ['GBP', 'INR'], {});
   await pocket('home', 'Home', 'shared', ps, [[ps, 'Prernaa Singh', 'PS', 'owner'], [aa, 'Aakash', 'AA', 'member']], ['GBP', 'INR'], { GBP: 320000, INR: 2500000 });
+  await setDoc(doc(db, 'pockets', 'home'), { tags: ['India Dec 2026'] }, { merge: true });
 
   // [day, name, category, currency, amount (major), by]
   const sept = [
@@ -98,6 +99,21 @@ await env.withSecurityRulesDisabled(async (ctx) => {
       });
     }
   }
+  // A trip tag (screen 22) and a monthly repeat that's due, so the app logs it on first open.
+  const trip = [
+    [`${prev}-02`, 'Flights to Delhi', 'transport', 'GBP', 640, 'PS'], [`${prev}-14`, 'Hotel deposit, Jaipur', 'other', 'INR', 24000, 'PS'],
+    [`${prev}-14`, 'Train tickets', 'transport', 'INR', 6100, 'AA'], [`${prev}-20`, 'e-Visa', 'other', 'GBP', 116, 'PS'],
+  ];
+  for (const [i, [d, name, cat, cur, amt, by]] of trip.entries()) {
+    await setDoc(doc(db, 'pockets', 'home', 'expenses', `t${i + 1}`), {
+      currency: cur, amountMinor: Math.round(amt * 100), name, categoryId: cat, byUid: who[by], byInitials: by, date: d,
+      tag: 'India Dec 2026', createdAt: now, updatedAt: now,
+    });
+  }
+  await setDoc(doc(db, 'pockets', 'home', 'recurring', 'rent'), {
+    currency: 'GBP', amountMinor: 145000, name: 'Rent', categoryId: 'bills', byUid: ps, byInitials: 'PS',
+    day: 1, nextDate: `${month}-01`, createdByUid: ps, createdAt: now, updatedAt: now,
+  });
   await setDoc(doc(db, 'pockets', `personal_${ps}`, 'expenses', 'p1'), {
     currency: 'GBP', amountMinor: 1250, name: 'Coffee beans', categoryId: 'groceries', byUid: ps, byInitials: 'PS',
     date: `${month}-05`, createdAt: now, updatedAt: now,
