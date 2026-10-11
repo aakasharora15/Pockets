@@ -2,6 +2,8 @@ import { useEffect, useRef } from 'react';
 import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { OfflineToast, PlusButton, TabBar, Toast } from './components/Chrome';
 import { HomeSkeleton } from './components/Skeletons';
+import { onMovedToPersonal, replayOutbox } from './data/outbox';
+import { logDueRecurring } from './data/recurring';
 import { configMissing } from './firebase';
 import { firstName } from './lib/initials';
 import { AuthForm } from './screens/auth/AuthForm';
@@ -16,7 +18,10 @@ import { Account } from './screens/settings/Account';
 import { Budgets } from './screens/settings/Budgets';
 import { Categories } from './screens/settings/Categories';
 import { Currencies } from './screens/settings/Currencies';
+import { Recurring } from './screens/settings/Recurring';
 import { Settings } from './screens/settings/Settings';
+import { Tags } from './screens/tags/Tags';
+import { TagView } from './screens/tags/TagView';
 import { SetPinScreen, UnlockScreen } from './screens/setup/PinScreen';
 import { Setup } from './screens/setup/Setup';
 import { SetupNeeded } from './screens/SetupNeeded';
@@ -109,6 +114,8 @@ function MainRoutes() {
   return (
     <>
       <JoinWatcher />
+      <OutboxRunner />
+      <RecurringRunner />
       <Routes>
         <Route element={<Tabs />}>
           <Route path="/" element={<Home />} />
@@ -121,6 +128,9 @@ function MainRoutes() {
         <Route path="/settings/budgets" element={<Budgets />} />
         <Route path="/settings/categories" element={<Categories />} />
         <Route path="/settings/account" element={<Account />} />
+        <Route path="/settings/tags" element={<Tags />} />
+        <Route path="/settings/tags/:tag" element={<TagView />} />
+        <Route path="/settings/recurring" element={<Recurring />} />
         <Route path="/join" element={<Join />} />
         <Route path="/join/:code" element={<Join />} />
         <Route path="/welcome" element={<Navigate to="/" replace />} />
@@ -149,6 +159,66 @@ function JoinWatcher() {
       seen.current.set(p.id, uids);
     }
   }, [pockets, user?.uid, showToast]);
+  return null;
+}
+
+/** Re-sends anything saved on this phone that the server hasn't confirmed: now, when back online, every minute. */
+function OutboxRunner() {
+  const { user } = useSession();
+  const { showToast } = useUi();
+  const uid = user?.uid;
+  useEffect(() => {
+    if (!uid) return;
+    onMovedToPersonal((n) => showToast(`Saved ${n} ${n === 1 ? 'expense' : 'expenses'} to Personal: its Pocket isn't available`));
+    const run = () => void replayOutbox(uid);
+    const onVisible = () => document.visibilityState === 'visible' && run();
+    // Give Firestore a moment to send its own queue first.
+    const first = window.setTimeout(run, 4000);
+    const every = window.setInterval(run, 60_000);
+    window.addEventListener('online', run);
+    document.addEventListener('visibilitychange', onVisible);
+    return () => {
+      window.clearTimeout(first);
+      window.clearInterval(every);
+      window.removeEventListener('online', run);
+      document.removeEventListener('visibilitychange', onVisible);
+      onMovedToPersonal(null);
+    };
+  }, [uid, showToast]);
+  return null;
+}
+
+/**
+ * Logs monthly repeats that are due, in every Pocket you're in: on opening, when back online, when
+ * the app comes back to the front and every half hour. Whoever opens Spendr first logs them.
+ */
+function RecurringRunner() {
+  const { pockets } = usePockets();
+  const { showToast } = useUi();
+  const ids = pockets.map((p) => p.id).join(',');
+  const last = useRef(0);
+  useEffect(() => {
+    if (!ids) return;
+    const run = async (force = false) => {
+      if (!navigator.onLine || (!force && Date.now() - last.current < 60_000)) return;
+      last.current = Date.now();
+      let n = 0;
+      for (const pid of ids.split(',')) n += await logDueRecurring(pid).catch(() => 0);
+      if (n) showToast(`${n} repeating ${n === 1 ? 'expense' : 'expenses'} added`);
+    };
+    const first = window.setTimeout(() => void run(true), 2500);
+    const every = window.setInterval(() => void run(), 30 * 60_000);
+    const onOnline = () => void run();
+    const onVisible = () => document.visibilityState === 'visible' && void run();
+    window.addEventListener('online', onOnline);
+    document.addEventListener('visibilitychange', onVisible);
+    return () => {
+      window.clearTimeout(first);
+      window.clearInterval(every);
+      window.removeEventListener('online', onOnline);
+      document.removeEventListener('visibilitychange', onVisible);
+    };
+  }, [ids, showToast]);
   return null;
 }
 

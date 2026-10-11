@@ -9,6 +9,10 @@ export const categoriesCol = (pid: string) => collection(db, 'pockets', pid, 'ca
 export const categoryRef = (pid: string, cid: string) => doc(db, 'pockets', pid, 'categories', cid);
 export const expensesCol = (pid: string) => collection(db, 'pockets', pid, 'expenses');
 export const expenseRef = (pid: string, eid: string) => doc(db, 'pockets', pid, 'expenses', eid);
+export const recurringCol = (pid: string) => collection(db, 'pockets', pid, 'recurring');
+export const recurringRef = (pid: string, rid: string) => doc(db, 'pockets', pid, 'recurring', rid);
+export const receiptsCol = (pid: string) => collection(db, 'pockets', pid, 'receipts');
+export const receiptRef = (pid: string, eid: string) => doc(db, 'pockets', pid, 'receipts', eid);
 export const invitesCol = () => collection(db, 'invites');
 export const inviteRef = (code: string) => doc(db, 'invites', code);
 
