@@ -1,6 +1,6 @@
-# Pockets
+# Spendr
 
-**Pockets** is an open-source expense tracker for you and the people you share costs with. Every account gets a private Personal Pocket. Create shared Pockets with a partner or flatmates, invite them by link, code or QR, and see who spent what. Each expense keeps its own currency, and totals are never converted or mixed. It installs on your phone as a web app, works offline, and syncs in real time. Run your own copy with a free Firebase project.
+**Spendr** is an open-source expense tracker for you and the people you share costs with. Every account gets a private Personal Pocket. Create shared Pockets with a partner or flatmates, invite them by link, code or QR, and see who spent what. Each expense keeps its own currency, and totals are never converted or mixed. It installs on your phone as a web app, works offline, and syncs in real time. Run your own copy with a free Firebase project.
 
 <p>
   <img src="docs/screenshots/home.png" width="220" alt="Home">
@@ -20,9 +20,9 @@
 - **Offline.** Add expenses with no signal; they sync when you're back.
 - **Export.** CSV per Pocket.
 
-## Run your own Pockets
+## Run your own Spendr
 
-You need Node.js 20 or later and a Google account. Firebase's free Spark plan is enough: Pockets uses Authentication, Firestore and Hosting only, with no Cloud Functions.
+You need Node.js 20 or later and a Google account. Firebase's free Spark plan is enough: Spendr uses Authentication, Firestore and Hosting only, with no Cloud Functions.
 
 1. **Create a Firebase project.** Go to the [Firebase console](https://console.firebase.google.com), add a project, and skip Google Analytics if you like.
 2. **Turn on sign-in.** In *Build › Authentication › Sign-in method*, enable **Google** and **Email/Password**.
@@ -39,12 +39,12 @@ You need Node.js 20 or later and a Google account. Firebase's free Spark plan is
    ```sh
    npm run deploy
    ```
-   This builds the app and deploys Hosting, the Firestore rules and indexes. Your Pockets is live at `https://<project-id>.web.app`.
+   This builds the app and deploys Hosting, the Firestore rules and indexes. Spendr is live at `https://<project-id>.web.app`.
 8. **Allow your domain for Google sign-in.** `<project-id>.web.app` and `<project-id>.firebaseapp.com` are allowed already. If you add a custom domain, add it under *Authentication › Settings › Authorized domains*.
 
-On iPhone, open the site in Safari, tap **Share › Add to Home Screen**, and Pockets opens full screen like an app.
+On iPhone, open the site in Safari, tap **Share › Add to Home Screen**, and Spendr opens full screen like an app.
 
-> **Google sign-in on iPhone.** Safari blocks third-party storage, which can break the sign-in pop-up when `authDomain` is a different domain from the one serving the app. If Google sign-in fails on iOS, set `authDomain` in `src/firebase.config.ts` to the domain you serve Pockets from (for example `<project-id>.web.app`) and redeploy. Firebase Hosting serves the sign-in helper on every domain it hosts.
+> **Google sign-in on iPhone.** Safari blocks third-party storage, which can break the sign-in pop-up when `authDomain` is a different domain from the one serving the app. If Google sign-in fails on iOS, set `authDomain` in `src/firebase.config.ts` to the domain you serve Spendr from (for example `<project-id>.web.app`) and redeploy. Firebase Hosting serves the sign-in helper on every domain it hosts.
 
 ### Deploy from GitHub
 

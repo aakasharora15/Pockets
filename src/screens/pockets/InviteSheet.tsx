@@ -80,10 +80,10 @@ export function InviteSheet({ pocketId, onClose }: { pocketId: string; onClose: 
 
   const share = async () => {
     if (!invite) return;
-    const text = `Join ${pocket.name} on Pockets. Code ${formatCode(invite.code)}`;
+    const text = `Join ${pocket.name} on Spendr. Code ${formatCode(invite.code)}`;
     if (navigator.share) {
       try {
-        await navigator.share({ title: `Join ${pocket.name} on Pockets`, text, url: link });
+        await navigator.share({ title: `Join ${pocket.name} on Spendr`, text, url: link });
         return;
       } catch (e) {
         if ((e as Error).name === 'AbortError') return;

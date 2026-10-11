@@ -1,5 +1,7 @@
 # Questions and decisions
 
+The app was called Pockets during design; it is now **Spendr**. Inside the app, a shared space is still called a Pocket.
+
 Everything below is either something I couldn't match exactly, a place where the design and the spec disagree, or behaviour neither of them covers. For each one I've said what I built so the app works today. Each is a small change if you want it the other way.
 
 Where the design (`design/Pockets.dc.html`) and the spec (`docs/SPEC.md`) disagreed, I followed the design for anything you can see (layout, colours, copy, rows, order) and the spec for behaviour the static design can't show. The exceptions are listed under "Conflicts" below.
@@ -21,7 +23,7 @@ Where the design (`design/Pockets.dc.html`) and the spec (`docs/SPEC.md`) disagr
    - Delete account: what's deleted, and "Log in again first" if the last sign-in was more than 5 minutes ago (Firebase requires it)
    - Account › Name: a sheet with Name and Initials fields
    - Add to Home Screen: an action sheet with Safari instructions (Android shows the browser's own install prompt instead)
-   - About Pockets: version, MIT licence, link to GitHub
+   - About Spendr: version, MIT licence, link to GitHub
    - Error messages for sign-in, invites ("That code doesn't match an invite…", "This invite has expired…", "already been used…") and failed saves
    - Forgot password: sends the reset email and shows "We've sent a reset link to {email}." under the fields
    - "Lock app now" in Settings › Account (in the spec, not the design)

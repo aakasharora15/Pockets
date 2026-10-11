@@ -10,8 +10,8 @@ export default defineConfig({
       injectRegister: false,
       includeAssets: ['fonts/Involve-VF.ttf', 'icons/apple-touch-icon.png', 'icons/favicon-32.png'],
       manifest: {
-        name: 'Pockets',
-        short_name: 'Pockets',
+        name: 'Spendr',
+        short_name: 'Spendr',
         description: 'Track your own spending, and share a Pocket with the people you live with. In any currency.',
         id: '/',
         start_url: '/',
