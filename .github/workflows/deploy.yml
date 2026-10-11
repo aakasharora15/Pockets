@@ -4,8 +4,7 @@ name: Deploy
 # Needs three repository secrets (Settings › Secrets and variables › Actions):
 #   FIREBASE_PROJECT_ID       your Firebase project id
 #   FIREBASE_WEB_CONFIG       the web app config as JSON, e.g. {"apiKey":"…","authDomain":"…",…}
-#   FIREBASE_SERVICE_ACCOUNT  a service account key (JSON) with the Firebase Hosting Admin and
-#                             Firebase Rules Admin roles
+#   FIREBASE_SERVICE_ACCOUNT  a service account key (JSON) with the Firebase Admin role
 # Without them (for example on a fork) the deploy job is skipped.
 
 on:
