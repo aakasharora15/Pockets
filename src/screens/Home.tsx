@@ -351,7 +351,7 @@ function ByPerson({ expenses, code, pocket }: { expenses: Expense[]; code: strin
 
 function Insight({ pocketId, month, expenses, code, empty }: { pocketId: string; month: string; expenses: Expense[]; code: string; empty: boolean }) {
   const { categories } = usePockets();
-  const key = `pockets.insight.${pocketId}.${month}`;
+  const key = `spendr.insight.${pocketId}.${month}`;
   const [dismissed, setDismissed] = useState(() => {
     try {
       return localStorage.getItem(key) === '1';

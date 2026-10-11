@@ -2,7 +2,7 @@
  * App PIN, kept on this device only. Hashed with PBKDF2 (SHA-256, 210k iterations) and stored in
  * IndexedDB, keyed by user id. Never sent to Firestore.
  */
-const DB = 'pockets-device';
+const DB = 'spendr-device';
 const STORE = 'pin';
 const ITERATIONS = 210_000;
 

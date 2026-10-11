@@ -14,7 +14,7 @@ export const USE_EMULATORS = import.meta.env.VITE_EMULATORS === '1';
 const found = import.meta.glob<{ default: FirebaseOptions }>('./firebase.config.ts', { eager: true });
 const userConfig = Object.values(found)[0]?.default;
 
-const DEMO_CONFIG: FirebaseOptions = { apiKey: 'demo-key', authDomain: 'localhost', projectId: 'demo-pockets', appId: 'demo-app' };
+const DEMO_CONFIG: FirebaseOptions = { apiKey: 'demo-key', authDomain: 'localhost', projectId: 'demo-spendr', appId: 'demo-app' };
 
 export const configMissing = !userConfig && !USE_EMULATORS;
 

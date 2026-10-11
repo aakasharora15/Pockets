@@ -35,7 +35,7 @@ const hour = 60 * 60 * 1000;
 
 beforeAll(async () => {
   env = await initializeTestEnvironment({
-    projectId: 'demo-pockets-rules',
+    projectId: 'demo-spendr-rules',
     firestore: { rules: readFileSync('firestore.rules', 'utf8') },
   });
 });

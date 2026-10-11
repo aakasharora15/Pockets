@@ -194,7 +194,7 @@ function NameSheet({ onClose }: { onClose: () => void }) {
           }}
         />
       </label>
-      <span className="helper">Shown on expenses you add. Pockets adds a number if someone else has the same initials.</span>
+      <span className="helper">Shown on expenses you add. Spendr adds a number if someone else has the same initials.</span>
       <button className="primary-btn sheet-bottom press" disabled={!valid} onClick={save}>
         Save
       </button>

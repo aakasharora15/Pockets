@@ -20,7 +20,7 @@ interface Draft {
   share: boolean;
 }
 
-const KEY = 'pockets.setup';
+const KEY = 'spendr.setup';
 
 function loadDraft(fallbackName: string): Draft {
   try {

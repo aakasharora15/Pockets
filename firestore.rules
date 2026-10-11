@@ -1,6 +1,6 @@
 rules_version = '2';
 
-// Pockets security rules.
+// Spendr security rules.
 //
 // Model: a user can read and write a Pocket and everything under it only if they have a
 // document in pockets/{pocketId}/members/{uid}. Personal Pockets have exactly one member.

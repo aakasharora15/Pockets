@@ -46,7 +46,7 @@ export function SetPinScreen({ step, onBack, onDone }: SetProps) {
       <div className="pin-head">
         <span className="pin-title">{first === null ? 'Set an app PIN' : 'Confirm your PIN'}</span>
         <span className={`pin-sub${error ? ' error' : ''}`}>
-          {error ? "PINs didn't match. Try again." : '4 digits to open Pockets quickly on this phone.'}
+          {error ? "PINs didn't match. Try again." : '4 digits to open Spendr quickly on this phone.'}
         </span>
       </div>
       <PinDots filled={digits.length} error={error} />

@@ -26,7 +26,7 @@ import { PocketsProvider, usePockets } from './state/pockets';
 import { SessionProvider, useSession } from './state/session';
 import { UiProvider, useUi } from './state/ui';
 
-const JOIN_KEY = 'pockets.join';
+const JOIN_KEY = 'spendr.join';
 
 export default function App() {
   if (configMissing) return <SetupNeeded />;

@@ -29,7 +29,7 @@ interface Ui {
 
 const Ctx = createContext<Ui | null>(null);
 
-const GLASS_KEY = 'pockets.glass';
+const GLASS_KEY = 'spendr.glass';
 
 function readGlass(): GlassStyle {
   try {
