@@ -12,7 +12,7 @@ import { useCurrentPocket, usePockets } from '../../state/pockets';
 import { useMe } from '../../state/session';
 import { useUi, type GlassStyle } from '../../state/ui';
 
-export const REPO_URL = 'https://github.com/aakasharora15/Pockets';
+export const REPO_URL = 'https://github.com/aakasharora15/Spendr';
 
 export function providerLabel(providerIds: string[]): string {
   if (providerIds.includes('google.com')) return 'Google';
