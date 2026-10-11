@@ -54,7 +54,7 @@ On iPhone, open the site in Safari, tap **Share › Add to Home Screen**, and Po
 | --- | --- |
 | `FIREBASE_PROJECT_ID` | Your project id. |
 | `FIREBASE_WEB_CONFIG` | The web config as JSON, for example `{"apiKey":"…","authDomain":"…","projectId":"…","storageBucket":"…","messagingSenderId":"…","appId":"…"}`. |
-| `FIREBASE_SERVICE_ACCOUNT` | A service account key (JSON) from *Google Cloud console › IAM › Service accounts*, with the **Firebase Hosting Admin** and **Firebase Rules Admin** roles. |
+| `FIREBASE_SERVICE_ACCOUNT` | A service account key (JSON) from *Google Cloud console › IAM › Service accounts*, with the **Firebase Admin** role (it covers Hosting, rules and indexes). |
 
 Without the secrets the deploy job is skipped, so forks don't fail.
 
