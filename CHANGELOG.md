@@ -2,6 +2,7 @@
 
 ## Unreleased
 
+- **Fixed on iPhone:** the whole screen (pocket pill, tab bar, plus button) no longer bounces or shifts when you scroll to the top or bottom of a list, double-tap the keypad, or tap into a text field. Only the list itself scrolls.
 - **Repeating expenses.** Turn on Repeat monthly when adding an expense (rent, Netflix, Octopus Energy) and Spendr logs it on the same day every month, or the last day in shorter months. Whoever opens the app first logs it, once. Settings › Repeating expenses lists them and stops them.
 - **Offline saving you can rely on.** Every expense is saved on the phone first and kept until the server confirms it, even if the app is closed. Rows not yet uploaded show "Waiting to sync". If an expense can't go to its Pocket (for example you were removed while offline), it's saved to Personal instead of being lost.
 - **Combined total.** Settings › Combined total adds a card on Home with every currency converted into one, each expense at the exchange rate for its own date. The separate £ and ₹ totals don't change.

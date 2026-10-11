@@ -7,20 +7,36 @@
 *::-webkit-scrollbar {
   display: none;
 }
+/*
+ * The page itself never scrolls or bounces: only the screens' own scroll areas do. Without this,
+ * iOS Safari rubber-bands the whole page when a list reaches its top or bottom (or when you drag
+ * on the tab bar or a header), and the pill, tab bar and plus button move with it.
+ * overscroll-behavior must be on <html>; on <body> it doesn't reach the page.
+ */
 html,
-body,
+body {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  overscroll-behavior: none;
+}
 #root {
   height: 100%;
 }
 html {
   background: #05080f;
+  /* No double-tap zoom (tapping 0 0 on the keypad), which shifts the whole screen. */
+  touch-action: manipulation;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
 }
 body {
   font-family: Involve, -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
   color: var(--text);
   background: #05080f;
-  overscroll-behavior: none;
   -webkit-user-select: none;
   user-select: none;
 }
@@ -106,6 +122,18 @@ textarea::placeholder {
 }
 .scroll > * {
   flex: none;
+}
+/* Scroll areas bounce on their own and never hand the scroll on to the page behind them. */
+.scroll,
+.setup-list,
+.switcher,
+.expense-sheet,
+.glass-menu {
+  overscroll-behavior-y: contain;
+}
+.cards-track,
+.tx-chips {
+  overscroll-behavior-x: contain;
 }
 .fade-top {
   position: absolute;
