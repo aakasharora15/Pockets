@@ -5,10 +5,10 @@ import { ListSkeleton } from '../../components/Skeletons';
 import { ActionSheet } from '../../components/Sheet';
 import { stopRecurring, useRecurring } from '../../data/recurring';
 import type { Recurring as Repeat } from '../../data/types';
-import { sheetDateLabel } from '../../lib/dates';
+import { dayMonth } from '../../lib/dates';
 import { Icon } from '../../lib/icons';
 import { formatMoney } from '../../lib/money';
-import { repeatLabel } from '../../lib/recurring';
+import { ordinal } from '../../lib/recurring';
 import { useCurrentPocket, usePockets } from '../../state/pockets';
 import { useUi } from '../../state/ui';
 
@@ -54,8 +54,8 @@ export function Recurring() {
                     <div className="ex-text">
                       <span className="ex-name">{r.name}</span>
                       <div className="ex-meta">
-                        <span>
-                          {repeatLabel(r.day)} · next {sheetDateLabel(r.nextDate).replace(/^Today, /, 'today, ')}
+                        <span className="ex-meta-text">
+                          Next {dayMonth(r.nextDate)} · {ordinal(r.day)} monthly
                         </span>
                       </div>
                     </div>
