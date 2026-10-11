@@ -437,6 +437,11 @@
   color: var(--text2);
   white-space: nowrap;
 }
+.ex-meta-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .ex-tag {
   min-width: 0;
   overflow: hidden;
