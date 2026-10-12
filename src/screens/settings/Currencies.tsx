@@ -7,7 +7,6 @@ import { useCurrentPocket } from '../../state/pockets';
 import { useMe } from '../../state/session';
 import { useUi } from '../../state/ui';
 
-/** 19b · Currencies */
 export function Currencies() {
   const pocket = useCurrentPocket();
   const { user } = useMe();

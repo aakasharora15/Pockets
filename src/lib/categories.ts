@@ -1,4 +1,4 @@
-/** Default categories created for every new Pocket. Order matches Manage categories (19c). */
+/** Default categories created for every new Pocket, in display order. */
 export interface CategorySeed {
   id: string;
   name: string;
@@ -39,7 +39,7 @@ export const CATEGORY_PALETTE = ['#4FC48A', '#5AA0F0', '#A884F0', '#8FA0B8', '#F
 /** Order values are spaced so new categories can slot in above Other. */
 export const ORDER_STEP = 1000;
 
-/** Softer tints used for the Calendar day breakdown bar (from the design's category table). */
+/** Softer tints used for the Calendar day breakdown bar. */
 const PASTEL: Record<string, string> = {
   groceries: '#9EC5EE',
   restaurants: '#9BE39B',

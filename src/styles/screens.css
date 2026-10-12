@@ -1,4 +1,4 @@
-/* ---------- 01 Welcome ---------- */
+/* ---------- Welcome ---------- */
 .flow-body.welcome {
   padding-top: calc(var(--top) + 12px);
   /* Room for the tilted cards' corners. */
@@ -96,7 +96,7 @@
   color: #ffffff;
 }
 
-/* ---------- 01a / 01b Auth ---------- */
+/* ---------- Auth ---------- */
 .auth-stack {
   position: absolute;
   left: 24px;
@@ -271,7 +271,7 @@
   text-wrap: pretty;
 }
 
-/* ---------- 01e / 02 PIN ---------- */
+/* ---------- PIN ---------- */
 .pin-head {
   position: absolute;
   top: calc(var(--top) + 114px);
@@ -314,7 +314,7 @@
   width: 100%;
 }
 
-/* ---------- 04 Home ---------- */
+/* ---------- Home ---------- */
 .home-scroll {
   gap: 16px;
 }
@@ -676,7 +676,7 @@
   font-weight: 600;
 }
 
-/* ---------- 24 Pocket switcher ---------- */
+/* ---------- Pocket switcher ---------- */
 .switcher {
   position: absolute;
   top: calc(var(--top) + 58px);
@@ -731,7 +731,7 @@
   flex: none;
 }
 
-/* ---------- Sheets: 25 New shared Pocket, 26 Invite ---------- */
+/* ---------- Sheets: New shared Pocket, Invite ---------- */
 .sheet-label {
   margin-top: 4px;
 }
@@ -841,7 +841,7 @@
   margin-top: -4px;
 }
 
-/* ---------- 11–15 Expense sheet ---------- */
+/* ---------- Expense sheet ---------- */
 .expense-sheet {
   background: linear-gradient(180deg, rgba(38, 46, 62, 0.94) 0, #1c2230 140px);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 -8px 32px rgba(0, 0, 0, 0.12);
@@ -1146,7 +1146,7 @@
   z-index: 60;
 }
 
-/* ---------- 17 Transactions ---------- */
+/* ---------- Transactions ---------- */
 .tx-scroll {
   gap: 12px;
 }
@@ -1219,7 +1219,7 @@
   padding: 0 24px;
 }
 
-/* ---------- 18 Calendar ---------- */
+/* ---------- Calendar ---------- */
 .cal-scroll {
   gap: 14px;
 }
@@ -1355,7 +1355,7 @@
   border-radius: 50%;
 }
 
-/* ---------- 19 Settings ---------- */
+/* ---------- Settings ---------- */
 .settings-scroll {
   padding-top: calc(var(--top) + 12px);
   gap: 20px;
@@ -1467,7 +1467,7 @@
   color: var(--text2);
 }
 
-/* ---------- 19c Categories ---------- */
+/* ---------- Categories ---------- */
 .add-row {
   color: var(--accent);
 }
@@ -1522,7 +1522,7 @@
   display: flex;
 }
 
-/* ---------- 19d New category ---------- */
+/* ---------- New category ---------- */
 .newcat-preview {
   align-self: center;
   margin-top: 8px;
@@ -1559,7 +1559,7 @@
   color: var(--ink-dark);
 }
 
-/* ---------- 28 People ---------- */
+/* ---------- People ---------- */
 .invite-row {
   color: var(--accent);
 }
@@ -1638,7 +1638,7 @@
   color: var(--destructive);
 }
 
-/* ---------- 27 Join ---------- */
+/* ---------- Join ---------- */
 .join-head {
   top: calc(var(--top) + 66px);
 }
@@ -1739,7 +1739,7 @@
   margin-top: 4px;
 }
 
-/* ---------- 29 Account ---------- */
+/* ---------- Account ---------- */
 .account-hero {
   display: flex;
   flex-direction: column;
@@ -1835,7 +1835,7 @@
   gap: 4px;
 }
 
-/* ---------- 22 Tag view ---------- */
+/* ---------- Tag view ---------- */
 .tag-scroll {
   gap: 14px;
 }

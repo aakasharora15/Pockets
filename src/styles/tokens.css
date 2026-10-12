@@ -1,4 +1,4 @@
-/* Design tokens. Colours from the design (dark "Midnight" theme); type, radii and spacing follow iOS. */
+/* Design tokens: colours (dark "Midnight" theme), type, radii and spacing. */
 :root {
   /* Apple's system font (San Francisco) on iPhone, iPad and Mac; the platform font elsewhere. */
   --font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;

@@ -38,7 +38,7 @@ function getOrCreateInvite(pocket: PocketWithMembers, me: { uid: string; name: s
   return p;
 }
 
-/** 26 · Invite to a Pocket (QR, code, link) */
+/** Invite to a Pocket by QR code, short code or link. */
 export function InviteSheet({ pocketId, onClose }: { pocketId: string; onClose: () => void }) {
   const { pockets } = usePockets();
   const { user, profile } = useMe();

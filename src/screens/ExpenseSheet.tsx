@@ -37,7 +37,6 @@ function fitTyped(typed: string, code: CurrencyCode): string {
   return dp === 0 ? int : `${int}.${dec.slice(0, dp)}`;
 }
 
-/** 11–15 · New / Edit expense */
 export function ExpenseSheet({ request }: { request: ExpenseSheetRequest }) {
   const { user } = useMe();
   const { pockets, current, categoriesFor } = usePockets();

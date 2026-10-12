@@ -37,7 +37,6 @@ function cellsFor(month: string): Cell[] {
   return cells;
 }
 
-/** 18 · Calendar */
 export function Calendar() {
   const pocket = useCurrentPocket();
   const { categories } = usePockets();

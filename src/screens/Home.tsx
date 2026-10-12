@@ -20,7 +20,6 @@ import { useUi } from '../state/ui';
 import { NewPocketSheet } from './pockets/NewPocketSheet';
 import { PocketPill, PocketSwitcher } from './pockets/PocketSwitcher';
 
-/** 04 · Home (08 when empty) */
 export function Home() {
   const pocket = useCurrentPocket();
   const { categories } = usePockets();

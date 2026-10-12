@@ -11,7 +11,6 @@ import { Icon } from '../lib/icons';
 import { useCurrentPocket, usePockets } from '../state/pockets';
 import { useUi } from '../state/ui';
 
-/** 17 · Transactions */
 export function Transactions() {
   const pocket = useCurrentPocket();
   const { categories } = usePockets();

@@ -35,7 +35,7 @@ const COPY = {
   },
 };
 
-/** 01a · Create account and 01b · Log in */
+/** Create account and log in. */
 export function AuthForm({ mode }: { mode: Mode }) {
   const navigate = useNavigate();
   const copy = COPY[mode];

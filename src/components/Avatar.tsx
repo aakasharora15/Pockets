@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 
-/** Avatar sizes used in the design: size → font size. */
+/** Supported avatar sizes: size → font size. */
 const FONT: Record<number, number> = { 28: 10, 36: 13, 42: 15, 44: 16, 72: 26 };
 
 interface Props {

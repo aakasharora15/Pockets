@@ -32,7 +32,7 @@ function loadDraft(fallbackName: string): Draft {
   return { step: 1, name: fallbackName, currencies: [], share: false };
 }
 
-/** 01c–01f · Setup: name → currencies → app PIN → share? */
+/** First-run setup: name → currencies → app PIN → share? */
 export function Setup() {
   const { user, logOut } = useSession();
   const { createPin, state: pinState } = useLock();

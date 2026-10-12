@@ -12,7 +12,6 @@ import { useUi } from '../../state/ui';
 
 const ROW_H = 52;
 
-/** 19c · Manage categories (19d New category, 19e Delete category) */
 export function Categories() {
   const pocket = useCurrentPocket();
   const { categories } = usePockets();
@@ -182,7 +181,6 @@ export function Categories() {
   );
 }
 
-/** 19d · New category */
 function NewCategorySheet({ existing, onClose }: { existing: Category[]; onClose: () => void }) {
   const pocket = useCurrentPocket();
   const { showToast } = useUi();

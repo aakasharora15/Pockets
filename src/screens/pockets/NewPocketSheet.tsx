@@ -7,7 +7,6 @@ import { useMe } from '../../state/session';
 import { usePockets } from '../../state/pockets';
 import { useUi } from '../../state/ui';
 
-/** 25 · New shared Pocket */
 export function NewPocketSheet({ onClose }: { onClose: () => void }) {
   const { user, profile } = useMe();
   const { current, setCurrent } = usePockets();

@@ -15,7 +15,7 @@ import { byCategory, totalIn } from '../../lib/stats';
 import { useCurrentPocket, usePockets } from '../../state/pockets';
 import { useUi } from '../../state/ui';
 
-/** 22 · Trip / tag view: totals per currency, by category, and every expense with the tag. */
+/** One tag (often a trip): totals per currency, by category, and every expense with the tag. */
 export function TagView() {
   const { tag: raw = '' } = useParams();
   const tag = decodeURIComponent(raw);

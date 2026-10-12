@@ -42,14 +42,14 @@ const REGISTRY: Record<string, PhIcon> = {
 export interface IconProps {
   name: string;
   weight?: IconWeight;
-  /** Font size in the design; Phosphor glyphs fill a 1em box. Omit to inherit 1em. */
+  /** Font size; Phosphor glyphs fill a 1em box. Omit to inherit 1em. */
   size?: number;
   color?: string;
   style?: CSSProperties;
   label?: string;
 }
 
-/** Renders a Phosphor icon the same way the design's `<i class="ph ph-name">` does. */
+/** Renders a Phosphor icon as inline SVG. */
 export function Icon({ name, weight = 'regular', size, color, style, label }: IconProps) {
   const C = REGISTRY[name] ?? DotsThreeIcon;
   return (
@@ -64,7 +64,7 @@ export function Icon({ name, weight = 'regular', size, color, style, label }: Ic
   );
 }
 
-/** Icons offered when creating a category (screen 19d), in design order. */
+/** Icons offered when creating a category, in picker order. */
 export const CATEGORY_ICON_CHOICES = [
   'paw-print', 'baby', 'house', 'car', 'airplane-tilt', 'heartbeat', 'coffee', 'wine', 'graduation-cap', 'game-controller',
   'music-notes', 't-shirt', 'scissors', 'first-aid', 'pill', 'gas-pump', 'wrench', 'plant', 'dog', 'device-mobile',

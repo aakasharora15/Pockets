@@ -30,7 +30,6 @@ interface InstallPrompt extends Event {
   prompt: () => Promise<void>;
 }
 
-/** 19 · Settings */
 export function Settings() {
   const pocket = useCurrentPocket();
   const { categories, pockets } = usePockets();

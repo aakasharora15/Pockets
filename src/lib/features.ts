@@ -1,15 +1,12 @@
 /**
- * Extension points for "Later" items in the spec that are still off. The design for each exists,
- * so turning one on means building its screen, not reworking the layout.
- *
- * Tags and the trip view, the combined total (currency conversion), repeating expenses and receipt
- * photos used to be listed here; they're built and always on now.
+ * Feature flags for work that isn't shipped yet. Each one gates its entry points, so turning it on
+ * means finishing its screens rather than reworking existing layouts.
  */
 export const FEATURES = {
-  /** Sign in with Apple (needs a paid Apple developer account). Screens 01a, 01b. */
+  /** Sign in with Apple (needs a paid Apple developer account). */
   appleSignIn: false,
-  /** Monthly recap sheet and Home recap card (screens 07, 23). */
+  /** Monthly recap sheet and Home recap card. */
   monthlyRecap: false,
-  /** Light theme (screens 06, 16). Version 1 is dark only; the light icon is in public/icons. */
+  /** Light theme. The app is dark only for now; the light icon is in public/icons. */
   lightTheme: false,
 } as const;

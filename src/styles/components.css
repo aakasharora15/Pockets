@@ -1064,7 +1064,7 @@
   background: rgba(255, 255, 255, 0.08);
 }
 
-/* ---------- Switch (design toggle rows) ---------- */
+/* ---------- Switch ---------- */
 .switch {
   position: relative;
   width: 51px;
@@ -1136,9 +1136,9 @@
 }
 
 /*
- * PIN screens (01e set, 02 unlock): title, dots and keypad stacked from the top. At the design's
- * 844 pt they sit exactly where the design puts them; on shorter screens the spacing and keys
- * shrink so the whole keypad, 0 and delete included, always fits.
+ * PIN screens (set and unlock): title, dots and keypad stacked from the top. Sized for an 844 pt
+ * screen; on shorter screens the spacing and keys shrink so the whole keypad, 0 and delete
+ * included, always fits.
  */
 .pin-screen {
   --pin-top: calc(var(--top) + 114px);

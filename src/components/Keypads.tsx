@@ -5,7 +5,7 @@ const PIN_KEYS: [string, string][] = [
   ['7', 'PQRS'], ['8', 'TUV'], ['9', 'WXYZ'], ['', ''], ['0', ''], ['del', ''],
 ];
 
-/** Glass PIN keypad (screens 01e and 02). */
+/** PIN keypad for setting and entering the app PIN. */
 export function PinPad({ onKey }: { onKey: (k: string) => void }) {
   return (
     <div className="pin-pad">

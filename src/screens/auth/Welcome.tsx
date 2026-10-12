@@ -9,7 +9,6 @@ const CARDS = [
   { icon: 'users-three', title: 'Share a Pocket', sub: 'Invite someone by QR code, link or code.', rot: 'rotate(4deg)', mt: -2, z: 1 },
 ];
 
-/** 01 · Welcome */
 export function Welcome() {
   const navigate = useNavigate();
   // Show as many feature cards as fit above the buttons; never a card cut in half.

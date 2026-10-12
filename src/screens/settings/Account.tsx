@@ -18,7 +18,6 @@ import { providerLabel } from './Settings';
 
 const RECENT_LOGIN_MS = 5 * 60 * 1000;
 
-/** 29 · Account (Settings › Account) */
 export function Account() {
   const { user, profile } = useMe();
   const { logOut } = useSession();

@@ -11,7 +11,7 @@ interface SetProps {
   onDone: (pin: string) => Promise<void> | void;
 }
 
-/** 01e · Set an app PIN. Entered twice; mismatch shows "PINs didn't match. Try again." */
+/** Set the app PIN. Entered twice; a mismatch starts again. */
 export function SetPinScreen({ step, onBack, onDone }: SetProps) {
   const [first, setFirst] = useState<string | null>(null);
   const [digits, setDigits] = useState('');
@@ -65,7 +65,6 @@ export function SetPinScreen({ step, onBack, onDone }: SetProps) {
   );
 }
 
-/** 02 · Unlock with PIN */
 export function UnlockScreen({ onUnlock, onForgot }: { onUnlock: (pin: string) => Promise<boolean>; onForgot: () => void }) {
   const [digits, setDigits] = useState('');
   const [error, setError] = useState(false);

@@ -26,7 +26,6 @@ export function PocketPill({ pocket, open, onClick }: { pocket: PocketWithMember
   );
 }
 
-/** 24 · Pocket switcher */
 export function PocketSwitcher({ onClose, onNew, onJoin }: { onClose: () => void; onNew: () => void; onJoin: () => void }) {
   const { pockets, current, setCurrent } = usePockets();
   return (

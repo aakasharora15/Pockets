@@ -10,7 +10,7 @@ import { totalIn } from '../../lib/stats';
 import { useCurrentPocket } from '../../state/pockets';
 import { useUi } from '../../state/ui';
 
-/** 20 · Monthly budgets: one per currency, never combined. */
+/** Monthly budgets: one per currency, never combined. */
 export function Budgets() {
   const pocket = useCurrentPocket();
   const { expenses } = useExpenses(pocket.id, currentMonth());

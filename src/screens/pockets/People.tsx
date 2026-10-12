@@ -17,7 +17,6 @@ import { useUi } from '../../state/ui';
 
 type Confirm = { kind: 'remove'; member: Member } | { kind: 'delete' } | { kind: 'leave' } | null;
 
-/** 28 · People (Settings › People) */
 export function People() {
   const pocket = useCurrentPocket();
   const { setCurrent } = usePockets();

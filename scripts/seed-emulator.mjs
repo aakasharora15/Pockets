@@ -1,4 +1,4 @@
-// Seeds the local emulators with the design's sample data so every screen has something to show.
+// Seeds the local emulators with sample data so every screen has something to show.
 // Usage: start the emulators (npm run emulators), then `npm run seed`.
 // Log in as prernaa@example.com / password123 (or aakash@example.com). App PIN: set any on first open.
 import { initializeTestEnvironment } from '@firebase/rules-unit-testing';
@@ -99,7 +99,7 @@ await env.withSecurityRulesDisabled(async (ctx) => {
       });
     }
   }
-  // A trip tag (screen 22) and a monthly repeat that's due, so the app logs it on first open.
+  // A trip tag and a monthly repeat that's due, so the app logs it on first open.
   const trip = [
     [`${prev}-02`, 'Flights to Delhi', 'transport', 'GBP', 640, 'PS'], [`${prev}-14`, 'Hotel deposit, Jaipur', 'other', 'INR', 24000, 'PS'],
     [`${prev}-14`, 'Train tickets', 'transport', 'INR', 6100, 'AA'], [`${prev}-20`, 'e-Visa', 'other', 'GBP', 116, 'PS'],

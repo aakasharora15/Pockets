@@ -19,7 +19,6 @@ const PROBLEMS: Record<InviteProblem | 'offline', string> = {
   offline: 'You need to be online to join a Pocket.',
 };
 
-/** 27 · Join a Pocket */
 export function Join() {
   const params = useParams();
   const navigate = useNavigate();
