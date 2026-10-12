@@ -119,6 +119,8 @@ textarea::placeholder {
   display: flex;
   flex-direction: column;
   -webkit-overflow-scrolling: touch;
+  /* Vertical scrolling only, so sideways drags (row swipes, swipe back) reach the app. */
+  touch-action: pan-y;
 }
 .scroll > * {
   flex: none;
@@ -183,4 +185,40 @@ textarea::placeholder {
   overflow: hidden;
   clip: rect(0 0 0 0);
   white-space: nowrap;
+}
+
+/* ---------- Screen transitions (iOS push and pop) ---------- */
+.route {
+  position: absolute;
+  inset: 0;
+}
+.route-push {
+  animation: route-push 0.38s cubic-bezier(0.32, 0.72, 0, 1);
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.35);
+}
+.route-pop {
+  animation: route-pop 0.32s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.route:not(.dragging) {
+  transition: transform 0.18s ease-out;
+}
+.route.dragging {
+  box-shadow: -10px 0 30px rgba(0, 0, 0, 0.35);
+}
+@keyframes route-push {
+  from {
+    transform: translateX(100%);
+  }
+}
+@keyframes route-pop {
+  from {
+    transform: translateX(-28%);
+    opacity: 0.6;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .route-push,
+  .route-pop {
+    animation: none;
+  }
 }
