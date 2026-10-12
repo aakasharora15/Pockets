@@ -1,15 +1,21 @@
 # Changelog
 
-## Unreleased
+## 1.1.0 (2026-10-12)
 
-- **Fixed on iPhone:** the whole screen (pocket pill, tab bar, plus button) no longer bounces or shifts when you scroll to the top or bottom of a list, double-tap the keypad, or tap into a text field. Only the list itself scrolls.
+### Added
+
 - **Repeating expenses.** Turn on Repeat monthly when adding an expense (rent, Netflix, Octopus Energy) and Spendr logs it on the same day every month, or the last day in shorter months. Whoever opens the app first logs it, once. Settings › Repeating expenses lists them and stops them.
 - **Offline saving you can rely on.** Every expense is saved on the phone first and kept until the server confirms it, even if the app is closed. Rows not yet uploaded show "Waiting to sync". If an expense can't go to its Pocket (for example you were removed while offline), it's saved to Personal instead of being lost.
 - **Combined total.** Settings › Combined total adds a card on Home with every currency converted into one, each expense at the exchange rate for its own date. The separate £ and ₹ totals don't change.
 - **Receipt photos.** Attach a photo from the expense sheet. "Fill in from receipt" reads the total and shop name on the phone and fills them in for you to check.
 - **Tags and trip view (22).** Add a tag such as a trip to any expense; Settings › Tags shows each tag's totals per currency, by category and every expense.
 - **Export and backup.** Export a CSV of the whole Pocket, one month or one tag. Settings › Back up and restore creates a backup file of every Pocket you're in (optionally with receipt photos) and restores missing items from one.
-- New app icon (the glass pocket). Home-screen and install icons at 1024, 512, 192, 180, 167, 152 and 120 px, plus a maskable 512 px icon for Android. The same icon now sits next to the wordmark on Welcome and PIN unlock. Theme colour is now #05080F. On iPhone, remove an existing Spendr shortcut and add it again to see the new icon.
+- **New app icon** (the glass pocket) for the home screen and inside the app. On iPhone, remove an existing Spendr shortcut and add it again to see it.
+
+### Fixed
+
+- **iPhone:** the screen no longer bounces or shifts when you scroll to the top or bottom of a list, double-tap the keypad or tap into a text field.
+- **Smaller screens:** Create account, the PIN keypad and Save expense are no longer covered or pushed off screen.
 
 ## 1.0.0 (2026-10-10)
 
