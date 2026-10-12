@@ -112,7 +112,7 @@ export function People() {
               </div>
               <div className="member-body sep">
                 <div className="member-text">
-                  <span className="member-name">Invite pending</span>
+                  <span className="member-name">{inv.email ?? 'Invite pending'}</span>
                   <span className="member-sub">
                     {formatCode(inv.code)} · expires in {Math.max(1, Math.round((expiryOf(inv) - Date.now()) / 3600000))} h
                   </span>

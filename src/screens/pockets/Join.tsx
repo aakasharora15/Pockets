@@ -16,6 +16,7 @@ const PROBLEMS: Record<InviteProblem | 'offline', string> = {
   expired: 'This invite has expired. Ask for a new one.',
   used: 'This invite has already been used. Ask for a new one.',
   'already-member': "You're already in this Pocket.",
+  'wrong-email': 'This invite was sent to a different email. Log in with that email to join.',
   offline: 'You need to be online to join a Pocket.',
 };
 
@@ -38,7 +39,7 @@ export function Join() {
     setProblem(null);
     if (code.length !== 6) return;
     let live = true;
-    lookupInvite(code, user.uid)
+    lookupInvite(code, user.uid, user.email)
       .then((r) => {
         if (!live) return;
         if (typeof r === 'string') setProblem(r);

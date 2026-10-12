@@ -107,6 +107,8 @@ export interface Invite {
   /** Snapshot for the joiner's preview (they can't read the Pocket until they join). */
   members: InvitePreviewMember[];
   currencies: CurrencyCode[];
+  /** Set on emailed invites: only an account signed in with this address can use it. */
+  email?: string;
 }
 
 /** A Pocket the signed-in user belongs to, with its members. */

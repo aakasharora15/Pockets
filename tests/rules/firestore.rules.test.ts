@@ -107,8 +107,8 @@ function invite(over: Record<string, unknown> = {}) {
   };
 }
 
-const as = (uid: string | null): Firestore =>
-  (uid ? env.authenticatedContext(uid) : env.unauthenticatedContext()).firestore() as unknown as Firestore;
+const as = (uid: string | null, email?: string): Firestore =>
+  (uid ? env.authenticatedContext(uid, email ? { email } : undefined) : env.unauthenticatedContext()).firestore() as unknown as Firestore;
 
 function joinBatch(db: Firestore, uid: string, code = 'K7PQ2M', pid = HOME) {
   const b = writeBatch(db);
@@ -382,6 +382,23 @@ describe('invites', () => {
       });
     });
     await assertFails(joinBatch(as(STRANGER), STRANGER, 'K7PQ2M', 'other1').commit());
+  });
+
+  it('an emailed invite must have a valid, lower-case address', async () => {
+    const make = (code: string, email: string) =>
+      setDoc(doc(as(OWNER), 'invites', code), invite({ code, email, createdAt: serverTimestamp() }));
+    await assertSucceeds(make('MAQWE2', 'trina@example.com'));
+    await assertFails(make('MAQWE3', 'Trina@Example.com'));
+    await assertFails(make('MAQWE4', 'not an email'));
+  });
+
+  it('an emailed invite works only for that email', async () => {
+    await env.withSecurityRulesDisabled(async (ctx) => {
+      await setDoc(doc(ctx.firestore(), 'invites', 'MAILME'), invite({ code: 'MAILME', email: 'trina@example.com' }));
+    });
+    await assertFails(joinBatch(as(STRANGER), STRANGER, 'MAILME').commit());
+    await assertFails(joinBatch(as(STRANGER, 'someone@example.com'), STRANGER, 'MAILME').commit());
+    await assertSucceeds(joinBatch(as(STRANGER, 'Trina@Example.com'), STRANGER, 'MAILME').commit());
   });
 
   it('members can cancel invites; strangers cannot', async () => {

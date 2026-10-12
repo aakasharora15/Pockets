@@ -6,8 +6,8 @@ import { commit } from './pockets';
 import { inviteRef, memberRef, personalPocketId, userRef } from './refs';
 import type { Invite, PocketWithMembers } from './types';
 
-/** Creates a single-use invite that expires in 48 hours. */
-export async function createInvite(pocket: PocketWithMembers, me: { uid: string; name: string }): Promise<Invite> {
+/** Creates a single-use invite that expires in 48 hours, optionally locked to one email address. */
+export async function createInvite(pocket: PocketWithMembers, me: { uid: string; name: string }, email?: string): Promise<Invite> {
   for (let attempt = 0; attempt < 5; attempt++) {
     const code = generateCode();
     const existing = await getDoc(inviteRef(code)).catch(() => null);
@@ -22,6 +22,7 @@ export async function createInvite(pocket: PocketWithMembers, me: { uid: string;
       usedByUid: null,
       members: pocket.members.map((m) => ({ name: m.name, initials: m.initials })),
       currencies: pocket.currencies,
+      ...(email ? { email: email.trim().toLowerCase() } : {}),
     };
     const batch = writeBatch(db);
     batch.set(inviteRef(code), { ...invite, createdAt: serverTimestamp() });
@@ -42,15 +43,16 @@ export function expiryOf(inv: Pick<Invite, 'createdAt' | 'expiresAt'>): number {
   return inv.createdAt ? inv.createdAt.toMillis() + INVITE_TTL_MS : inv.expiresAt.toMillis();
 }
 
-export type InviteProblem = 'not-found' | 'expired' | 'used' | 'already-member';
+export type InviteProblem = 'not-found' | 'expired' | 'used' | 'already-member' | 'wrong-email';
 
-export async function lookupInvite(code: string, uid: string): Promise<Invite | InviteProblem> {
+export async function lookupInvite(code: string, uid: string, email: string | null): Promise<Invite | InviteProblem> {
   const snap = await getDoc(inviteRef(code));
   if (!snap.exists()) return 'not-found';
   const inv = { ...(snap.data() as Omit<Invite, 'code'>), code } as Invite;
   if (inv.usedByUid === uid) return 'already-member';
   if (inv.usedByUid) return 'used';
   if (expiryOf(inv) < Date.now()) return 'expired';
+  if (inv.email && inv.email !== email?.toLowerCase()) return 'wrong-email';
   return inv;
 }
 

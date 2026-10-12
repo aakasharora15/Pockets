@@ -1,11 +1,12 @@
 import QRCode from 'qrcode';
 import { getDocs, query, where } from 'firebase/firestore';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { Sheet } from '../../components/Sheet';
 import { createInvite, expiryOf } from '../../data/invites';
 import { invitesCol } from '../../data/refs';
 import type { Invite, PocketWithMembers } from '../../data/types';
 import { Icon } from '../../lib/icons';
+import { firstName } from '../../lib/initials';
 import { formatCode, inviteLink } from '../../lib/inviteCode';
 import { usePockets } from '../../state/pockets';
 import { useMe } from '../../state/session';
@@ -17,13 +18,15 @@ async function openInvite(pocketId: string, uid: string): Promise<Invite | null>
     const snap = await getDocs(query(invitesCol(), where('pocketId', '==', pocketId)));
     const open = snap.docs
       .map((d) => ({ ...(d.data() as Invite), code: d.id }))
-      .filter((i) => !i.usedByUid && i.createdByUid === uid && expiryOf(i) > Date.now() + 60 * 60 * 1000)
+      .filter((i) => !i.usedByUid && !i.email && i.createdByUid === uid && expiryOf(i) > Date.now() + 60 * 60 * 1000)
       .sort((a, b) => expiryOf(b) - expiryOf(a));
     return open[0] ?? null;
   } catch {
     return null;
   }
 }
+
+const EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
 
 // One request per Pocket at a time, so opening the sheet twice quickly doesn't make two invites.
 const inflight = new Map<string, Promise<Invite>>();
@@ -46,6 +49,8 @@ export function InviteSheet({ pocketId, onClose }: { pocketId: string; onClose: 
   const pocket = pockets.find((p) => p.id === pocketId);
   const [invite, setInvite] = useState<Invite | null>(null);
   const [error, setError] = useState('');
+  const [to, setTo] = useState('');
+  const [sending, setSending] = useState(false);
 
   useEffect(() => {
     if (!pocket) return;
@@ -97,6 +102,33 @@ export function InviteSheet({ pocketId, onClose }: { pocketId: string; onClose: 
     }
   };
 
+  // Emailed invites are separate from the shared link: single use, and only for that address.
+  const sendEmail = async (e: FormEvent) => {
+    e.preventDefault();
+    const addr = to.trim().toLowerCase();
+    if (!EMAIL.test(addr) || sending) return;
+    setSending(true);
+    try {
+      const inv = await createInvite(pocket, { uid: user.uid, name: profile.name }, addr);
+      const subject = `Join ${pocket.name} on Spendr`;
+      const body = [
+        `${firstName(profile.name)} has invited you to ${pocket.name} on Spendr.`,
+        '',
+        `Join here: ${inviteLink(inv.code)}`,
+        `Or open Spendr and enter the code ${formatCode(inv.code)}.`,
+        '',
+        `The invite is for ${addr}, works once and expires in 48 hours.`,
+      ].join('\n');
+      window.location.href = `mailto:${addr}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+      setTo('');
+      showToast(`Invite for ${addr} is ready to send`);
+    } catch {
+      showToast(navigator.onLine ? "Couldn't make the invite. Try again" : 'You need to be online to invite someone');
+    } finally {
+      setSending(false);
+    }
+  };
+
   return (
     <Sheet onClose={onClose} label={`Invite to ${pocket.name}`}>
       <div className="invite-head">
@@ -125,6 +157,23 @@ export function InviteSheet({ pocketId, onClose }: { pocketId: string; onClose: 
           <Icon name="copy" />
         </button>
       </div>
+      <form className="email-card" onSubmit={sendEmail}>
+        <Icon name="envelope-simple" size={20} />
+        <input
+          type="email"
+          inputMode="email"
+          autoCapitalize="none"
+          autoCorrect="off"
+          spellCheck={false}
+          placeholder="Or invite by email"
+          aria-label="Email address"
+          value={to}
+          onChange={(e) => setTo(e.target.value)}
+        />
+        <button className="email-send press" type="submit" disabled={!EMAIL.test(to.trim()) || sending}>
+          Send
+        </button>
+      </form>
       {error && <span className="helper error">{error}</span>}
       <button className="primary-btn sheet-bottom press" onClick={share} disabled={!invite}>
         <Icon name="export" weight="bold" size={18} />

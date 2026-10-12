@@ -834,6 +834,71 @@
   justify-content: center;
   font-size: 20px;
 }
+.email-card {
+  background: var(--card);
+  border-radius: var(--r-card);
+  padding: 6px 6px 6px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text2);
+}
+.email-card input {
+  flex: 1;
+  min-width: 0;
+  height: 44px;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font: inherit;
+  font-size: 17px;
+}
+.email-card input::placeholder {
+  color: var(--text3);
+}
+.email-send {
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 18px;
+  background: var(--accent);
+  color: #ffffff;
+  font-size: 15px;
+  font-weight: 600;
+}
+.email-send:disabled {
+  opacity: 0.4;
+}
+/* Shorter phones: a smaller QR code keeps the email row and Share button on screen. */
+@media (max-height: 760px) {
+  .qr-box {
+    width: 172px;
+    height: 172px;
+    margin-top: 0;
+  }
+  .qr-box svg,
+  .qr-placeholder {
+    width: 140px;
+    height: 140px;
+  }
+}
+@media (max-height: 640px) {
+  .sheet:has(.qr-box) {
+    gap: 12px;
+  }
+  .qr-box {
+    width: 140px;
+    height: 140px;
+  }
+  .qr-box svg,
+  .qr-placeholder {
+    width: 116px;
+    height: 116px;
+  }
+  .invite-hint {
+    display: none;
+  }
+}
 .invite-expiry {
   align-self: center;
   font-size: 13px;

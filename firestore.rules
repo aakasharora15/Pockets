@@ -28,6 +28,10 @@ service cloud.firestore {
     function invitePath(code) {
       return /databases/$(database)/documents/invites/$(code);
     }
+    // An emailed invite only works for an account signed in with that email.
+    function inviteEmailOk(inv) {
+      return !('email' in inv) || request.auth.token.get('email', '').lower() == inv.email;
+    }
     // Membership as it stands now (reads) and after this request (writes in a batch).
     function isMember(pid) {
       return signedIn() && exists(memberPath(pid, me()));
@@ -136,6 +140,7 @@ service cloud.firestore {
               && get(invitePath(request.resource.data.inviteCode)).data.usedByUid == null
               && request.time < get(invitePath(request.resource.data.inviteCode)).data.createdAt + duration.value(48, 'h')
               && getAfter(invitePath(request.resource.data.inviteCode)).data.usedByUid == me()
+              && inviteEmailOk(get(invitePath(request.resource.data.inviteCode)).data)
               && get(pocketPath(pid)).data.type == 'shared')
           );
 
@@ -257,13 +262,18 @@ service cloud.firestore {
       allow create: if isMember(request.resource.data.pocketId)
         && code.matches('^[A-HJ-NP-Z2-9]{6}$')
         && request.resource.data.keys().hasOnly(['code', 'pocketId', 'pocketName', 'createdByUid', 'createdByName',
-                                                  'createdAt', 'expiresAt', 'usedByUid', 'members', 'currencies'])
+                                                  'createdAt', 'expiresAt', 'usedByUid', 'members', 'currencies', 'email'])
         && request.resource.data.code == code
         && request.resource.data.createdByUid == me()
         && request.resource.data.usedByUid == null
         // The server's clock decides expiry: 48 hours after createdAt. expiresAt is for display.
         && request.resource.data.createdAt == request.time
         && request.resource.data.expiresAt is timestamp
+        && (!('email' in request.resource.data)
+          || (request.resource.data.email is string
+            && request.resource.data.email.size() <= 254
+            && request.resource.data.email.matches('^[^@\\s]+@[^@\\s]+[.][^@\\s]+$')
+            && request.resource.data.email == request.resource.data.email.lower()))
         && get(pocketPath(request.resource.data.pocketId)).data.type == 'shared';
 
       // Redeem: single use, before expiry, by the caller, together with creating their membership.
@@ -272,6 +282,7 @@ service cloud.firestore {
         && request.time < resource.data.createdAt + duration.value(48, 'h')
         && changes().hasOnly(['usedByUid', 'usedAt'])
         && request.resource.data.usedByUid == me()
+        && inviteEmailOk(resource.data)
         && existsAfter(memberPath(resource.data.pocketId, me()));
 
       // Cancel a pending invite (or clean up when the Pocket is deleted).
