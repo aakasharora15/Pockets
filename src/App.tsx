@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { OfflineToast, PlusButton, TabBar, Toast } from './components/Chrome';
+import { RouteStage } from './components/RouteStage';
 import { HomeSkeleton } from './components/Skeletons';
 import { onMovedToPersonal, replayOutbox } from './data/outbox';
 import { addMissingDefaults } from './data/categories';
@@ -129,26 +130,28 @@ function MainRoutes() {
       <OutboxRunner />
       <RecurringRunner />
       <DefaultsRunner />
-      <Routes>
-        <Route element={<Tabs />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/transactions" element={<Transactions />} />
-          <Route path="/calendar" element={<Calendar />} />
-          <Route path="/settings" element={<Settings />} />
-        </Route>
-        <Route path="/settings/people" element={<People />} />
-        <Route path="/settings/currencies" element={<Currencies />} />
-        <Route path="/settings/budgets" element={<Budgets />} />
-        <Route path="/settings/categories" element={<Categories />} />
-        <Route path="/settings/account" element={<Account />} />
-        <Route path="/settings/tags" element={<Tags />} />
-        <Route path="/settings/tags/:tag" element={<TagView />} />
-        <Route path="/settings/recurring" element={<Recurring />} />
-        <Route path="/join" element={<Join />} />
-        <Route path="/join/:code" element={<Join />} />
-        <Route path="/welcome" element={<Navigate to="/" replace />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      <RouteStage>
+        <Routes>
+          <Route element={<Tabs />}>
+            <Route path="/" element={<Home />} />
+            <Route path="/transactions" element={<Transactions />} />
+            <Route path="/calendar" element={<Calendar />} />
+            <Route path="/settings" element={<Settings />} />
+          </Route>
+          <Route path="/settings/people" element={<People />} />
+          <Route path="/settings/currencies" element={<Currencies />} />
+          <Route path="/settings/budgets" element={<Budgets />} />
+          <Route path="/settings/categories" element={<Categories />} />
+          <Route path="/settings/account" element={<Account />} />
+          <Route path="/settings/tags" element={<Tags />} />
+          <Route path="/settings/tags/:tag" element={<TagView />} />
+          <Route path="/settings/recurring" element={<Recurring />} />
+          <Route path="/join" element={<Join />} />
+          <Route path="/join/:code" element={<Join />} />
+          <Route path="/welcome" element={<Navigate to="/" replace />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </RouteStage>
       <Overlays />
     </>
   );
