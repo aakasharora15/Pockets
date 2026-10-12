@@ -1,5 +1,21 @@
 # Changelog
 
+## Unreleased
+
+### Changed
+
+- **Looks and feels like an iPhone app.** Apple's system font, screens that slide in and out, swipe back from the left edge in the installed app, a blurred bar behind the top buttons when you scroll, smaller top buttons, consistent corners, coloured Settings icons and labels on the tabs. No gap at the top in Safari.
+
+### Added
+
+- **Swipe to delete** on Home, Calendar, Transactions and tag pages. Swipe left for Edit and Delete, or swipe across to delete straight away.
+- **New categories:** Amazon, Rent, Council tax, Water bill and Household. Existing Pockets get them once.
+
+### Fixed
+
+- The category and Pocket menus no longer show the rows behind them.
+- Digits typed quickly while setting a PIN are no longer lost.
+
 ## 1.1.0 (2026-10-12)
 
 ### Added
