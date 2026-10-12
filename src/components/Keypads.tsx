@@ -1,3 +1,4 @@
+import { tap } from '../lib/haptics';
 import { Icon } from '../lib/icons';
 
 const PIN_KEYS: [string, string][] = [
@@ -6,7 +7,11 @@ const PIN_KEYS: [string, string][] = [
 ];
 
 /** PIN keypad for setting and entering the app PIN. */
-export function PinPad({ onKey }: { onKey: (k: string) => void }) {
+export function PinPad({ onKey: send }: { onKey: (k: string) => void }) {
+  const onKey = (k: string) => {
+    tap();
+    send(k);
+  };
   return (
     <div className="pin-pad">
       {PIN_KEYS.map(([d, letters], i) => {
@@ -39,7 +44,11 @@ export function PinDots({ filled, error }: { filled: number; error?: boolean }) 
 }
 
 /** Glass amount keypad (expense sheet). "." is hidden for currencies without decimals (₹). */
-export function AmountPad({ onKey, decimals }: { onKey: (k: string) => void; decimals: boolean }) {
+export function AmountPad({ onKey: send, decimals }: { onKey: (k: string) => void; decimals: boolean }) {
+  const onKey = (k: string) => {
+    tap();
+    send(k);
+  };
   const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '0', 'del'];
   return (
     <div className="amount-pad">

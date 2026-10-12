@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { BackButton } from '../../components/Chrome';
 import { PinDots, PinPad } from '../../components/Keypads';
+import { buzz } from '../../lib/haptics';
 import { Logo } from '../auth/Logo';
 import { Progress } from './Progress';
 
@@ -44,6 +45,7 @@ export function SetPinScreen({ step, onBack, onDone }: SetProps) {
         setFirst(null);
         setDigits('');
         setError(true);
+        buzz();
       }
     }, 120);
     return () => window.clearTimeout(t);
@@ -81,6 +83,7 @@ export function UnlockScreen({ onUnlock, onForgot }: { onUnlock: (pin: string) =
       if (!ok && live) {
         setDigits('');
         setError(true);
+        buzz();
       }
     });
     return () => {

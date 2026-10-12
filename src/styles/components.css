@@ -873,6 +873,31 @@
   border: none;
   box-shadow: none;
 }
+/* Lights up on touch and fades out on release, like the iPhone passcode keys. */
+.pin-key:not(.blank),
+.amount-key:not(.blank) {
+  position: relative;
+}
+.pin-key:not(.blank)::after,
+.amount-key:not(.blank)::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: rgba(255, 255, 255, 0.42);
+  opacity: 0;
+  transition: opacity 0.45s ease-out;
+  pointer-events: none;
+}
+.pin-key:not(.blank):active::after,
+.amount-key:not(.blank):active::after {
+  opacity: 1;
+  transition: none;
+}
+.pin-key.blank:active,
+.amount-key.blank:active {
+  opacity: 0.45;
+}
 .amount-key {
   width: 76px;
   height: 76px;
@@ -1013,6 +1038,7 @@
   border-radius: 50%;
   background: transparent;
   border: 1.5px solid #ffffff;
+  transition: background-color 0.12s ease-out;
 }
 .pin-dot.on {
   background: #ffffff;
