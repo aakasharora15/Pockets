@@ -31,7 +31,7 @@
 .logo-word {
   font-size: 20px;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--text);
   letter-spacing: -0.01em;
 }
 .welcome-hero {
@@ -45,7 +45,7 @@
   margin-top: 14px;
   font-size: 17px;
   line-height: 1.4;
-  color: rgba(235, 240, 250, 0.72);
+  color: var(--text-sub);
   max-width: 320px;
   text-wrap: pretty;
 }
@@ -70,7 +70,7 @@
   height: 40px;
   border-radius: 10px;
   background: var(--tile);
-  color: #ffffff;
+  color: var(--text);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -93,7 +93,7 @@
 .welcome-login {
   font-size: 17px;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--text);
 }
 
 /* ---------- Auth ---------- */
@@ -116,7 +116,7 @@
 .or-line {
   flex: 1;
   height: 0.5px;
-  background: rgba(255, 255, 255, 0.18);
+  background: var(--fill-4);
 }
 .helper {
   font-size: 13px;
@@ -159,10 +159,10 @@
   flex: 1;
   height: 4px;
   border-radius: 2px;
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--fill-4);
 }
 .setup-bar.on {
-  background: #ffffff;
+  background: var(--text);
 }
 .setup-body {
   position: absolute;
@@ -241,7 +241,7 @@
   text-align: left;
 }
 .choice.on {
-  box-shadow: inset 0 0 0 1.5px #ffffff;
+  box-shadow: inset 0 0 0 1.5px var(--text);
 }
 .choice-tile {
   width: 44px;
@@ -290,7 +290,7 @@
 }
 .pin-sub {
   font-size: 15px;
-  color: rgba(235, 240, 250, 0.66);
+  color: var(--text-sub);
 }
 .pin-sub.error {
   color: var(--destructive);
@@ -326,7 +326,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #ffffff;
+  color: var(--text);
   touch-action: pan-y;
 }
 .month-title {
@@ -386,7 +386,7 @@
 .trend {
   height: 28px;
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--fill-3);
   padding: 0 10px;
   display: flex;
   align-items: center;
@@ -399,7 +399,7 @@
   display: flex;
   align-items: flex-start;
   gap: 3px;
-  color: #ffffff;
+  color: var(--text);
 }
 .cur-card-sym {
   font-size: 26px;
@@ -446,7 +446,7 @@
 }
 .dot.on {
   width: 18px;
-  background: #ffffff;
+  background: var(--text);
 }
 .weekly {
   display: flex;
@@ -465,7 +465,7 @@
   position: absolute;
   left: 0;
   right: 0;
-  border-top: 1.5px dashed rgba(255, 255, 255, 0.35);
+  border-top: 1.5px dashed var(--line);
 }
 .weekly-cols {
   position: absolute;
@@ -499,7 +499,7 @@
 }
 .weekly-bar.ghost {
   background: transparent;
-  border: 1.5px dashed rgba(255, 255, 255, 0.35);
+  border: 1.5px dashed var(--line);
 }
 .weekly-empty {
   position: absolute;
@@ -524,7 +524,7 @@
 }
 .weekly-labels span.on {
   font-weight: 600;
-  color: #ffffff;
+  color: var(--text);
 }
 .see-all {
   font-size: 15px;
@@ -551,7 +551,7 @@
   display: flex;
   justify-content: space-between;
   align-items: baseline;
-  color: #ffffff;
+  color: var(--text);
   gap: 8px;
 }
 .where-name {
@@ -634,19 +634,19 @@
   width: 48px;
   height: 48px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.12);
+  background: var(--fill-3);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 22px;
-  color: #ffffff;
+  color: var(--text);
   flex: none;
 }
 .insight-text {
   flex: 1;
   font-size: 15px;
   font-weight: 600;
-  color: #ffffff;
+  color: var(--text);
   line-height: 1.3;
 }
 .insight-x {
@@ -695,7 +695,7 @@
   width: 100%;
 }
 .switcher-row:active {
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--fill-1);
 }
 .switcher-text {
   flex: 1;
@@ -723,7 +723,7 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--fill-3);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -741,7 +741,7 @@
   gap: 8px;
 }
 .owner-note {
-  background: rgba(255, 255, 255, 0.06);
+  background: var(--fill-1);
   border-radius: var(--r-card);
   padding: 14px 16px;
   display: flex;
@@ -750,7 +750,7 @@
   margin-top: 4px;
   font-size: 15px;
   line-height: 1.4;
-  color: rgba(235, 240, 250, 0.8);
+  color: var(--text-soft);
   text-wrap: pretty;
 }
 .sheet-bottom {
@@ -773,7 +773,7 @@
 .invite-sub {
   font-size: 15px;
   line-height: 1.4;
-  color: rgba(235, 240, 250, 0.66);
+  color: var(--text-sub);
   padding: 0 4px;
   margin-top: -8px;
   text-wrap: pretty;
@@ -828,7 +828,7 @@
   width: 44px;
   height: 44px;
   border-radius: 22px;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--fill-3);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -908,7 +908,7 @@
 
 /* ---------- Expense sheet ---------- */
 .expense-sheet {
-  background: linear-gradient(180deg, rgba(38, 46, 62, 0.94) 0, #1c2230 140px);
+  background: var(--sheet-expense);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), 0 -8px 32px rgba(0, 0, 0, 0.12);
   gap: 12px;
   overflow-y: auto;
@@ -924,7 +924,7 @@
   height: 48px;
   border-radius: 24px;
   background: var(--fill);
-  color: #ffffff;
+  color: var(--text);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -935,8 +935,8 @@
   overflow: hidden;
 }
 .cur-pill.on {
-  background: #ffffff;
-  color: #2b2420;
+  background: var(--inverse);
+  color: var(--on-inverse);
 }
 .cur-pill-sym {
   font-size: 18px;
@@ -947,11 +947,11 @@
   align-items: flex-start;
   gap: 3px;
   height: 64px;
-  color: #ffffff;
+  color: var(--text);
   width: 100%;
 }
 .amount.placeholder {
-  color: #aeaeb2;
+  color: var(--text3);
 }
 .amount-sym {
   font-size: 28px;
@@ -970,7 +970,7 @@
   width: 3px;
   height: 50px;
   border-radius: 2px;
-  background: #ffffff;
+  background: var(--text);
   margin-left: 4px;
   margin-top: 4px;
   animation: blink 1s steps(1) infinite;
@@ -1037,7 +1037,7 @@
   height: 24px;
   border-radius: 7px;
   background: var(--tile);
-  color: #ffffff;
+  color: var(--text);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1073,7 +1073,7 @@
   color: var(--text2);
 }
 .note-input:focus {
-  color: #ffffff;
+  color: var(--text);
 }
 .date-input {
   position: absolute;
@@ -1109,7 +1109,7 @@
 }
 .mini-seg-item.on {
   background: var(--segment);
-  color: #ffffff;
+  color: var(--text);
   font-weight: 600;
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
 }
@@ -1135,8 +1135,8 @@
   scrollbar-width: none;
   border-radius: var(--r-card);
   /* Nearly solid, so rows behind never show through (iOS Safari doesn't always blur inside a sheet). */
-  background: rgba(44, 44, 48, 0.98);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: var(--menu);
+  border: 1px solid var(--fill-4);
   backdrop-filter: blur(40px) saturate(180%);
   -webkit-backdrop-filter: blur(40px) saturate(180%);
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
@@ -1161,7 +1161,7 @@
   width: 100%;
 }
 .menu-item:active {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--fill-2);
 }
 .menu-check {
   width: 20px;
@@ -1180,7 +1180,7 @@
   height: 26px;
   border-radius: 8px;
   background: var(--tile);
-  color: #ffffff;
+  color: var(--text);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1197,13 +1197,13 @@
   width: 100%;
 }
 .save-btn {
-  color: #2b2420;
+  color: var(--on-inverse);
 }
 .save-btn.off,
 .save-btn:disabled {
   opacity: 1;
-  background: rgba(120, 120, 128, 0.16);
-  color: #aeaeb2;
+  background: var(--disabled-fill);
+  color: var(--text3);
 }
 .sheet-layer {
   position: absolute;
@@ -1244,7 +1244,7 @@
   appearance: none;
 }
 .tx-search input::placeholder {
-  color: rgba(235, 240, 250, 0.5);
+  color: var(--text3);
 }
 .tx-search input::-webkit-search-cancel-button {
   -webkit-appearance: none;
@@ -1262,7 +1262,7 @@
   flex: none;
   width: 1px;
   height: 20px;
-  background: rgba(255, 255, 255, 0.18);
+  background: var(--fill-4);
   margin: 0 4px;
 }
 .tx-group {
@@ -1310,8 +1310,8 @@
   width: 44px;
   height: 44px;
   border-radius: 50%;
-  background: rgba(255, 255, 255, 0.06);
-  color: #ffffff;
+  background: var(--fill-1);
+  color: var(--text);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1322,17 +1322,17 @@
 }
 .cal-cell.out {
   background: transparent;
-  color: rgba(235, 240, 250, 0.3);
+  color: var(--text3);
   cursor: default;
 }
 .cal-cell.sel {
-  background: #ffffff;
-  color: var(--ink-dark);
+  background: var(--inverse);
+  color: var(--on-inverse);
   font-weight: 600;
 }
 .cal-cell.today {
   background: transparent;
-  border: 1.5px solid #ffffff;
+  border: 1.5px solid var(--text);
   font-weight: 600;
 }
 .cal-num {
@@ -1361,7 +1361,7 @@
   align-items: center;
   gap: 5px;
   font-size: 12px;
-  color: rgba(235, 240, 250, 0.8);
+  color: var(--text-soft);
 }
 .cal-legend-dot {
   width: 6px;
@@ -1407,7 +1407,7 @@
   flex-wrap: wrap;
   gap: 6px 14px;
   font-size: 13px;
-  color: rgba(235, 240, 250, 0.8);
+  color: var(--text-soft);
 }
 .day-legend-item {
   display: flex;
@@ -1453,7 +1453,7 @@
   background: var(--segment);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
   font-weight: 600;
-  color: #ffffff;
+  color: var(--text);
 }
 
 /* ---------- Settings sub-pages ---------- */
@@ -1489,8 +1489,8 @@
   height: 32px;
   padding: 0 4px;
   border-radius: 9px;
-  background: #ffffff;
-  color: var(--ink-dark);
+  background: var(--inverse);
+  color: var(--on-inverse);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1523,7 +1523,7 @@
   color: var(--text2);
 }
 .budget-track.thin {
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--fill-3);
 }
 .budget-foot {
   display: flex;
@@ -1540,7 +1540,7 @@
   width: 34px;
   height: 34px;
   border-radius: 10px;
-  background: rgba(79, 139, 255, 0.16);
+  background: var(--insight);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1613,15 +1613,15 @@
   aspect-ratio: 1 / 1;
   border-radius: 14px;
   background: var(--tile);
-  color: #ffffff;
+  color: var(--text);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 22px;
 }
 .icon-choice.on {
-  background: #ffffff;
-  color: var(--ink-dark);
+  background: var(--inverse);
+  color: var(--on-inverse);
 }
 
 /* ---------- People ---------- */
@@ -1632,7 +1632,7 @@
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  background: rgba(79, 139, 255, 0.16);
+  background: var(--insight);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1683,13 +1683,13 @@
   align-items: center;
   font-size: 12px;
   font-weight: 600;
-  background: rgba(255, 255, 255, 0.1);
+  background: var(--fill-3);
 }
 .pending-icon {
   width: 36px;
   height: 36px;
   border-radius: 50%;
-  border: 1.5px dashed rgba(255, 255, 255, 0.35);
+  border: 1.5px dashed var(--line);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1742,7 +1742,7 @@
 .code-dash {
   width: 10px;
   height: 2px;
-  background: rgba(255, 255, 255, 0.4);
+  background: var(--line);
 }
 .code-input {
   position: absolute;
@@ -1777,11 +1777,11 @@
   align-items: center;
   gap: 10px;
   font-size: 15px;
-  color: rgba(235, 240, 250, 0.8);
+  color: var(--text-soft);
 }
 .join-hair {
   height: 0.5px;
-  background: rgba(255, 255, 255, 0.12);
+  background: var(--fill-3);
 }
 .join-name {
   display: flex;
@@ -1982,7 +1982,7 @@
   flex-wrap: wrap;
   gap: 6px 14px;
   font-size: 13px;
-  color: rgba(235, 240, 250, 0.8);
+  color: var(--text-soft);
 }
 .tag-legend-item {
   display: flex;

@@ -262,7 +262,7 @@ function WeeklySpend({ expenses, code, month, empty }: { expenses: Expense[]; co
             const ghost = w.ghost || nothingInCurrency;
             return (
               <div key={w.label} className="weekly-col">
-                <span className="weekly-val" style={{ color: w.current ? '#FFFFFF' : undefined }}>
+                <span className="weekly-val" style={{ color: w.current ? 'var(--text)' : undefined }}>
                   {ghost ? '' : formatShort(w.total, code)}
                 </span>
                 <div

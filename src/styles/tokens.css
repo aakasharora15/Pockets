@@ -1,4 +1,4 @@
-/* Design tokens: colours (dark "Midnight" theme), type, radii and spacing. */
+/* Design tokens: colours, type, radii and spacing. Dark ("Midnight") is the default; light overrides below. */
 :root {
   /* Apple's system font (San Francisco) on iPhone, iPad and Mac; the platform font elsewhere. */
   --font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -19,6 +19,8 @@
   --raised: #2a3242;
   --avatar: #2e3646;
   --avatar-ring: #0e2747;
+  --ring-open: #2a3242;
+  --ring-menu: #2c303a;
 
   --text: #ffffff;
   --text2: rgba(235, 240, 250, 0.62);
@@ -40,10 +42,33 @@
   --tile: rgba(255, 255, 255, 0.08);
   --track: rgba(255, 255, 255, 0.14);
   --tag-bg: rgba(255, 255, 255, 0.1);
-  --ink-dark: #05080f;
+  /* Solid page colour behind everything, and the high-contrast "inverse" surface (primary buttons, selected chips). */
+  --page: #05080f;
+  --inverse: #ffffff;
+  --on-inverse: #05080f;
 
-  --sheet: linear-gradient(180deg, rgba(38, 46, 62, 0.96) 0, #141a26 140px);
+  --text-soft: rgba(235, 240, 250, 0.8);
+  --text-sub: rgba(235, 240, 250, 0.66);
+  --chevron: #5a5a5e;
+  --pressed: #232a3a;
+  --line: rgba(255, 255, 255, 0.35);
+  /* Neutral fills, faintest to strongest. */
+  --fill-1: rgba(255, 255, 255, 0.06);
+  --fill-2: rgba(255, 255, 255, 0.08);
+  --fill-3: rgba(255, 255, 255, 0.1);
+  --fill-4: rgba(255, 255, 255, 0.18);
+  --disabled-fill: rgba(120, 120, 128, 0.16);
+  --switch-off: rgba(120, 120, 128, 0.32);
+  --sheet-close: rgba(118, 118, 128, 0.28);
+  --grabber: rgba(235, 235, 245, 0.3);
+  --key-flash: rgba(255, 255, 255, 0.42);
+
+  --sheet: linear-gradient(180deg, rgba(38, 46, 62, 0.94) 0, #141a26 140px);
+  --sheet-expense: linear-gradient(180deg, rgba(38, 46, 62, 0.94) 0, #1c2230 140px);
   --popover: rgba(44, 48, 58, 0.94);
+  --popover-glass: rgba(44, 48, 58, 0.82);
+  --popover-strong: rgba(44, 48, 58, 0.92);
+  --menu: rgba(44, 44, 48, 0.98);
 
   --spring: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 

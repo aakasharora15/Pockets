@@ -24,7 +24,7 @@ export function SettingsRow({ icon, tint, label, value, first, chevron = true, o
         <span className="row-label">{label}</span>
         {value !== undefined && <span className="row-value">{value}</span>}
         {children}
-        {chevron && <Icon name="caret-right" weight="bold" size={13} color="#5A5A5E" />}
+        {chevron && <Icon name="caret-right" weight="bold" size={13} color="var(--chevron)" />}
       </div>
     </>
   );

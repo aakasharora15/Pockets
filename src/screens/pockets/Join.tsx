@@ -120,7 +120,7 @@ export function Join() {
                 <span className="join-pocket">{invite.pocketName}</span>
               </div>
               <div className="join-members">
-                <AvatarStack initials={invite.members.slice(0, 3).map((m) => m.initials)} size={28} ring="#1C2230" />
+                <AvatarStack initials={invite.members.slice(0, 3).map((m) => m.initials)} size={28} ring="var(--card)" />
                 <span>
                   {invite.members.map((m) => firstName(m.name)).join(', ')} · {invite.currencies.map((c) => currency(c).symbol).join(' ')}
                 </span>

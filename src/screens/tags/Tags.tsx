@@ -49,7 +49,7 @@ export function Tags() {
                       {counts[t]} {counts[t] === 1 ? 'expense' : 'expenses'}
                     </span>
                   )}
-                  <Icon name="caret-right" weight="bold" size={13} color="#5A5A5E" />
+                  <Icon name="caret-right" weight="bold" size={13} color="var(--chevron)" />
                 </div>
               </button>
             ))}

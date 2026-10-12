@@ -82,7 +82,7 @@ export function Account() {
               const owner = shared && p.ownerUid === user.uid;
               const inner = (
                 <>
-                  <AvatarStack initials={memberInitials(p)} size={36} ring="#1C2230" />
+                  <AvatarStack initials={memberInitials(p)} size={36} ring="var(--card)" />
                   <div className={`member-body${i ? ' sep' : ''}`}>
                     <div className="member-text">
                       <span className="member-name">{p.name}</span>
@@ -91,7 +91,7 @@ export function Account() {
                         {owner ? ' · Owner' : ''}
                       </span>
                     </div>
-                    {shared && <Icon name="caret-right" weight="bold" size={13} color="#5A5A5E" />}
+                    {shared && <Icon name="caret-right" weight="bold" size={13} color="var(--chevron)" />}
                   </div>
                 </>
               );

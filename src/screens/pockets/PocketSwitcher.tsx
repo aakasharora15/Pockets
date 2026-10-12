@@ -19,7 +19,7 @@ export function memberInitials(p: PocketWithMembers): string[] {
 export function PocketPill({ pocket, open, onClick }: { pocket: PocketWithMembers; open: boolean; onClick: () => void }) {
   return (
     <button className="pocket-pill glass-pref press" onClick={onClick} aria-expanded={open} aria-haspopup="menu">
-      <AvatarStack initials={memberInitials(pocket)} size={28} ring={open ? '#2A3242' : '#0E2747'} />
+      <AvatarStack initials={memberInitials(pocket)} size={28} ring={open ? 'var(--ring-open)' : 'var(--avatar-ring)'} />
       <span className="pocket-pill-name">{pocket.name}</span>
       <Icon name={open ? 'caret-up' : 'caret-down'} weight="bold" size={13} />
     </button>
@@ -43,7 +43,7 @@ export function PocketSwitcher({ onClose, onNew, onJoin }: { onClose: () => void
               onClose();
             }}
           >
-            <AvatarStack initials={memberInitials(p)} size={36} ring="#2C303A" />
+            <AvatarStack initials={memberInitials(p)} size={36} ring="var(--ring-menu)" />
             <div className="switcher-text">
               <span className="switcher-name">{p.name}</span>
               <span className="switcher-sub">{pocketSummary(p)}</span>

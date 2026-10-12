@@ -91,7 +91,7 @@ export function People() {
                     <span className="member-sub">{me ? 'You' : m.joinedAt ? `Joined ${longDate(toDayKey(m.joinedAt.toDate()))}` : 'Joined'}</span>
                   </div>
                   {m.role === 'owner' && <span className="owner-badge">Owner</span>}
-                  {canRemove && <Icon name="caret-right" weight="bold" size={13} color="#5A5A5E" />}
+                  {canRemove && <Icon name="caret-right" weight="bold" size={13} color="var(--chevron)" />}
                 </div>
               </>
             );

@@ -281,7 +281,7 @@ export function ExpenseSheet({ request }: { request: ExpenseSheetRequest }) {
                   <div className="detail-body">
                     <span className="detail-label">Pocket</span>
                     <span className="detail-value">{pocket.name}</span>
-                    <Icon name="caret-up-down" weight="bold" size={13} color="#5A5A5E" />
+                    <Icon name="caret-up-down" weight="bold" size={13} color="var(--chevron)" />
                   </div>
                 </button>
 
@@ -298,7 +298,7 @@ export function ExpenseSheet({ request }: { request: ExpenseSheetRequest }) {
                   <div className="detail-body sep">
                     <span className="detail-label">Category</span>
                     <span className="detail-value">{category?.name ?? 'Choose'}</span>
-                    <Icon name="caret-up-down" weight="bold" size={13} color="#5A5A5E" />
+                    <Icon name="caret-up-down" weight="bold" size={13} color="var(--chevron)" />
                   </div>
                 </button>
 
@@ -327,7 +327,7 @@ export function ExpenseSheet({ request }: { request: ExpenseSheetRequest }) {
                   <div className="detail-body sep">
                     <span className="detail-label">Date</span>
                     <span className="detail-value">{sheetDateLabel(date)}</span>
-                    <Icon name="caret-right" weight="bold" size={13} color="#5A5A5E" />
+                    <Icon name="caret-right" weight="bold" size={13} color="var(--chevron)" />
                   </div>
                   <input
                     ref={dateInput}
@@ -346,7 +346,7 @@ export function ExpenseSheet({ request }: { request: ExpenseSheetRequest }) {
                   <div className="detail-body sep">
                     <span className="detail-label">Note</span>
                     <input className="note-input" placeholder="Optional" aria-label="Note" maxLength={500} value={note} onChange={(e) => setNote(e.target.value)} />
-                    <Icon name="caret-right" weight="bold" size={13} color="#5A5A5E" />
+                    <Icon name="caret-right" weight="bold" size={13} color="var(--chevron)" />
                   </div>
                 </label>
 
@@ -370,7 +370,7 @@ export function ExpenseSheet({ request }: { request: ExpenseSheetRequest }) {
                         <option key={t} value={t} />
                       ))}
                     </datalist>
-                    <Icon name="caret-right" weight="bold" size={13} color="#5A5A5E" />
+                    <Icon name="caret-right" weight="bold" size={13} color="var(--chevron)" />
                   </div>
                 </label>
 
@@ -396,7 +396,7 @@ export function ExpenseSheet({ request }: { request: ExpenseSheetRequest }) {
                       <div className="detail-body sep">
                         <span className="detail-label">Receipt</span>
                         {photo ? <Thumb photo={photo} /> : <span className="detail-value">Loading</span>}
-                        <Icon name="caret-right" weight="bold" size={13} color="#5A5A5E" />
+                        <Icon name="caret-right" weight="bold" size={13} color="var(--chevron)" />
                       </div>
                     </button>
                     {photo && (
@@ -418,7 +418,7 @@ export function ExpenseSheet({ request }: { request: ExpenseSheetRequest }) {
                     </span>
                     <div className="detail-body sep">
                       <span className="detail-label">Add receipt photo</span>
-                      <Icon name="caret-right" weight="bold" size={13} color="#5A5A5E" />
+                      <Icon name="caret-right" weight="bold" size={13} color="var(--chevron)" />
                     </div>
                     <input
                       type="file"

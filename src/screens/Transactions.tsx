@@ -64,7 +64,7 @@ export function Transactions() {
           <span className="tx-month">{monthYear(month)}</span>
         </div>
         <label className="tx-search glass">
-          <Icon name="magnifying-glass" size={18} color="#FFFFFF" />
+          <Icon name="magnifying-glass" size={18} color="var(--text)" />
           <input ref={searchRef} type="search" placeholder="Search expenses" aria-label="Search expenses" value={search} onChange={(e) => setSearch(e.target.value)} />
         </label>
         {showFilters && (

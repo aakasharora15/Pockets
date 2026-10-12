@@ -126,7 +126,7 @@ export function Categories() {
               <div key={c.id} className={`cat-row${dragging ? ' dragging' : ''}`} style={dragging ? { transform: `translateY(${dragY}px)` } : undefined}>
                 <div className="cat-row-lead">
                   {isOther ? (
-                    <Icon name="lock-simple" size={16} color="rgba(235, 240, 250, 0.4)" label="Can't delete" />
+                    <Icon name="lock-simple" size={16} color="var(--text3)" label="Can't delete" />
                   ) : (
                     <button className="press" aria-label={`Delete ${c.name}`} onClick={() => remove(c)}>
                       <Icon name="minus-circle" weight="fill" size={22} color="var(--destructive)" />
@@ -151,7 +151,7 @@ export function Categories() {
                     onPointerUp={onHandleUp}
                     onPointerCancel={onHandleUp}
                   >
-                    <Icon name="list" size={18} color="rgba(235, 240, 250, 0.4)" />
+                    <Icon name="list" size={18} color="var(--text3)" />
                   </span>
                 </div>
               </div>
