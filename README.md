@@ -105,8 +105,6 @@ src/
 firestore.rules            security rules
 tests/rules/               rules tests
 scripts/seed-emulator.mjs  sample data for the emulators
-design/                    the approved design (open Pockets.dc.html via `npx serve design`)
-docs/SPEC.md               product spec
 ```
 
 ### Data and security
