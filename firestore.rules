@@ -74,14 +74,15 @@ service cloud.firestore {
     // ---------- pockets ----------
 
     function validPocket(d) {
-      return d.keys().hasOnly(['name', 'type', 'ownerUid', 'currencies', 'budgets', 'tags', 'createdAt'])
+      return d.keys().hasOnly(['name', 'type', 'ownerUid', 'currencies', 'budgets', 'tags', 'defaultsVersion', 'createdAt'])
         && isName(d.name)
         && d.type in ['personal', 'shared']
         && d.currencies is list && d.currencies.size() > 0 && d.currencies.size() <= 8
         && d.currencies.toSet().difference(currencyCodes().toSet()).size() == 0
         && d.budgets is map
         && d.budgets.keys().toSet().difference(currencyCodes().toSet()).size() == 0
-        && (!('tags' in d) || (d.tags is list && d.tags.size() <= 200));
+        && (!('tags' in d) || (d.tags is list && d.tags.size() <= 200))
+        && (!('defaultsVersion' in d) || d.defaultsVersion is int);
     }
 
     match /pockets/{pid} {
@@ -97,8 +98,8 @@ service cloud.firestore {
       allow update: if validPocket(request.resource.data)
         && request.resource.data.type == resource.data.type
         && (
-          // Anyone in the Pocket can set budgets and add or remove tags.
-          (isMember(pid) && changes().hasOnly(['budgets', 'tags']))
+          // Anyone in the Pocket can set budgets, add or remove tags, and add new default categories.
+          (isMember(pid) && changes().hasOnly(['budgets', 'tags', 'defaultsVersion']))
           // Only the owner can rename, change currencies or hand over ownership.
           || (isOwner(pid)
               && (request.resource.data.ownerUid == me()

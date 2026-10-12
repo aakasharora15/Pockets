@@ -22,6 +22,8 @@ export interface Pocket {
   budgets: Partial<Record<CurrencyCode, number>>;
   /** Tags used in this Pocket (trips, events), in the order they were first used. */
   tags?: string[];
+  /** Default category set this Pocket has (see DEFAULTS_VERSION). Missing means 1. */
+  defaultsVersion?: number;
   createdAt: Timestamp | null;
 }
 

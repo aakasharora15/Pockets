@@ -1,7 +1,7 @@
 import type { Icon as PhIcon, IconWeight } from '@phosphor-icons/react';
 import {
   AirplaneTiltIcon, AppleLogoIcon, ArrowDownIcon, ArrowUpIcon, BabyIcon, BackspaceIcon, BagSimpleIcon, BasketIcon,
-  BedIcon, BookOpenIcon, CalendarBlankIcon, CameraIcon, CloudArrowUpIcon, ClockCounterClockwiseIcon, ArrowsLeftRightIcon, ScanIcon, UploadSimpleIcon, ImageIcon, FileArrowDownIcon, CarIcon, CaretDownIcon, CaretLeftIcon, CaretRightIcon, CaretUpDownIcon,
+  BankIcon, BedIcon, BookOpenIcon, CouchIcon, DropIcon, KeyIcon, PackageIcon, CalendarBlankIcon, CameraIcon, CloudArrowUpIcon, ClockCounterClockwiseIcon, ArrowsLeftRightIcon, ScanIcon, UploadSimpleIcon, ImageIcon, FileArrowDownIcon, CarIcon, CaretDownIcon, CaretLeftIcon, CaretRightIcon, CaretUpDownIcon,
   CaretUpIcon, CheckIcon, CoffeeIcon, CoinsIcon, CopyIcon, CurrencyCircleDollarIcon, CurrencyGbpIcon, DeviceMobileIcon,
   DogIcon, DotsThreeIcon, DownloadSimpleIcon, DropHalfIcon, EnvelopeSimpleIcon, ExportIcon, FirstAidIcon,
   ForkKnifeIcon, GameControllerIcon, GasPumpIcon, GearSixIcon, GiftIcon, GoogleLogoIcon, GraduationCapIcon,
@@ -18,7 +18,7 @@ import type { CSSProperties } from 'react';
 const REGISTRY: Record<string, PhIcon> = {
   'airplane-tilt': AirplaneTiltIcon, 'apple-logo': AppleLogoIcon, 'arrow-down': ArrowDownIcon, 'arrow-up': ArrowUpIcon,
   baby: BabyIcon, backspace: BackspaceIcon, 'bag-simple': BagSimpleIcon, basket: BasketIcon, bed: BedIcon,
-  'book-open': BookOpenIcon, 'calendar-blank': CalendarBlankIcon, camera: CameraIcon, 'cloud-arrow-up': CloudArrowUpIcon,
+  'book-open': BookOpenIcon, bank: BankIcon, couch: CouchIcon, drop: DropIcon, key: KeyIcon, package: PackageIcon, 'calendar-blank': CalendarBlankIcon, camera: CameraIcon, 'cloud-arrow-up': CloudArrowUpIcon,
   'clock-counter-clockwise': ClockCounterClockwiseIcon, 'arrows-left-right': ArrowsLeftRightIcon, scan: ScanIcon,
   'upload-simple': UploadSimpleIcon, image: ImageIcon, 'file-arrow-down': FileArrowDownIcon, car: CarIcon, 'caret-down': CaretDownIcon,
   'caret-left': CaretLeftIcon, 'caret-right': CaretRightIcon, 'caret-up-down': CaretUpDownIcon, 'caret-up': CaretUpIcon,
