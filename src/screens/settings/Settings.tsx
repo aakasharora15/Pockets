@@ -31,6 +31,25 @@ interface InstallPrompt extends Event {
   prompt: () => Promise<void>;
 }
 
+/**
+ * Row icon colours, taken from Spendr's own palette (the accent and the category colours used in
+ * the charts) so Settings reads as part of the same app. Neighbouring rows never share a colour.
+ */
+const TINT = {
+  people: '#4F8BFF',
+  currencies: '#4FC48A',
+  budgets: '#E8B83E',
+  combined: '#F09A55',
+  categories: '#A884F0',
+  tags: '#EE86B4',
+  repeating: '#5AA0F0',
+  export: '#73A6A0',
+  backup: '#7C8CF8',
+  theme: '#7C8CF8',
+  glass: '#5AA0F0',
+  neutral: '#8FA0B8',
+};
+
 const THEMES: [ThemeSetting, string][] = [
   ['dark', 'Dark'],
   ['light', 'Light'],
@@ -151,19 +170,19 @@ export function Settings() {
         <span className="page-title settings-title">Settings</span>
         <Group title={`This Pocket · ${pocket.name}`}>
           {pocket.type === 'shared' && (
-            <SettingsRow first icon="users-three" tint="#5E5CE6" label="People" value={pocket.members.length} onClick={() => navigate('/settings/people')} />
+            <SettingsRow first icon="users-three" tint={TINT.people} label="People" value={pocket.members.length} onClick={() => navigate('/settings/people')} />
           )}
           <SettingsRow
             first={pocket.type !== 'shared'}
-            icon="currency-circle-dollar" tint="#0A84FF"
+            icon="currency-circle-dollar" tint={TINT.currencies}
             label="Currencies"
             value={pocket.currencies.map((c) => currency(c).symbol).join(' ')}
             onClick={() => navigate('/settings/currencies')}
           />
-          <SettingsRow icon="target" tint="#30D158" label="Monthly budgets" onClick={() => navigate('/settings/budgets')} />
+          <SettingsRow icon="target" tint={TINT.budgets} label="Monthly budgets" onClick={() => navigate('/settings/budgets')} />
           {pocket.currencies.length > 1 && (
             <SettingsRow
-              icon="arrows-left-right" tint="#FF9F0A"
+              icon="arrows-left-right" tint={TINT.combined}
               label="Combined total"
               value={combined ? `In ${currency(combined).symbol}` : 'Off'}
               onClick={() => setSheet('combined')}
@@ -171,26 +190,26 @@ export function Settings() {
           )}
         </Group>
         <Group>
-          <SettingsRow first icon="squares-four" tint="#BF5AF2" label="Manage categories" onClick={() => navigate('/settings/categories')} />
-          <SettingsRow icon="tag" tint="#FF375F" label="Tags" value={tags.length || undefined} onClick={() => navigate('/settings/tags')} />
-          <SettingsRow icon="repeat" tint="#64D2FF" label="Repeating expenses" value={repeats.length || undefined} onClick={() => navigate('/settings/recurring')} />
+          <SettingsRow first icon="squares-four" tint={TINT.categories} label="Manage categories" onClick={() => navigate('/settings/categories')} />
+          <SettingsRow icon="tag" tint={TINT.tags} label="Tags" value={tags.length || undefined} onClick={() => navigate('/settings/tags')} />
+          <SettingsRow icon="repeat" tint={TINT.repeating} label="Repeating expenses" value={repeats.length || undefined} onClick={() => navigate('/settings/recurring')} />
         </Group>
         <Group>
-          <SettingsRow first icon="download-simple" tint="#30B0C7" label="Export data (CSV)" onClick={() => setSheet('export')} />
-          <SettingsRow icon="clock-counter-clockwise" tint="#AC8E68" label="Back up and restore" onClick={() => setSheet('backup')} />
+          <SettingsRow first icon="download-simple" tint={TINT.export} label="Export data (CSV)" onClick={() => setSheet('export')} />
+          <SettingsRow icon="clock-counter-clockwise" tint={TINT.backup} label="Back up and restore" onClick={() => setSheet('backup')} />
         </Group>
         <Group title="Account">
           <SettingsRow
             first
-            icon="user-circle" tint="#8E8E93"
+            icon="user-circle" tint={TINT.neutral}
             label={profile.name}
             value={providerLabel(user.providerData.map((p) => p.providerId))}
             onClick={() => navigate('/settings/account')}
           />
-          <SettingsRow icon="lock-simple" tint="#8E8E93" label="Lock app now" chevron={false} onClick={lockNow} />
+          <SettingsRow icon="lock-simple" tint={TINT.neutral} label="Lock app now" chevron={false} onClick={lockNow} />
         </Group>
         <Group title="Appearance">
-          <SettingsRow first icon="moon" tint="#5E5CE6" label="Theme" chevron={false}>
+          <SettingsRow first icon="moon" tint={TINT.theme} label="Theme" chevron={false}>
             <div className="glass-seg" role="radiogroup" aria-label="Theme">
               {THEMES.map(([t, label]) => (
                 <button key={t} role="radio" aria-checked={theme === t} className={`glass-seg-item${theme === t ? ' on' : ''}`} onClick={() => setTheme(t)}>
@@ -199,7 +218,7 @@ export function Settings() {
               ))}
             </div>
           </SettingsRow>
-          <SettingsRow icon="drop-half" tint="#0A84FF" label="Glass" chevron={false}>
+          <SettingsRow icon="drop-half" tint={TINT.glass} label="Glass" chevron={false}>
             <div className="glass-seg" role="radiogroup" aria-label="Glass">
               {(['tinted', 'classic', 'clear'] as GlassStyle[]).map((g) => (
                 <button key={g} role="radio" aria-checked={glass === g} className={`glass-seg-item${glass === g ? ' on' : ''}`} onClick={() => setGlass(g)}>
@@ -210,8 +229,8 @@ export function Settings() {
           </SettingsRow>
         </Group>
         <Group>
-          {!standalone && <SettingsRow first icon="device-mobile" tint="#8E8E93" label="Add to Home Screen" onClick={install} />}
-          <SettingsRow first={!!standalone} icon="info" tint="#8E8E93" label="About Spendr" onClick={() => setSheet('about')} />
+          {!standalone && <SettingsRow first icon="device-mobile" tint={TINT.neutral} label="Add to Home Screen" onClick={install} />}
+          <SettingsRow first={!!standalone} icon="info" tint={TINT.neutral} label="About Spendr" onClick={() => setSheet('about')} />
         </Group>
         <div className="settings-footer">Spendr · Version {__APP_VERSION__}</div>
       </div>
