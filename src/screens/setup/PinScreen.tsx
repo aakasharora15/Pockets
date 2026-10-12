@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { BackButton } from '../../components/Chrome';
 import { PinDots, PinPad } from '../../components/Keypads';
 import { Logo } from '../auth/Logo';
@@ -16,9 +16,18 @@ export function SetPinScreen({ step, onBack, onDone }: SetProps) {
   const [first, setFirst] = useState<string | null>(null);
   const [digits, setDigits] = useState('');
   const [error, setError] = useState(false);
+  // Digits typed while the fourth dot is showing belong to the confirmation, not the bin.
+  const carry = useRef('');
+
+  const typed = useRef('');
+  typed.current = digits;
 
   const press = (k: string) => {
     setError(false);
+    if (k !== 'del' && typed.current.length >= 4) {
+      if (first === null && carry.current.length < 4) carry.current += k;
+      return;
+    }
     setDigits((d) => (k === 'del' ? d.slice(0, -1) : d.length < 4 ? d + k : d));
   };
 
@@ -27,7 +36,8 @@ export function SetPinScreen({ step, onBack, onDone }: SetProps) {
     const t = window.setTimeout(() => {
       if (first === null) {
         setFirst(digits);
-        setDigits('');
+        setDigits(carry.current);
+        carry.current = '';
       } else if (first === digits) {
         void onDone(digits);
       } else {
