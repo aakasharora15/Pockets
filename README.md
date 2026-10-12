@@ -17,12 +17,16 @@
 - **Transactions and Calendar.** Search, filter by person or currency, swipe to edit or delete. Month grid with category dots.
 - **Invites.** By link, 6-character code or QR code. Single use, 48 hours.
 - **Private by default.** A 4-digit app PIN on each device. Firestore security rules keep each Pocket to its members.
-- **Offline.** Add expenses with no signal; they sync when you're back.
-- **Export.** CSV per Pocket.
+- **Repeating expenses.** Mark rent, Netflix or the energy bill as repeating monthly and Spendr logs it on the day.
+- **Tags and trips.** Tag expenses (say, a trip) and see the tag's totals per currency, by category.
+- **Receipt photos.** Attach a photo; Spendr can read the total and shop name from it, on the phone.
+- **Combined total, if you want one.** An optional card converts everything into one currency, each expense at its own day's exchange rate. The separate totals stay as they are.
+- **Offline.** Add expenses with no signal. They're kept on the phone, marked "Waiting to sync", and upload when you're back.
+- **Export and backup.** CSV of a Pocket, a month or a tag. A backup file of everything, and restore from it.
 
 ## Run your own Spendr
 
-You need Node.js 20 or later and a Google account. Firebase's free Spark plan is enough: Spendr uses Authentication, Firestore and Hosting only, with no Cloud Functions.
+You need Node.js 20 or later and a Google account. Firebase's free Spark plan is enough: Spendr uses Authentication, Firestore and Hosting only, with no Cloud Functions or Cloud Storage. Receipt photos are compressed and stored in Firestore.
 
 1. **Create a Firebase project.** Go to the [Firebase console](https://console.firebase.google.com), add a project, and skip Google Analytics if you like.
 2. **Turn on sign-in.** In *Build › Authentication › Sign-in method*, enable **Google** and **Email/Password**.
@@ -75,7 +79,7 @@ The seed creates `prernaa@example.com` and `aakash@example.com`, both with passw
 | --- | --- |
 | `npm run dev` | App against the project in `src/firebase.config.ts`. |
 | `npm run typecheck` | TypeScript. |
-| `npm test` | Unit tests (money, dates, invite codes, CSV, stats). |
+| `npm test` | Unit tests (money, dates, invite codes, CSV, stats, repeats, exchange rates, receipt text, backups). |
 | `npm run test:rules` | Security rules tests in the Firestore emulator. |
 | `npm run build` | Production build in `dist/`. |
 
@@ -85,6 +89,10 @@ The seed creates `prernaa@example.com` and `aakash@example.com`, both with passw
 - Firebase Auth (Google, email and password) and Firestore with offline persistence.
 - Plain CSS with design tokens in `src/styles/tokens.css`. One typeface, [Involve](https://github.com/StefanPeev/Involve), self-hosted. Icons from [Phosphor](https://phosphoricons.com).
 - Money is stored as integers in minor units (pence, paise, cents) and formatted with `Intl.NumberFormat`.
+- Offline: Firestore's offline persistence, plus an outbox in IndexedDB (`src/data/outbox.ts`) that keeps every expense until the server confirms it and re-sends anything left over.
+- Repeating expenses are logged by whichever phone opens the app first on or after the day, in a Firestore transaction, so a month is never logged twice. No server code.
+- Exchange rates for the combined total come from [Frankfurter](https://github.com/lineofflight/frankfurter) (free central bank reference rates, no key) and are cached on the phone.
+- Receipt reading uses [Tesseract.js](https://github.com/naptha/tesseract.js) in the browser. Its files are copied into `public/ocr` at build time (`scripts/copy-ocr.mjs`) and downloaded by the phone the first time someone reads a receipt (about 7 MB).
 
 ```
 src/
@@ -105,10 +113,12 @@ docs/SPEC.md               product spec
 
 ```
 users/{uid}                          name, initials, email, pocketIds
-pockets/{pocketId}                   name, type, ownerUid, currencies, budgets
+pockets/{pocketId}                   name, type, ownerUid, currencies, budgets, tags
 pockets/{pocketId}/members/{uid}     name, initials, role
 pockets/{pocketId}/categories/{id}   name, icon, colour, order, system
-pockets/{pocketId}/expenses/{id}     currency, amountMinor, name, categoryId, byUid, date, note
+pockets/{pocketId}/expenses/{id}     currency, amountMinor, name, categoryId, byUid, date, note, tag, recurringId, receipt
+pockets/{pocketId}/recurring/{id}    the expense template, day of the month, nextDate
+pockets/{pocketId}/receipts/{id}     JPEG (under 900 KB) for the expense with the same id
 invites/{code}                       pocketId, createdBy, createdAt, usedByUid
 ```
 

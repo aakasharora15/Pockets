@@ -8,7 +8,9 @@ const listeners = new Set<(n: number) => void>();
 export function trackExpenseWrite(p: Promise<unknown>): void {
   pending++;
   emit();
-  p.finally(() => {
+  p.catch(() => {
+    /* reported by whoever made the write */
+  }).finally(() => {
     pending = Math.max(0, pending - 1);
     emit();
   });

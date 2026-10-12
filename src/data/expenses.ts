@@ -4,14 +4,14 @@ import {
   getDocs,
   orderBy,
   query,
-  serverTimestamp,
   where,
   writeBatch,
 } from 'firebase/firestore';
-import { db } from '../firebase';
+import { auth, db } from '../firebase';
 import type { CurrencyCode } from '../lib/currencies';
+import { forgetExpense, saveExpenseDoc } from './outbox';
 import { commit } from './pockets';
-import { BATCH_LIMIT, expenseRef, expensesCol } from './refs';
+import { BATCH_LIMIT, expenseRef, expensesCol, receiptRef } from './refs';
 import type { Expense } from './types';
 
 export interface ExpenseInput {
@@ -23,9 +23,12 @@ export interface ExpenseInput {
   byInitials: string;
   date: string;
   note: string;
+  tag?: string;
+  recurringId?: string;
+  receipt?: boolean;
 }
 
-function clean(input: ExpenseInput) {
+export function cleanExpense(input: ExpenseInput): Record<string, unknown> {
   const data: Record<string, unknown> = {
     currency: input.currency,
     amountMinor: Math.round(input.amountMinor),
@@ -37,15 +40,27 @@ function clean(input: ExpenseInput) {
   };
   const note = input.note.trim();
   if (note) data.note = note.slice(0, 500);
+  const tag = cleanTag(input.tag ?? '');
+  if (tag) data.tag = tag;
+  if (input.recurringId) data.recurringId = input.recurringId;
+  if (input.receipt) data.receipt = true;
   return data;
 }
 
-export async function addExpense(pid: string, input: ExpenseInput): Promise<string> {
-  const ref = doc(expensesCol(pid));
-  const batch = writeBatch(db);
-  batch.set(ref, { ...clean(input), createdAt: serverTimestamp(), updatedAt: serverTimestamp() });
-  await commit(batch, { expense: true });
-  return ref.id;
+export function cleanTag(tag: string): string {
+  return tag.trim().replace(/\s+/g, ' ').slice(0, 40);
+}
+
+const me = () => auth.currentUser?.uid ?? '';
+
+/** A new expense id, so a receipt photo can be saved under it before or after the expense. */
+export function newExpenseId(pid: string): string {
+  return doc(expensesCol(pid)).id;
+}
+
+export async function addExpense(pid: string, input: ExpenseInput, id = newExpenseId(pid)): Promise<string> {
+  await saveExpenseDoc(me(), pid, id, cleanExpense(input), null);
+  return id;
 }
 
 /** Saves an edit. If the Pocket changed, the expense moves (create in the new one, delete the old). */
@@ -55,28 +70,40 @@ export async function saveExpenseEdit(
   toPid: string,
   input: ExpenseInput,
   editorUid: string,
-): Promise<void> {
-  const batch = writeBatch(db);
-  const data = { ...clean(input), editedByUid: editorUid, updatedAt: serverTimestamp() };
+): Promise<string> {
+  const data = { ...cleanExpense(input), editedByUid: editorUid };
   if (fromPid === toPid) {
     // Overwrite so a cleared note is removed; keep the original creation time.
-    batch.set(expenseRef(fromPid, original.id), { ...data, createdAt: original.createdAt ?? serverTimestamp() });
-  } else {
-    batch.set(doc(expensesCol(toPid)), { ...data, createdAt: original.createdAt ?? serverTimestamp() });
-    batch.delete(expenseRef(fromPid, original.id));
+    await saveExpenseDoc(me(), fromPid, original.id, data, original.createdAt);
+    return original.id;
   }
+  const id = newExpenseId(toPid);
+  await saveExpenseDoc(me(), toPid, id, data, original.createdAt);
+  await forgetExpense(fromPid, original.id);
+  const batch = writeBatch(db);
+  batch.delete(expenseRef(fromPid, original.id));
+  if (original.receipt) batch.delete(receiptRef(fromPid, original.id));
   await commit(batch, { expense: true });
+  return id;
 }
 
-export async function deleteExpense(pid: string, id: string): Promise<void> {
+export async function deleteExpense(pid: string, id: string, hasReceipt = false): Promise<void> {
+  await forgetExpense(pid, id);
   const batch = writeBatch(db);
   batch.delete(expenseRef(pid, id));
+  if (hasReceipt) batch.delete(receiptRef(pid, id));
   await commit(batch, { expense: true });
 }
 
 export async function countInCategory(pid: string, categoryId: string): Promise<number> {
   const snap = await getCountFromServer(query(expensesCol(pid), where('categoryId', '==', categoryId)));
   return snap.data().count;
+}
+
+/** Expenses dated within [from, to), oldest first. */
+export async function expensesBetween(pid: string, from: string, to: string): Promise<Expense[]> {
+  const snap = await getDocs(query(expensesCol(pid), where('date', '>=', from), where('date', '<', to), orderBy('date')));
+  return snap.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Expense, 'id'>) }));
 }
 
 export async function allExpenses(pid: string): Promise<Expense[]> {

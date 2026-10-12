@@ -437,6 +437,29 @@
   color: var(--text2);
   white-space: nowrap;
 }
+.ex-meta-text {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ex-tag {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  padding: 1px 7px;
+  border-radius: 6px;
+  background: var(--tag-bg);
+  color: rgba(235, 240, 250, 0.8);
+  font-size: 12px;
+}
+.ex-sync {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--warn);
+}
 .ex-amt {
   font-size: 20px;
   font-weight: 600;
@@ -1021,4 +1044,32 @@
 }
 .skel-list .cat-tile {
   background: rgba(255, 255, 255, 0.08);
+}
+
+/* ---------- Switch (design toggle rows) ---------- */
+.switch {
+  position: relative;
+  width: 51px;
+  height: 31px;
+  border-radius: 16px;
+  background: rgba(120, 120, 128, 0.32);
+  transition: background 0.3s;
+  flex: none;
+}
+.switch.on {
+  background: #34c759;
+}
+.switch-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15), 0 1px 1px rgba(0, 0, 0, 0.16);
+  transition: left 0.25s;
+}
+.switch.on .switch-knob {
+  left: 22px;
 }

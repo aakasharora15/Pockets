@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Category, Expense } from '../data/types';
 import { OTHER_ID } from '../lib/categories';
 import { longDate } from '../lib/dates';
@@ -14,11 +14,14 @@ interface RowProps {
   categories: Category[];
   first: boolean;
   onOpen: () => void;
+  /** Hide the tag chip (on the tag's own page). */
+  hideTag?: boolean;
 }
 
 /** One expense row: neutral icon tile, name, date, amount (design rows in Recent / Transactions / Calendar). */
-export function ExpenseRow({ expense, categories, first, onOpen }: RowProps) {
+export function ExpenseRow({ expense, categories, first, onOpen, hideTag }: RowProps) {
   const cat = categoryOf(categories, expense.categoryId);
+  const waiting = useLasting(!!expense.pending, 1500);
   return (
     <button className="ex-row press-row" onClick={onOpen}>
       <div className="cat-tile">
@@ -29,12 +32,38 @@ export function ExpenseRow({ expense, categories, first, onOpen }: RowProps) {
           <span className="ex-name">{expense.name || cat?.name || 'Expense'}</span>
           <div className="ex-meta">
             <span>{longDate(expense.date)}</span>
+            {waiting ? (
+              <span className="ex-sync">
+                <Icon name="cloud-arrow-up" weight="bold" size={13} />
+                Waiting to sync
+              </span>
+            ) : (
+              <>
+                {expense.recurringId && <Icon name="repeat" size={13} label="Repeats monthly" />}
+                {expense.receipt && <Icon name="receipt" size={13} label="Receipt photo" />}
+                {expense.tag && !hideTag && <span className="ex-tag">{expense.tag}</span>}
+              </>
+            )}
           </div>
         </div>
         <span className="ex-amt num">{formatMoney(expense.amountMinor, expense.currency)}</span>
       </div>
     </button>
   );
+}
+
+/** True once `on` has stayed true for `ms` (so a normal save doesn't flash "Waiting to sync"). */
+function useLasting(on: boolean, ms: number): boolean {
+  const [lasting, setLasting] = useState(false);
+  useEffect(() => {
+    if (!on) {
+      setLasting(false);
+      return;
+    }
+    const t = window.setTimeout(() => setLasting(true), navigator.onLine ? ms : 0);
+    return () => window.clearTimeout(t);
+  }, [on, ms]);
+  return lasting;
 }
 
 const ACTIONS_W = 148;

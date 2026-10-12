@@ -6,6 +6,7 @@ import {
 } from '@firebase/rules-unit-testing';
 import {
   arrayUnion,
+  Bytes,
   collection,
   collectionGroup,
   deleteDoc,
@@ -242,6 +243,59 @@ describe('expenses', () => {
     await assertFails(setDoc(doc(db, 'pockets', HOME, 'expenses', 'x2'), expense({ amountMinor: 0 })));
     await assertFails(setDoc(doc(db, 'pockets', HOME, 'expenses', 'x3'), expense({ currency: 'AED' })));
     await assertFails(setDoc(doc(db, 'pockets', HOME, 'expenses', 'x4'), expense({ date: '18/09/2026' })));
+  });
+});
+
+describe('tags, recurring and receipts', () => {
+  it('expenses can carry a tag, a recurring link and a receipt flag', async () => {
+    const db = as(MEMBER);
+    await assertSucceeds(setDoc(doc(db, 'pockets', HOME, 'expenses', 't1'), expense({ tag: 'India Dec 2026', recurringId: 'r1', receipt: true })));
+    await assertFails(setDoc(doc(db, 'pockets', HOME, 'expenses', 't2'), expense({ tag: '' })));
+    await assertFails(setDoc(doc(db, 'pockets', HOME, 'expenses', 't3'), expense({ tag: 'x'.repeat(41) })));
+    await assertFails(setDoc(doc(db, 'pockets', HOME, 'expenses', 't4'), expense({ receipt: 'yes' })));
+  });
+
+  it('any member can add tags to the Pocket', async () => {
+    await assertSucceeds(updateDoc(doc(as(MEMBER), 'pockets', HOME), { tags: arrayUnion('India Dec 2026') }));
+    await assertFails(updateDoc(doc(as(STRANGER), 'pockets', HOME), { tags: arrayUnion('Nope') }));
+  });
+
+  const rule = (over: Record<string, unknown> = {}) => ({
+    currency: 'GBP', amountMinor: 120000, name: 'Rent', categoryId: 'other', byUid: OWNER, byInitials: 'PS',
+    day: 1, nextDate: '2026-11-01', createdByUid: OWNER, createdAt: Timestamp.now(), updatedAt: Timestamp.now(), ...over,
+  });
+
+  it('members can create, change and stop recurring expenses', async () => {
+    const db = as(MEMBER);
+    await assertSucceeds(setDoc(doc(db, 'pockets', HOME, 'recurring', 'r1'), rule()));
+    await assertSucceeds(updateDoc(doc(db, 'pockets', HOME, 'recurring', 'r1'), { nextDate: '2026-12-01' }));
+    await assertSucceeds(getDocs(collection(db, 'pockets', HOME, 'recurring')));
+    await assertSucceeds(deleteDoc(doc(db, 'pockets', HOME, 'recurring', 'r1')));
+  });
+
+  it('recurring expenses are checked like expenses', async () => {
+    const db = as(OWNER);
+    await assertFails(setDoc(doc(db, 'pockets', HOME, 'recurring', 'x1'), rule({ day: 32 })));
+    await assertFails(setDoc(doc(db, 'pockets', HOME, 'recurring', 'x2'), rule({ amountMinor: 0 })));
+    await assertFails(setDoc(doc(db, 'pockets', HOME, 'recurring', 'x3'), rule({ nextDate: 'soon' })));
+    await assertFails(setDoc(doc(as(STRANGER), 'pockets', HOME, 'recurring', 'x4'), rule()));
+    await assertFails(getDocs(collection(as(STRANGER), 'pockets', HOME, 'recurring')));
+  });
+
+  const receipt = (size: number) => ({
+    data: Bytes.fromUint8Array(new Uint8Array(size)), type: 'image/jpeg', width: 800, height: 1200, byUid: MEMBER, createdAt: Timestamp.now(),
+  });
+
+  it('members can attach a receipt photo; others cannot see it', async () => {
+    await assertSucceeds(setDoc(doc(as(MEMBER), 'pockets', HOME, 'receipts', 'e1'), receipt(200000)));
+    await assertSucceeds(getDoc(doc(as(OWNER), 'pockets', HOME, 'receipts', 'e1')));
+    await assertFails(getDoc(doc(as(STRANGER), 'pockets', HOME, 'receipts', 'e1')));
+    await assertFails(setDoc(doc(as(STRANGER), 'pockets', HOME, 'receipts', 'e2'), receipt(1000)));
+  });
+
+  it('receipt photos must be small JPEGs', async () => {
+    await assertFails(setDoc(doc(as(MEMBER), 'pockets', HOME, 'receipts', 'e1'), receipt(950000)));
+    await assertFails(setDoc(doc(as(MEMBER), 'pockets', HOME, 'receipts', 'e1'), { ...receipt(1000), type: 'image/png' }));
   });
 });
 
