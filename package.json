@@ -1,7 +1,7 @@
 {
   "name": "spendr",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Open-source expense tracker for you and the people you share costs with.",
   "license": "MIT",
   "type": "module",
