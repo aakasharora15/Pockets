@@ -15,7 +15,7 @@
 - **Home at a glance.** Month totals with budget bars, weekly spend, where it went, who spent what, and recent expenses.
 - **Fast entry.** Amount, category, done. Optional name, date and note.
 - **Transactions and Calendar.** Search, filter by person or currency, swipe to edit or delete. Month grid with category dots.
-- **Invites.** By link, 6-character code or QR code. Single use, 48 hours.
+- **Invites.** By link, 6-character code, QR code or email. Single use, 48 hours. An emailed invite only works for that address.
 - **Private by default.** A 4-digit app PIN on each device. Firestore security rules keep each Pocket to its members.
 - **Repeating expenses.** Mark rent, Netflix or the energy bill as repeating monthly and Spendr logs it on the day.
 - **Tags and trips.** Tag expenses (say, a trip) and see the tag's totals per currency, by category.
@@ -23,6 +23,7 @@
 - **Combined total, if you want one.** An optional card converts everything into one currency, each expense at its own day's exchange rate. The separate totals stay as they are.
 - **Offline.** Add expenses with no signal. They're kept on the phone, marked "Waiting to sync", and upload when you're back.
 - **Export and backup.** CSV of a Pocket, a month or a tag. A backup file of everything, and restore from it.
+- **Dark or light.** Dark by default, with a light theme or Auto to follow the phone.
 
 ## Run your own Spendr
 
@@ -117,10 +118,10 @@ pockets/{pocketId}/categories/{id}   name, icon, colour, order, system
 pockets/{pocketId}/expenses/{id}     currency, amountMinor, name, categoryId, byUid, date, note, tag, recurringId, receipt
 pockets/{pocketId}/recurring/{id}    the expense template, day of the month, nextDate
 pockets/{pocketId}/receipts/{id}     JPEG (under 900 KB) for the expense with the same id
-invites/{code}                       pocketId, createdBy, createdAt, usedByUid
+invites/{code}                       pocketId, createdBy, createdAt, usedByUid, email (emailed invites)
 ```
 
-Only members can read or write a Pocket. Only the owner can rename it, change its currencies, remove people or delete it. Joining is a single batch that marks an invite used and adds the member; the rules check the invite is for that Pocket, unused and less than 48 hours old by the server's clock. The app PIN never leaves the device: it is hashed with PBKDF2 and kept in IndexedDB.
+Only members can read or write a Pocket. Only the owner can rename it, change its currencies, remove people or delete it. Joining is a single batch that marks an invite used and adds the member; the rules check the invite is for that Pocket, unused and less than 48 hours old by the server's clock, and for an emailed invite that the joiner is signed in with that address. The app PIN never leaves the device: it is hashed with PBKDF2 and kept in IndexedDB.
 
 ## Licence
 

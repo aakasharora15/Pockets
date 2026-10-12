@@ -10,11 +10,15 @@
 
 - **Swipe to delete** on Home, Calendar, Transactions and tag pages. Swipe left for Edit and Delete, or swipe across to delete straight away.
 - **New categories:** Amazon, Rent, Council tax, Water bill and Household. Existing Pockets get them once.
+- **Light theme.** Settings › Appearance › Theme: Dark, Light or Auto (follows the phone).
+- **Invite by email.** Type an address in the invite sheet and Mail opens with the link and code. The invite only works for an account with that email.
+- **Keypad feedback.** Keys light up while pressed and give a light tap (Android, and iPhone on iOS 18 or later). A wrong PIN gives a double tap.
 
 ### Fixed
 
 - The category and Pocket menus no longer show the rows behind them.
 - Digits typed quickly while setting a PIN are no longer lost.
+- Settings showed version 1.0 whatever the version.
 
 ## 1.1.0 (2026-10-12)
 
