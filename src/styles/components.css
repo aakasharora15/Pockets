@@ -1193,3 +1193,26 @@
     display: none;
   }
 }
+
+/* Amount keypad: smaller keys on shorter screens so Save expense stays on screen. */
+@media (max-height: 760px) {
+  .amount-pad {
+    grid-template-columns: repeat(3, 66px);
+  }
+  .amount-key {
+    width: 66px;
+    height: 66px;
+    font-size: 30px;
+  }
+}
+@media (max-height: 700px) {
+  .amount-pad {
+    grid-template-columns: repeat(3, 60px);
+    row-gap: 6px;
+  }
+  .amount-key {
+    width: 60px;
+    height: 60px;
+    font-size: 28px;
+  }
+}
