@@ -12,6 +12,7 @@
 - **New categories:** Amazon, Rent, Council tax, Water bill and Household. Existing Pockets get them once.
 - **Light theme.** Settings › Appearance › Theme: Dark, Light or Auto (follows the phone).
 - **Invite by email.** Type an address in the invite sheet and Mail opens with the link and code. The invite only works for an account with that email.
+- **Sync status** in Settings: the account you're signed in to, when this phone last synced and anything waiting to upload, with Sync now.
 - **Keypad feedback.** Keys light up while pressed and give a light tap (Android, and iPhone on iOS 18 or later). A wrong PIN gives a double tap.
 
 ### Fixed
@@ -19,6 +20,9 @@
 - The category and Pocket menus no longer show the rows behind them.
 - Digits typed quickly while setting a PIN are no longer lost.
 - Settings showed version 1.0 whatever the version.
+- **Every phone signed in to an account opens on the same Pocket.** The open Pocket was remembered per phone, so a second phone started on Personal and expenses logged in a shared Pocket looked missing.
+- An expense the server refused is no longer moved to Personal unless you were really removed from its Pocket; it stays put and Settings › Sync status shows the error.
+- Lists that lost their live connection now reconnect when the phone is back online or the app returns to the front.
 
 ## 1.1.0 (2026-10-12)
 

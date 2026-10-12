@@ -418,4 +418,10 @@ describe('users', () => {
     await assertFails(getDoc(doc(as(OWNER), 'users', STRANGER)));
     await assertFails(updateDoc(doc(as(OWNER), 'users', STRANGER), { name: 'Hacked' }));
   });
+
+  it('a user can save the Pocket they last opened', async () => {
+    await assertSucceeds(updateDoc(doc(as(STRANGER), 'users', STRANGER), { lastPocketId: 'personal_trina' }));
+    await assertFails(updateDoc(doc(as(STRANGER), 'users', STRANGER), { lastPocketId: 42 }));
+    await assertFails(updateDoc(doc(as(STRANGER), 'users', STRANGER), { somethingElse: true }));
+  });
 });

@@ -1,9 +1,9 @@
-import { Bytes, doc, serverTimestamp, Timestamp, writeBatch, type FirestoreError } from 'firebase/firestore';
+import { Bytes, doc, getDocFromServer, serverTimestamp, Timestamp, writeBatch, type FirestoreError } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { db } from '../firebase';
 import { idbAll, idbDelete, idbPut } from '../lib/idb';
 import { trackExpenseWrite } from './pending';
-import { expenseRef, expensesCol, personalPocketId, receiptRef } from './refs';
+import { expenseRef, expensesCol, memberRef, personalPocketId, receiptRef } from './refs';
 
 /**
  * Outbox: every expense (and receipt photo) the app saves is written here first, in IndexedDB,
@@ -213,10 +213,11 @@ export async function replayOutbox(uid: string): Promise<void> {
       } catch (err) {
         const code = (err as FirestoreError).code;
         const personal = personalPocketId(uid);
-        if (code === 'permission-denied' && e.pid !== personal) {
+        if (code === 'permission-denied' && e.pid !== personal && !(await stillMember(e.pid, uid))) {
           // No longer in that Pocket: keep the expense in Personal rather than lose it.
           if (await moveToPersonal(e, personal)) moved += e.kind === 'expense' ? 1 : 0;
         } else {
+          // Anything else stays where it is, with the error, and is retried; Sync status shows it.
           await store({ ...e, attempts: e.attempts + 1, error: code ?? String(err) });
         }
       } finally {
@@ -227,6 +228,16 @@ export async function replayOutbox(uid: string): Promise<void> {
     replaying = false;
   }
   if (moved) movedListener?.(moved);
+}
+
+/** Asks the server (not the cache) whether this account is still in the Pocket. Unsure → yes. */
+async function stillMember(pid: string, uid: string): Promise<boolean> {
+  try {
+    return (await getDocFromServer(memberRef(pid, uid))).exists();
+  } catch (err) {
+    // Refused to read the membership: the Pocket is gone or we were removed.
+    return (err as FirestoreError).code !== 'permission-denied';
+  }
 }
 
 const movedIds = new Map<string, string>();

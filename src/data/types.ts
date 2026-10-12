@@ -7,6 +7,8 @@ export interface UserProfile {
   email: string;
   createdAt: Timestamp | null;
   pocketIds: string[];
+  /** The Pocket last opened on any phone; new sessions open on it. */
+  lastPocketId?: string;
 }
 
 export type PocketType = 'personal' | 'shared';

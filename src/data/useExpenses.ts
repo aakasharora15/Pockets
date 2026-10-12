@@ -4,6 +4,7 @@ import { monthEnd, monthStart } from '../lib/dates';
 import { listen } from './listen';
 import { useOutbox, type ExpenseEntry } from './outbox';
 import { expensesCol } from './refs';
+import { markServerSync } from './syncStatus';
 import type { Expense } from './types';
 
 export interface ExpensesState {
@@ -37,6 +38,7 @@ function useExpenseQuery(pid: string | undefined, key: string, build: (pid: stri
     return listen<QuerySnapshot>(
       (next, fail) => onSnapshot(q, { includeMetadataChanges: true }, next, fail),
       (snap) => {
+        if (!snap.metadata.fromCache) markServerSync();
         const list = snap.docs.map((d) => ({
           id: d.id,
           ...(d.data({ serverTimestamps: 'estimate' }) as Omit<Expense, 'id'>),

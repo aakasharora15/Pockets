@@ -1,9 +1,10 @@
-import { collectionGroup, onSnapshot, orderBy, query, where, type DocumentSnapshot, type QuerySnapshot } from 'firebase/firestore';
+import { collectionGroup, onSnapshot, orderBy, query, updateDoc, where, type DocumentSnapshot, type QuerySnapshot } from 'firebase/firestore';
 import { createContext, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
-import { categoriesCol, membersCol, personalPocketId, pocketRef } from '../data/refs';
+import { categoriesCol, membersCol, personalPocketId, pocketRef, userRef } from '../data/refs';
 import type { Category, Member, Pocket, PocketWithMembers } from '../data/types';
 import { db } from '../firebase';
 import { listen } from '../data/listen';
+import { markServerSync } from '../data/syncStatus';
 import { useSession } from './session';
 
 interface PocketsState {
@@ -48,10 +49,14 @@ export function PocketsProvider({ children }: { children: ReactNode }) {
     setMembers({});
     setCats({});
     if (!uid || !profile) return;
-    setCurrentId(readCurrent(uid));
+    // The account's last Pocket (from whichever phone used it last), else this phone's.
+    setCurrentId(profile.lastPocketId ?? readCurrent(uid));
     return onSnapshot(
       query(collectionGroup(db, 'members'), where('uid', '==', uid)),
-      (snap) => setIds(snap.docs.map((d) => d.ref.parent.parent!.id)),
+      (snap) => {
+        if (!snap.metadata.fromCache) markServerSync();
+        setIds(snap.docs.map((d) => d.ref.parent.parent!.id));
+      },
       () => setError(true),
     );
   }, [uid, !!profile]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -120,6 +125,8 @@ export function PocketsProvider({ children }: { children: ReactNode }) {
       } catch {
         /* storage unavailable */
       }
+      // Saved on the account too, so the next phone to open Spendr shows the same Pocket.
+      if (profile?.lastPocketId !== id) updateDoc(userRef(uid), { lastPocketId: id }).catch(() => {});
     }
   };
 

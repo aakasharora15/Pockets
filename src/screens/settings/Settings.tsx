@@ -5,6 +5,8 @@ import { Group, SettingsRow } from '../../components/Rows';
 import { ActionSheet, Sheet, SheetHeader } from '../../components/Sheet';
 import { createBackup, restoreBackup } from '../../data/backup';
 import { allExpenses, expensesBetween } from '../../data/expenses';
+import { replayOutbox, useOutbox } from '../../data/outbox';
+import { lastServerSync } from '../../data/syncStatus';
 import { useRecurring } from '../../data/recurring';
 import { taggedExpenses } from '../../data/tags';
 import type { Expense } from '../../data/types';
@@ -60,10 +62,11 @@ export function Settings() {
   const pocket = useCurrentPocket();
   const { categories, pockets } = usePockets();
   const { user, profile } = useMe();
-  const { glass, setGlass, theme, setTheme, showToast, month, combinedFor, setCombined } = useUi();
+  const { glass, setGlass, theme, setTheme, showToast, month, combinedFor, setCombined, online } = useUi();
+  const waiting = useOutbox().filter((e) => e.uid === user.uid);
   const { lockNow } = useLock();
   const navigate = useNavigate();
-  const [sheet, setSheet] = useState<'install' | 'about' | 'export' | 'export-tag' | 'export-month' | 'backup' | 'combined' | null>(null);
+  const [sheet, setSheet] = useState<'install' | 'about' | 'sync' | 'export' | 'export-tag' | 'export-month' | 'backup' | 'combined' | null>(null);
   const [installPrompt, setInstallPrompt] = useState<InstallPrompt | null>(null);
   const [exporting, setExporting] = useState(false);
   const [exportMonth, setExportMonth] = useState(month);
@@ -206,6 +209,12 @@ export function Settings() {
             value={providerLabel(user.providerData.map((p) => p.providerId))}
             onClick={() => navigate('/settings/account')}
           />
+          <SettingsRow
+            icon="cloud-arrow-up" tint={TINT.neutral}
+            label="Sync status"
+            value={!online ? 'Offline' : waiting.length ? `${waiting.length} waiting` : 'Up to date'}
+            onClick={() => setSheet('sync')}
+          />
           <SettingsRow icon="lock-simple" tint={TINT.neutral} label="Lock app now" chevron={false} onClick={lockNow} />
         </Group>
         <Group title="Appearance">
@@ -341,6 +350,31 @@ export function Settings() {
           e.target.value = '';
         }}
       />
+      {sheet === 'sync' && (
+        <ActionSheet
+          title="Sync status"
+          message={syncSummary({
+            email: user.email ?? profile.name,
+            provider: providerLabel(user.providerData.map((p) => p.providerId)),
+            uid: user.uid,
+            pocket: pocket.name,
+            online,
+            waiting: waiting.filter((e) => e.kind === 'expense').length,
+            error: waiting.find((e) => e.error)?.error,
+          })}
+          actions={[
+            {
+              label: 'Sync now',
+              onClick: async () => {
+                setSheet(null);
+                await replayOutbox(user.uid);
+                showToast(navigator.onLine ? 'Synced' : "You're offline. Spendr will sync when you're back");
+              },
+            },
+          ]}
+          onCancel={() => setSheet(null)}
+        />
+      )}
       {sheet === 'about' && (
         <ActionSheet
           title={`Spendr · Version ${__APP_VERSION__}`}
@@ -351,6 +385,22 @@ export function Settings() {
       )}
     </div>
   );
+}
+
+/** What Sync status shows. Compare it between phones: the account ID must be the same. */
+function syncSummary(s: { email: string; provider: string; uid: string; pocket: string; online: boolean; waiting: number; error?: string }): string {
+  const last = lastServerSync();
+  const lines = [
+    `Signed in as ${s.email} (${s.provider}). Account ID ${s.uid.slice(0, 6).toUpperCase()}.`,
+    `Showing ${s.pocket}.`,
+    !s.online
+      ? 'Offline. New expenses are kept on this phone until you reconnect.'
+      : last
+        ? `Last synced at ${new Date(last).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}.`
+        : 'Not synced with the server yet in this session.',
+    s.waiting ? `${s.waiting} ${s.waiting === 1 ? 'expense' : 'expenses'} waiting to upload${s.error ? ` (last error: ${s.error})` : ''}.` : 'Nothing waiting to upload.',
+  ];
+  return lines.join(' ');
 }
 
 function todayKeyOf(iso: string): string {
