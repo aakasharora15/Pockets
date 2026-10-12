@@ -96,67 +96,71 @@ export function AuthForm({ mode }: { mode: Mode }) {
   };
 
   return (
-    <form className="screen" onSubmit={submit} noValidate>
+    <form className="screen flow" onSubmit={submit} noValidate>
       <BackButton to="/welcome" />
-      <div className="flow-head">
-        <span className="flow-title">{copy.title}</span>
-        <span className="flow-sub">{copy.sub}</span>
-      </div>
-      <div className="auth-stack" style={{ top: mode === 'signup' ? 250 : 230 }}>
-        {FEATURES.appleSignIn && (
-          <button type="button" className="white-btn press">
-            <Icon name="apple-logo" weight="fill" size={20} />
-            Continue with Apple
-          </button>
-        )}
-        <button type="button" className="glass-btn glass press" onClick={google}>
-          <Icon name="google-logo" weight="bold" size={19} />
-          Continue with Google
-        </button>
-        <div className="or-row">
-          <div className="or-line" />
-          or
-          <div className="or-line" />
+      <div className="flow-body">
+        <div className="flow-head" style={{ minHeight: mode === 'signup' ? 120 : 100 }}>
+          <span className="flow-title">{copy.title}</span>
+          <span className="flow-sub">{copy.sub}</span>
         </div>
-        <label className="field">
-          <Icon name="envelope-simple" size={19} color="var(--text2)" />
-          <input
-            type="email"
-            inputMode="email"
-            autoComplete="email"
-            placeholder="name@domain.com"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            aria-label="Email"
-          />
-        </label>
-        <label className="field">
-          <Icon name="lock-simple" size={19} color="var(--text2)" />
-          <input
-            type="password"
-            autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            aria-label="Password"
-          />
-        </label>
-        {mode === 'signup' && !error && <span className="helper">At least 8 characters.</span>}
-        {mode === 'login' && (
-          <button type="button" className="forgot press" onClick={forgot}>
-            Forgot password?
+        <div className="auth-stack">
+          {FEATURES.appleSignIn && (
+            <button type="button" className="white-btn press">
+              <Icon name="apple-logo" weight="fill" size={20} />
+              Continue with Apple
+            </button>
+          )}
+          <button type="button" className="glass-btn glass press" onClick={google}>
+            <Icon name="google-logo" weight="bold" size={19} />
+            Continue with Google
           </button>
-        )}
-        {error && <span className="helper error">{error}</span>}
-        {info && <span className="helper">{info}</span>}
+          <div className="or-row">
+            <div className="or-line" />
+            or
+            <div className="or-line" />
+          </div>
+          <label className="field">
+            <Icon name="envelope-simple" size={19} color="var(--text2)" />
+            <input
+              type="email"
+              inputMode="email"
+              autoComplete="email"
+              placeholder="name@domain.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              aria-label="Email"
+            />
+          </label>
+          <label className="field">
+            <Icon name="lock-simple" size={19} color="var(--text2)" />
+            <input
+              type="password"
+              autoComplete={mode === 'signup' ? 'new-password' : 'current-password'}
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              aria-label="Password"
+            />
+          </label>
+          {mode === 'signup' && !error && <span className="helper">At least 8 characters.</span>}
+          {mode === 'login' && (
+            <button type="button" className="forgot press" onClick={forgot}>
+              Forgot password?
+            </button>
+          )}
+          {error && <span className="helper error">{error}</span>}
+          {info && <span className="helper">{info}</span>}
+        </div>
       </div>
-      {mode === 'signup' && <div className="terms">By continuing you agree to the Terms and Privacy Policy.</div>}
-      <button type="submit" className="primary-btn bottom-primary raised press" disabled={busy}>
-        {copy.cta}
-      </button>
-      <button type="button" className="bottom-link press" onClick={() => navigate(copy.switchTo, { replace: true })}>
-        {copy.switchText}&nbsp;<b>{copy.switchCta}</b>
-      </button>
+      <div className="flow-foot">
+        {mode === 'signup' && <div className="terms">By continuing you agree to the Terms and Privacy Policy.</div>}
+        <button type="submit" className="primary-btn bottom-primary press" disabled={busy}>
+          {copy.cta}
+        </button>
+        <button type="button" className="bottom-link press" onClick={() => navigate(copy.switchTo, { replace: true })}>
+          {copy.switchText}&nbsp;<b>{copy.switchCta}</b>
+        </button>
+      </div>
     </form>
   );
 }
