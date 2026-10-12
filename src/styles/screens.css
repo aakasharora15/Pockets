@@ -1052,6 +1052,14 @@
   position: fixed;
   inset: 0;
   z-index: 1;
+  /* Dim what's behind an open menu, like an iOS context menu. */
+  background: rgba(0, 0, 0, 0.32);
+  animation: fade-in 0.2s ease;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
 }
 .glass-menu {
   position: absolute;
@@ -1061,7 +1069,8 @@
   overflow-y: auto;
   scrollbar-width: none;
   border-radius: 24px;
-  background: rgba(58, 58, 62, 0.78);
+  /* Nearly solid, so rows behind never show through (iOS Safari doesn't always blur inside a sheet). */
+  background: rgba(44, 44, 48, 0.98);
   border: 1px solid rgba(255, 255, 255, 0.14);
   backdrop-filter: blur(40px) saturate(180%);
   -webkit-backdrop-filter: blur(40px) saturate(180%);
