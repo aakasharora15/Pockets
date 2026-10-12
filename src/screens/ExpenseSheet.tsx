@@ -222,7 +222,7 @@ export function ExpenseSheet({ request }: { request: ExpenseSheetRequest }) {
     <>
       <Sheet
         onClose={closeExpenseSheet}
-        top={detent === 'medium' ? 'max(58px, calc(100% - 672px))' : 58}
+        top={detent === 'medium' ? 'max(calc(var(--top) + 4px), calc(100% - 672px))' : 'calc(var(--top) + 4px)'}
         className={`expense-sheet ${detent}`}
         label={editing ? 'Edit expense' : 'New expense'}
         onDrag={(dir) => (dir === 'up' ? setDetent('large') : detent === 'large' && !editing ? setDetent('medium') : closeExpenseSheet())}

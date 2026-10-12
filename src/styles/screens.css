@@ -1,6 +1,6 @@
 /* ---------- 01 Welcome ---------- */
 .flow-body.welcome {
-  padding-top: 66px;
+  padding-top: calc(var(--top) + 12px);
   /* Room for the tilted cards' corners. */
   padding-bottom: 8px;
 }
@@ -56,7 +56,7 @@
 }
 .welcome-card {
   height: 76px;
-  border-radius: 28px;
+  border-radius: var(--r-card);
   background: var(--card);
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
   display: flex;
@@ -68,7 +68,7 @@
 .welcome-tile {
   width: 40px;
   height: 40px;
-  border-radius: 11px;
+  border-radius: 10px;
   background: var(--tile);
   color: #ffffff;
   display: flex;
@@ -148,7 +148,7 @@
 /* ---------- Setup ---------- */
 .setup-progress {
   position: absolute;
-  top: 78px;
+  top: calc(var(--top) + 24px);
   left: 76px;
   right: 24px;
   display: flex;
@@ -166,7 +166,7 @@
 }
 .setup-body {
   position: absolute;
-  top: 250px;
+  top: calc(var(--top) + 196px);
   left: 24px;
   right: 24px;
   display: flex;
@@ -175,7 +175,7 @@
 }
 .shown-as {
   background: var(--card);
-  border-radius: 20px;
+  border-radius: var(--r-card);
   padding: 14px 16px;
   display: flex;
   align-items: center;
@@ -196,7 +196,7 @@
 }
 .setup-list {
   position: absolute;
-  inset: 250px 20px 120px;
+  inset: calc(var(--top) + 196px) 20px 120px;
   overflow-y: auto;
   scrollbar-width: none;
 }
@@ -223,7 +223,7 @@
 }
 .choice-stack {
   position: absolute;
-  top: 270px;
+  top: calc(var(--top) + 216px);
   left: 24px;
   right: 24px;
   display: flex;
@@ -246,7 +246,7 @@
 .choice-tile {
   width: 44px;
   height: 44px;
-  border-radius: 13px;
+  border-radius: 12px;
   background: var(--tile);
   display: flex;
   align-items: center;
@@ -274,7 +274,7 @@
 /* ---------- 01e / 02 PIN ---------- */
 .pin-head {
   position: absolute;
-  top: 168px;
+  top: calc(var(--top) + 114px);
   left: 24px;
   right: 24px;
   display: flex;
@@ -297,7 +297,7 @@
 }
 .unlock-logo {
   position: absolute;
-  top: 66px;
+  top: calc(var(--top) + 12px);
   left: 24px;
 }
 .pin-forgot {
@@ -365,7 +365,7 @@
   flex: none;
   scroll-snap-align: start;
   background: var(--card);
-  border-radius: 28px;
+  border-radius: var(--r-card);
   padding: 18px 20px 20px;
   display: flex;
   flex-direction: column;
@@ -679,7 +679,7 @@
 /* ---------- 24 Pocket switcher ---------- */
 .switcher {
   position: absolute;
-  top: 116px;
+  top: calc(var(--top) + 58px);
   left: 40px;
   right: 40px;
   z-index: 40;
@@ -742,7 +742,7 @@
 }
 .owner-note {
   background: rgba(255, 255, 255, 0.06);
-  border-radius: 20px;
+  border-radius: var(--r-card);
   padding: 14px 16px;
   display: flex;
   align-items: center;
@@ -783,7 +783,7 @@
   margin-top: 8px;
   width: 236px;
   height: 236px;
-  border-radius: 28px;
+  border-radius: var(--r-card);
   background: #ffffff;
   display: flex;
   align-items: center;
@@ -802,7 +802,7 @@
 }
 .code-card {
   background: var(--card);
-  border-radius: 20px;
+  border-radius: var(--r-card);
   padding: 14px 16px 14px 20px;
   display: flex;
   align-items: center;
@@ -947,7 +947,7 @@
   z-index: 5;
 }
 .details {
-  border-radius: 20px;
+  border-radius: var(--r-card);
   background: var(--fill);
   overflow: hidden;
 }
@@ -1068,7 +1068,7 @@
   max-height: 330px;
   overflow-y: auto;
   scrollbar-width: none;
-  border-radius: 24px;
+  border-radius: var(--r-card);
   /* Nearly solid, so rows behind never show through (iOS Safari doesn't always blur inside a sheet). */
   background: rgba(44, 44, 48, 0.98);
   border: 1px solid rgba(255, 255, 255, 0.14);
@@ -1163,8 +1163,8 @@
   white-space: nowrap;
 }
 .tx-search {
-  height: 44px;
-  border-radius: 22px;
+  height: 40px;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -1357,7 +1357,7 @@
 
 /* ---------- 19 Settings ---------- */
 .settings-scroll {
-  padding-top: 66px;
+  padding-top: calc(var(--top) + 12px);
   gap: 20px;
 }
 .settings-title {
@@ -1438,7 +1438,7 @@
 }
 .budget-field {
   height: 60px;
-  border-radius: 20px;
+  border-radius: var(--r-card);
   background: var(--fill);
   display: flex;
   align-items: center;
@@ -1640,11 +1640,11 @@
 
 /* ---------- 27 Join ---------- */
 .join-head {
-  top: 120px;
+  top: calc(var(--top) + 66px);
 }
 .join-body {
   position: absolute;
-  top: 220px;
+  top: calc(var(--top) + 166px);
   left: 24px;
   right: 24px;
   display: flex;
@@ -1691,7 +1691,7 @@
 }
 .join-card {
   background: var(--card);
-  border-radius: 28px;
+  border-radius: var(--r-card);
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -1803,12 +1803,12 @@
   background: #05080f;
   display: flex;
   flex-direction: column;
-  padding: 114px 20px 34px;
+  padding: calc(var(--top) + 56px) 20px 34px;
   gap: 16px;
 }
 .viewer-close {
   position: absolute;
-  top: 58px;
+  top: calc(var(--top) + 4px);
   right: 16px;
 }
 .viewer-photo {
@@ -1844,7 +1844,7 @@
 }
 .top-right {
   position: absolute;
-  top: 58px;
+  top: calc(var(--top) + 4px);
   right: 16px;
   z-index: 15;
 }

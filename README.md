@@ -87,7 +87,7 @@ The seed creates `prernaa@example.com` and `aakash@example.com`, both with passw
 
 - React, TypeScript and Vite, installable as a PWA (`vite-plugin-pwa`).
 - Firebase Auth (Google, email and password) and Firestore with offline persistence.
-- Plain CSS with design tokens in `src/styles/tokens.css`. One typeface, [Involve](https://github.com/StefanPeev/Involve), self-hosted. Icons from [Phosphor](https://phosphoricons.com).
+- Plain CSS with design tokens in `src/styles/tokens.css`. Apple's system font (San Francisco) on Apple devices, the platform font elsewhere. Icons from [Phosphor](https://phosphoricons.com).
 - Money is stored as integers in minor units (pence, paise, cents) and formatted with `Intl.NumberFormat`.
 - Offline: Firestore's offline persistence, plus an outbox in IndexedDB (`src/data/outbox.ts`) that keeps every expense until the server confirms it and re-sends anything left over.
 - Repeating expenses are logged by whichever phone opens the app first on or after the day, in a Firestore transaction, so a month is never logged twice. No server code.
@@ -126,4 +126,4 @@ Only members can read or write a Pocket. Only the owner can rename it, change it
 
 ## Licence
 
-Code: [MIT](LICENSE). The Involve typeface is © 2022 Involve Project Authors, under the [SIL Open Font Licence 1.1](public/fonts/OFL.txt).
+Code: [MIT](LICENSE).

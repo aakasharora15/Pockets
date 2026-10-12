@@ -33,7 +33,7 @@ html {
   text-size-adjust: 100%;
 }
 body {
-  font-family: Involve, -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: var(--font);
   -webkit-font-smoothing: antialiased;
   color: var(--text);
   background: #05080f;
@@ -65,7 +65,7 @@ textarea::placeholder {
   color: var(--text2);
 }
 .num {
-  font-family: Involve, sans-serif;
+  font-family: var(--font-num);
   font-variant-numeric: tabular-nums;
 }
 
@@ -115,7 +115,7 @@ textarea::placeholder {
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: none;
-  padding: 114px 20px 140px;
+  padding: calc(var(--top) + 56px) 20px 140px;
   display: flex;
   flex-direction: column;
   -webkit-overflow-scrolling: touch;
@@ -135,21 +135,28 @@ textarea::placeholder {
 .tx-chips {
   overscroll-behavior-x: contain;
 }
+/*
+ * Bar material behind the top buttons, as on iOS: invisible at the top of a page, it fades in once
+ * the content scrolls under it, so text never collides with the search button or Pocket pill.
+ */
 .fade-top {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 120px;
+  height: calc(var(--top) + 60px);
   z-index: 10;
   pointer-events: none;
-  background: linear-gradient(180deg, var(--edge-top) 35%, transparent);
-  -webkit-mask-image: linear-gradient(180deg, #000 50%, transparent);
-  mask-image: linear-gradient(180deg, #000 50%, transparent);
+  background: var(--edge-top);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  -webkit-mask-image: linear-gradient(180deg, #000 72%, transparent);
+  mask-image: linear-gradient(180deg, #000 72%, transparent);
+  opacity: 0;
+  transition: opacity 0.2s ease;
 }
-.fade-top.blur {
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+.screen.scrolled .fade-top {
+  opacity: 1;
 }
 .fade-bottom {
   position: absolute;

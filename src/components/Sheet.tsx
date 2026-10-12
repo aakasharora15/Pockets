@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 interface SheetProps {
   onClose: () => void;
-  /** Distance from the top of the screen (58 = large detent). */
+  /** Distance from the top of the screen (default: the large detent, just below the status bar). */
   top?: number | string;
   className?: string;
   children: ReactNode;
@@ -12,7 +12,7 @@ interface SheetProps {
 }
 
 /** Bottom sheet with backdrop (tap to close) and grabber. */
-export function Sheet({ onClose, top = 58, className = '', children, onDrag, label }: SheetProps) {
+export function Sheet({ onClose, top = 'calc(var(--top) + 4px)', className = '', children, onDrag, label }: SheetProps) {
   const start = useRef<number | null>(null);
   const [dy, setDy] = useState(0);
 
