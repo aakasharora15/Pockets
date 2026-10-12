@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Fades } from '../../components/Chrome';
-import { Group, SettingsRow } from '../../components/Rows';
+import { Group, SettingsMenuRow, SettingsRow } from '../../components/Rows';
 import { ActionSheet, Sheet, SheetHeader } from '../../components/Sheet';
 import { createBackup, restoreBackup } from '../../data/backup';
 import { allExpenses, expensesBetween } from '../../data/expenses';
@@ -55,7 +55,13 @@ const TINT = {
 const THEMES: [ThemeSetting, string][] = [
   ['dark', 'Dark'],
   ['light', 'Light'],
-  ['auto', 'Auto'],
+  ['auto', 'Automatic'],
+];
+
+const GLASSES: [GlassStyle, string][] = [
+  ['tinted', 'Tinted'],
+  ['classic', 'Classic'],
+  ['clear', 'Clear'],
 ];
 
 export function Settings() {
@@ -198,8 +204,8 @@ export function Settings() {
           <SettingsRow icon="repeat" tint={TINT.repeating} label="Repeating expenses" value={repeats.length || undefined} onClick={() => navigate('/settings/recurring')} />
         </Group>
         <Group>
-          <SettingsRow first icon="download-simple" tint={TINT.export} label="Export data (CSV)" onClick={() => setSheet('export')} />
-          <SettingsRow icon="clock-counter-clockwise" tint={TINT.backup} label="Back up and restore" onClick={() => setSheet('backup')} />
+          <SettingsRow first icon="tray-arrow-down" tint={TINT.export} label="Export data (CSV)" onClick={() => setSheet('export')} />
+          <SettingsRow icon="archive" tint={TINT.backup} label="Back up and restore" onClick={() => setSheet('backup')} />
         </Group>
         <Group title="Account">
           <SettingsRow
@@ -218,24 +224,8 @@ export function Settings() {
           <SettingsRow icon="lock-simple" tint={TINT.neutral} label="Lock app now" chevron={false} onClick={lockNow} />
         </Group>
         <Group title="Appearance">
-          <SettingsRow first icon="moon" tint={TINT.theme} label="Theme" chevron={false}>
-            <div className="glass-seg" role="radiogroup" aria-label="Theme">
-              {THEMES.map(([t, label]) => (
-                <button key={t} role="radio" aria-checked={theme === t} className={`glass-seg-item${theme === t ? ' on' : ''}`} onClick={() => setTheme(t)}>
-                  {label}
-                </button>
-              ))}
-            </div>
-          </SettingsRow>
-          <SettingsRow icon="drop-half" tint={TINT.glass} label="Glass" chevron={false}>
-            <div className="glass-seg" role="radiogroup" aria-label="Glass">
-              {(['tinted', 'classic', 'clear'] as GlassStyle[]).map((g) => (
-                <button key={g} role="radio" aria-checked={glass === g} className={`glass-seg-item${glass === g ? ' on' : ''}`} onClick={() => setGlass(g)}>
-                  {g[0].toUpperCase() + g.slice(1)}
-                </button>
-              ))}
-            </div>
-          </SettingsRow>
+          <SettingsMenuRow first icon="moon" tint={TINT.theme} label="Theme" value={theme} options={THEMES} onChange={setTheme} />
+          <SettingsMenuRow icon="drop-half" tint={TINT.glass} label="Glass" value={glass} options={GLASSES} onChange={setGlass} />
         </Group>
         <Group>
           {!standalone && <SettingsRow first icon="device-mobile" tint={TINT.neutral} label="Add to Home Screen" onClick={install} />}

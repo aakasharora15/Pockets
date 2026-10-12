@@ -4,13 +4,13 @@
 
 ### Changed
 
-- **Looks and feels like an iPhone app.** Apple's system font, screens that slide in and out, swipe back from the left edge in the installed app, a blurred bar behind the top buttons when you scroll, smaller top buttons, consistent corners, one 16 pt margin that buttons, cards and the tab bar share, separators that stop short of the card edge, softer glass outlines, Settings icons coloured from Spendr's own palette, and labels on the tabs. No gap at the top in Safari.
+- **Looks and feels like an iPhone app.** Apple's system font, screens that slide in and out, swipe back from the left edge in the installed app, a blurred bar behind the top buttons when you scroll, smaller top buttons, consistent corners, one 16 pt margin that buttons, cards and the tab bar share, separators that stop short of the card edge, softer glass outlines, Settings rows balanced at 16 pt with solid icons, and Theme and Glass chosen from a menu as in iOS Settings, Settings icons coloured from Spendr's own palette, and labels on the tabs. No gap at the top in Safari.
 
 ### Added
 
 - **Swipe to delete** on Home, Calendar, Transactions and tag pages. Swipe left for Edit and Delete, or swipe across to delete straight away.
 - **New categories:** Amazon, Rent, Council tax, Water bill and Household. Existing Pockets get them once.
-- **Light theme.** Settings › Appearance › Theme: Dark, Light or Auto (follows the phone).
+- **Light theme.** Settings › Appearance › Theme: Dark, Light or Automatic (follows the phone).
 - **Invite by email.** Type an address in the invite sheet and Mail opens with the link and code. The invite only works for an account with that email.
 - **Sync status** in Settings: the account you're signed in to, when this phone last synced and anything waiting to upload, with Sync now.
 - **Keypad feedback.** Keys light up while pressed and give a light tap (Android, and iPhone on iOS 18 or later). A wrong PIN gives a double tap.

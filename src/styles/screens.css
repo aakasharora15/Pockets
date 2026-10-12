@@ -1433,28 +1433,6 @@
   font-size: 13px;
   color: var(--text2);
 }
-.glass-seg {
-  height: 30px;
-  border-radius: 15px;
-  background: var(--fill);
-  padding: 2px;
-  display: flex;
-}
-.glass-seg-item {
-  padding: 0 10px;
-  border-radius: 13px;
-  display: flex;
-  align-items: center;
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--text2);
-}
-.glass-seg-item.on {
-  background: var(--segment);
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
-  font-weight: 600;
-  color: var(--text);
-}
 
 /* ---------- Settings sub-pages ---------- */
 .sub-scroll {

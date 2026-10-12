@@ -257,7 +257,7 @@
   height: 44px;
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
   padding-left: 16px;
   width: 100%;
 }
@@ -273,7 +273,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 17px;
+  font-size: 19px;
   flex: none;
 }
 .row-body {
@@ -283,7 +283,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding-right: 14px;
+  padding-right: 16px;
 }
 /* Separators start at the row text and stop short of the card's rounded edge, as on iOS. */
 .sep,
@@ -296,6 +296,22 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+.menu-value {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.menu-dismiss {
+  position: fixed;
+  inset: 0;
+  z-index: 70;
+}
+/* Above the tap-to-close layer; doubled class so it beats .glass-menu's position and z-index. */
+.glass-menu.settings-menu {
+  position: fixed;
+  width: 200px;
+  z-index: 71;
 }
 .row-value {
   font-size: 17px;
