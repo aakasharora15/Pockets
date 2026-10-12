@@ -12,7 +12,12 @@ export const DEFAULT_CATEGORIES: CategorySeed[] = [
   { id: 'restaurants', name: 'Restaurants', icon: 'fork-knife', colour: '#4FC48A' },
   { id: 'groceries', name: 'Groceries', icon: 'basket', colour: '#5AA0F0' },
   { id: 'shopping', name: 'Shopping', icon: 'bag-simple', colour: '#A884F0' },
+  { id: 'amazon', name: 'Amazon', icon: 'package', colour: '#A8D65C' },
   { id: 'bills', name: 'Bills & Utilities', icon: 'receipt', colour: '#8FA0B8' },
+  { id: 'rent', name: 'Rent', icon: 'key', colour: '#7C8CF8' },
+  { id: 'counciltax', name: 'Council tax', icon: 'bank', colour: '#B38E5D' },
+  { id: 'water', name: 'Water bill', icon: 'drop', colour: '#4FD1E8' },
+  { id: 'household', name: 'Household', icon: 'couch', colour: '#73A6A0' },
   { id: 'transport', name: 'Transport', icon: 'train-simple', colour: '#F09A55' },
   { id: 'gifts', name: 'Gifts', icon: 'gift', colour: '#EE86B4' },
   { id: 'self', name: 'Self improvement', icon: 'book-open', colour: '#E2725E' },
@@ -21,8 +26,15 @@ export const DEFAULT_CATEGORIES: CategorySeed[] = [
   { id: OTHER_ID, name: 'Other', icon: 'dots-three', colour: '#9AA0AA' },
 ];
 
+/**
+ * Version of the default category set. Pockets created before a version get its new categories
+ * added once (see addMissingDefaults), so nobody has to add them by hand.
+ */
+export const DEFAULTS_VERSION = 2;
+export const ADDED_IN_V2 = ['amazon', 'rent', 'counciltax', 'water', 'household'];
+
 /** Chart colours handed out in turn to new categories. */
-export const CATEGORY_PALETTE = DEFAULT_CATEGORIES.map((c) => c.colour);
+export const CATEGORY_PALETTE = ['#4FC48A', '#5AA0F0', '#A884F0', '#8FA0B8', '#F09A55', '#EE86B4', '#E2725E', '#EE6F7C', '#E8B83E', '#9AA0AA'];
 
 /** Order values are spaced so new categories can slot in above Other. */
 export const ORDER_STEP = 1000;

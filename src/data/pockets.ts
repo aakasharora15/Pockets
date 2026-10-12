@@ -13,7 +13,7 @@ import {
 } from 'firebase/firestore';
 import { db } from '../firebase';
 import { trackExpenseWrite } from './pending';
-import { DEFAULT_CATEGORIES, ORDER_STEP } from '../lib/categories';
+import { DEFAULT_CATEGORIES, DEFAULTS_VERSION, ORDER_STEP } from '../lib/categories';
 import type { CurrencyCode } from '../lib/currencies';
 import {
   BATCH_LIMIT,
@@ -48,6 +48,7 @@ export function addPocketCreation(batch: WriteBatch, p: NewPocket): string {
     ownerUid: p.owner.uid,
     currencies: p.currencies,
     budgets: {},
+    defaultsVersion: DEFAULTS_VERSION,
     createdAt: serverTimestamp(),
   });
   batch.set(memberRef(ref.id, p.owner.uid), {

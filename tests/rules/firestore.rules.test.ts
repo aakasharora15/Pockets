@@ -255,6 +255,12 @@ describe('tags, recurring and receipts', () => {
     await assertFails(setDoc(doc(db, 'pockets', HOME, 'expenses', 't4'), expense({ receipt: 'yes' })));
   });
 
+  it('any member can record that new default categories were added', async () => {
+    await assertSucceeds(updateDoc(doc(as(MEMBER), 'pockets', HOME), { defaultsVersion: 2 }));
+    await assertFails(updateDoc(doc(as(MEMBER), 'pockets', HOME), { defaultsVersion: 'two' }));
+    await assertFails(updateDoc(doc(as(STRANGER), 'pockets', HOME), { defaultsVersion: 2 }));
+  });
+
   it('any member can add tags to the Pocket', async () => {
     await assertSucceeds(updateDoc(doc(as(MEMBER), 'pockets', HOME), { tags: arrayUnion('India Dec 2026') }));
     await assertFails(updateDoc(doc(as(STRANGER), 'pockets', HOME), { tags: arrayUnion('Nope') }));
