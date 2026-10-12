@@ -6,9 +6,9 @@ const PIN_KEYS: [string, string][] = [
 ];
 
 /** Glass PIN keypad (screens 01e and 02). */
-export function PinPad({ onKey, top = 356 }: { onKey: (k: string) => void; top?: number }) {
+export function PinPad({ onKey }: { onKey: (k: string) => void }) {
   return (
-    <div className="pin-pad" style={{ top }}>
+    <div className="pin-pad">
       {PIN_KEYS.map(([d, letters], i) => {
         if (!d) return <div key={i} className="pin-key blank" />;
         if (d === 'del')

@@ -1116,3 +1116,80 @@
 .flow .flow-foot .bottom-link {
   margin: 0 -24px;
 }
+
+/*
+ * PIN screens (01e set, 02 unlock): title, dots and keypad stacked from the top. At the design's
+ * 844 pt they sit exactly where the design puts them; on shorter screens the spacing and keys
+ * shrink so the whole keypad, 0 and delete included, always fits.
+ */
+.pin-screen {
+  --pin-top: 168px;
+  --pin-dots-gap: 49px;
+  --pin-pad-gap: 60px;
+  --pin-key: 76px;
+  --pin-row-gap: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--pin-top) 24px 0;
+}
+.pin-screen .pin-head,
+.pin-screen .pin-dots,
+.pin-screen .pin-pad,
+.pin-screen .pin-forgot {
+  position: static;
+}
+.pin-screen .pin-head {
+  width: 100%;
+}
+.pin-screen .pin-dots {
+  margin-top: var(--pin-dots-gap);
+}
+.pin-screen .pin-pad {
+  margin-top: var(--pin-pad-gap);
+  grid-template-columns: repeat(3, var(--pin-key));
+  row-gap: var(--pin-row-gap);
+}
+.pin-screen .pin-key {
+  width: var(--pin-key);
+  height: var(--pin-key);
+}
+.pin-screen .pin-forgot {
+  margin-top: auto;
+  margin-bottom: max(44px, env(safe-area-inset-bottom));
+  width: 100%;
+  flex: none;
+}
+@media (max-height: 780px) {
+  .pin-screen {
+    --pin-top: 140px;
+    --pin-dots-gap: 40px;
+    --pin-pad-gap: 44px;
+    --pin-key: 70px;
+    --pin-row-gap: 14px;
+  }
+}
+@media (max-height: 700px) {
+  .pin-screen {
+    --pin-top: 124px;
+    --pin-dots-gap: 24px;
+    --pin-pad-gap: 28px;
+    --pin-key: 62px;
+    --pin-row-gap: 10px;
+  }
+  .pin-screen .pin-digit {
+    font-size: 28px;
+  }
+}
+@media (max-height: 620px) {
+  .pin-screen {
+    --pin-top: 122px;
+    --pin-dots-gap: 18px;
+    --pin-pad-gap: 22px;
+    --pin-key: 56px;
+    --pin-row-gap: 8px;
+  }
+  .pin-screen .pin-letters {
+    display: none;
+  }
+}
