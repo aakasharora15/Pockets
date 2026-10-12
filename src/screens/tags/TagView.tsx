@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { BackButton } from '../../components/Chrome';
-import { categoryOf, ExpenseRow } from '../../components/ExpenseRow';
+import { categoryOf, SwipeRow, useSwipeRows } from '../../components/ExpenseRow';
 import { ListSkeleton } from '../../components/Skeletons';
 import { ActionSheet } from '../../components/Sheet';
 import { useCombined } from '../../data/useCombined';
@@ -21,10 +21,11 @@ export function TagView() {
   const tag = decodeURIComponent(raw);
   const pocket = useCurrentPocket();
   const { categories } = usePockets();
-  const { openExpenseSheet, showToast, combinedFor } = useUi();
+  const { showToast, combinedFor } = useUi();
   const navigate = useNavigate();
   const { expenses, loading } = useTagExpenses(pocket.id, tag);
   const [confirm, setConfirm] = useState(false);
+  const swipe = useSwipeRows(pocket.id);
 
   // Currencies in use, the Pocket's order first.
   const codes = useMemo(() => {
@@ -136,7 +137,7 @@ export function TagView() {
             </div>
             <div className="list-card">
               {expenses.map((e, i) => (
-                <ExpenseRow key={e.id} expense={e} categories={categories} first={i === 0} hideTag onOpen={() => openExpenseSheet({ mode: 'edit', expense: e, pocketId: pocket.id })} />
+                <SwipeRow key={e.id} expense={e} categories={categories} first={i === 0} hideTag {...swipe(e)} />
               ))}
             </div>
             <button className="delete-link press" onClick={() => setConfirm(true)}>

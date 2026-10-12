@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Fades } from '../components/Chrome';
-import { categoryOf, ExpenseRow } from '../components/ExpenseRow';
+import { categoryOf, SwipeRow, useSwipeRows } from '../components/ExpenseRow';
 import { ListSkeleton } from '../components/Skeletons';
 import { useExpenses } from '../data/useExpenses';
 import { pastelFor } from '../lib/categories';
@@ -41,7 +41,8 @@ function cellsFor(month: string): Cell[] {
 export function Calendar() {
   const pocket = useCurrentPocket();
   const { categories } = usePockets();
-  const { month, setMonth, openExpenseSheet } = useUi();
+  const { month, setMonth } = useUi();
+  const swipe = useSwipeRows(pocket.id);
   const navigate = useNavigate();
   const { expenses, loading } = useExpenses(pocket.id, month);
   const today = todayKey();
@@ -169,13 +170,7 @@ export function Calendar() {
             })}
             <div className="list-card">
               {dayList.map((e, i) => (
-                <ExpenseRow
-                  key={e.id}
-                  expense={e}
-                  categories={categories}
-                  first={i === 0}
-                  onOpen={() => openExpenseSheet({ mode: 'edit', expense: e, pocketId: pocket.id })}
-                />
+                <SwipeRow key={e.id} expense={e} categories={categories} first={i === 0} {...swipe(e)} />
               ))}
             </div>
           </>
