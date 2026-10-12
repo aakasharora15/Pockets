@@ -3,6 +3,8 @@ import { Icon } from '../lib/icons';
 
 interface RowProps {
   icon: string;
+  /** Icon tile colour, as in iOS Settings. */
+  tint?: string;
   label: string;
   value?: ReactNode;
   first?: boolean;
@@ -12,11 +14,11 @@ interface RowProps {
 }
 
 /** Settings-style row: neutral 29px tile with white outline icon, label, value, caret. */
-export function SettingsRow({ icon, label, value, first, chevron = true, onClick, children }: RowProps) {
+export function SettingsRow({ icon, tint, label, value, first, chevron = true, onClick, children }: RowProps) {
   const body = (
     <>
-      <div className="row-tile">
-        <Icon name={icon} />
+      <div className={`row-tile${tint ? ' tinted' : ''}`} style={tint ? { background: tint } : undefined}>
+        <Icon name={icon} weight={tint ? 'fill' : 'regular'} />
       </div>
       <div className={`row-body${first ? '' : ' sep'}`}>
         <span className="row-label">{label}</span>

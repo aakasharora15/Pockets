@@ -1,7 +1,7 @@
 /* ---------- Buttons ---------- */
 .back-btn {
   position: absolute;
-  top: 58px;
+  top: calc(var(--top) + 4px);
   left: 16px;
   width: 44px;
   height: 44px;
@@ -14,7 +14,7 @@
 }
 .done-btn {
   position: absolute;
-  top: 58px;
+  top: calc(var(--top) + 4px);
   right: 16px;
   height: 44px;
   padding: 0 18px;
@@ -27,23 +27,23 @@
 }
 .top-bar {
   position: absolute;
-  top: 54px;
+  top: calc(var(--top) + 4px);
   left: 16px;
   right: 16px;
-  height: 52px;
+  height: 44px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   z-index: 15;
 }
 .circle-52 {
-  width: 52px;
-  height: 52px;
-  border-radius: 26px;
+  width: 44px;
+  height: 44px;
+  border-radius: 22px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 22px;
+  font-size: 20px;
   flex: none;
 }
 .circle-44 {
@@ -57,7 +57,7 @@
   flex: none;
 }
 .spacer-52 {
-  width: 52px;
+  width: 44px;
   height: 52px;
 }
 .primary-btn {
@@ -159,7 +159,7 @@
 }
 .flow-head {
   position: absolute;
-  top: 130px;
+  top: calc(var(--top) + 72px);
   left: 24px;
   right: 24px;
   display: flex;
@@ -247,7 +247,7 @@
 }
 .group-card {
   background: var(--card);
-  border-radius: 12px;
+  border-radius: var(--r-card);
   overflow: hidden;
 }
 .group-card.shadow {
@@ -260,6 +260,9 @@
   gap: 14px;
   padding-left: 16px;
   width: 100%;
+}
+.row-tile.tinted {
+  color: #ffffff;
 }
 .row-tile {
   width: 29px;
@@ -355,7 +358,7 @@
 /* ---------- Cards ---------- */
 .card {
   background: var(--card);
-  border-radius: 28px;
+  border-radius: var(--r-card);
   padding: 20px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
 }
@@ -370,7 +373,7 @@
 }
 .list-card {
   background: var(--card);
-  border-radius: 20px;
+  border-radius: var(--r-card);
   overflow: hidden;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
 }
@@ -544,7 +547,7 @@
   position: absolute;
   left: 16px;
   right: 90px;
-  bottom: 28px;
+  bottom: max(calc(var(--bottom) - 6px), 16px);
   height: 64px;
   border-radius: 32px;
   display: flex;
@@ -562,15 +565,21 @@
   align-items: center;
   justify-content: center;
   gap: 2px;
-  font-size: 26px;
+  font-size: 24px;
 }
 .tab.on {
   color: #ffffff;
 }
+.tab-label {
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1;
+}
 .plus-btn {
   position: absolute;
   right: 16px;
-  bottom: 28px;
+  bottom: max(calc(var(--bottom) - 6px), 16px);
   width: 64px;
   height: 64px;
   border-radius: 32px;
@@ -606,17 +615,17 @@
 
 /* ---------- Pocket pill ---------- */
 .pocket-pill {
-  height: 44px;
-  border-radius: 22px;
+  height: 40px;
+  border-radius: 20px;
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 0 14px 0 8px;
+  padding: 0 12px 0 6px;
   color: #ffffff;
   min-width: 0;
 }
 .pocket-pill-name {
-  font-size: 17px;
+  font-size: 16px;
   font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
@@ -643,7 +652,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  top: 58px;
+  top: calc(var(--top) + 4px);
   border-radius: 38px 38px 0 0;
   color: #ffffff;
   background: linear-gradient(180deg, rgba(38, 46, 62, 0.94) 0, #141a26 140px);
@@ -712,7 +721,7 @@
   color: var(--text2);
 }
 .popover {
-  border-radius: 28px;
+  border-radius: var(--r-card);
   overflow: hidden;
   background: rgba(44, 48, 58, 0.82);
   backdrop-filter: blur(40px) saturate(180%);
@@ -734,7 +743,7 @@
   animation: sheet-up 0.3s cubic-bezier(0.25, 1, 0.5, 1);
 }
 .action-group {
-  border-radius: 28px;
+  border-radius: var(--r-card);
   overflow: hidden;
   background: rgba(44, 48, 58, 0.82);
   backdrop-filter: blur(40px) saturate(180%);
@@ -769,7 +778,7 @@
 }
 .action-cancel {
   height: 56px;
-  border-radius: 28px;
+  border-radius: var(--r-card);
   background: rgba(44, 48, 58, 0.92);
   backdrop-filter: blur(40px);
   -webkit-backdrop-filter: blur(40px);
@@ -785,7 +794,7 @@
 /* ---------- Toasts ---------- */
 .toast {
   position: absolute;
-  top: 60px;
+  top: calc(var(--top) + 6px);
   left: 50%;
   transform: translateX(-50%);
   height: 40px;
@@ -979,7 +988,7 @@
 }
 .pin-dots {
   position: absolute;
-  top: 282px;
+  top: calc(var(--top) + 228px);
   left: 0;
   right: 0;
   display: flex;
@@ -1033,11 +1042,11 @@
 }
 .skel-hero {
   height: 158px;
-  border-radius: 28px;
+  border-radius: var(--r-card);
 }
 .skel-card {
   height: 220px;
-  border-radius: 28px;
+  border-radius: var(--r-card);
 }
 .skel-card.short {
   height: 140px;
@@ -1089,7 +1098,7 @@
   overflow-y: auto;
   overflow-x: hidden;
   overscroll-behavior-y: contain;
-  padding: 130px 24px 16px;
+  padding: calc(var(--top) + 72px) 24px 16px;
   display: flex;
   flex-direction: column;
 }
@@ -1123,7 +1132,7 @@
  * shrink so the whole keypad, 0 and delete included, always fits.
  */
 .pin-screen {
-  --pin-top: 168px;
+  --pin-top: calc(var(--top) + 114px);
   --pin-dots-gap: 49px;
   --pin-pad-gap: 60px;
   --pin-key: 76px;
@@ -1162,7 +1171,7 @@
 }
 @media (max-height: 780px) {
   .pin-screen {
-    --pin-top: 140px;
+    --pin-top: calc(var(--top) + 86px);
     --pin-dots-gap: 40px;
     --pin-pad-gap: 44px;
     --pin-key: 70px;
@@ -1171,7 +1180,7 @@
 }
 @media (max-height: 700px) {
   .pin-screen {
-    --pin-top: 124px;
+    --pin-top: calc(var(--top) + 70px);
     --pin-dots-gap: 24px;
     --pin-pad-gap: 28px;
     --pin-key: 62px;
@@ -1183,7 +1192,7 @@
 }
 @media (max-height: 620px) {
   .pin-screen {
-    --pin-top: 122px;
+    --pin-top: calc(var(--top) + 68px);
     --pin-dots-gap: 18px;
     --pin-pad-gap: 22px;
     --pin-key: 56px;

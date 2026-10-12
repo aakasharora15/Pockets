@@ -102,6 +102,16 @@ function MainRoutes() {
   const { pathname } = useLocation();
   const { current } = usePockets();
 
+  // Top bars get their material once the page scrolls under them (see .fade-top).
+  useEffect(() => {
+    const onScroll = (e: Event) => {
+      const el = e.target;
+      if (el instanceof HTMLElement && el.classList.contains('scroll')) el.parentElement?.classList.toggle('scrolled', el.scrollTop > 2);
+    };
+    document.addEventListener('scroll', onScroll, true);
+    return () => document.removeEventListener('scroll', onScroll, true);
+  }, []);
+
   // Open a remembered invite link once everything is ready.
   useEffect(() => {
     const code = sessionStorage.getItem(JOIN_KEY);

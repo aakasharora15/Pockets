@@ -8,7 +8,7 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: false,
-      includeAssets: ['fonts/Involve-VF.ttf', 'icons/icon-180.png', 'icons/spendr-icon-dark.svg'],
+      includeAssets: ['icons/icon-180.png', 'icons/spendr-icon-dark.svg'],
       manifest: {
         name: 'Spendr',
         short_name: 'Spendr',
@@ -27,7 +27,7 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ttf,png,svg,webmanifest}'],
+        globPatterns: ['**/*.{js,css,html,png,svg,webmanifest}'],
         // The receipt reader is large and optional: fetched the first time it's used, then cached.
         globIgnores: ['ocr/**'],
         runtimeCaching: [

@@ -145,19 +145,19 @@ export function Settings() {
         <span className="page-title settings-title">Settings</span>
         <Group title={`This Pocket · ${pocket.name}`}>
           {pocket.type === 'shared' && (
-            <SettingsRow first icon="users-three" label="People" value={pocket.members.length} onClick={() => navigate('/settings/people')} />
+            <SettingsRow first icon="users-three" tint="#5E5CE6" label="People" value={pocket.members.length} onClick={() => navigate('/settings/people')} />
           )}
           <SettingsRow
             first={pocket.type !== 'shared'}
-            icon="currency-circle-dollar"
+            icon="currency-circle-dollar" tint="#0A84FF"
             label="Currencies"
             value={pocket.currencies.map((c) => currency(c).symbol).join(' ')}
             onClick={() => navigate('/settings/currencies')}
           />
-          <SettingsRow icon="target" label="Monthly budgets" onClick={() => navigate('/settings/budgets')} />
+          <SettingsRow icon="target" tint="#30D158" label="Monthly budgets" onClick={() => navigate('/settings/budgets')} />
           {pocket.currencies.length > 1 && (
             <SettingsRow
-              icon="arrows-left-right"
+              icon="arrows-left-right" tint="#FF9F0A"
               label="Combined total"
               value={combined ? `In ${currency(combined).symbol}` : 'Off'}
               onClick={() => setSheet('combined')}
@@ -165,26 +165,26 @@ export function Settings() {
           )}
         </Group>
         <Group>
-          <SettingsRow first icon="squares-four" label="Manage categories" onClick={() => navigate('/settings/categories')} />
-          <SettingsRow icon="tag" label="Tags" value={tags.length || undefined} onClick={() => navigate('/settings/tags')} />
-          <SettingsRow icon="repeat" label="Repeating expenses" value={repeats.length || undefined} onClick={() => navigate('/settings/recurring')} />
+          <SettingsRow first icon="squares-four" tint="#BF5AF2" label="Manage categories" onClick={() => navigate('/settings/categories')} />
+          <SettingsRow icon="tag" tint="#FF375F" label="Tags" value={tags.length || undefined} onClick={() => navigate('/settings/tags')} />
+          <SettingsRow icon="repeat" tint="#64D2FF" label="Repeating expenses" value={repeats.length || undefined} onClick={() => navigate('/settings/recurring')} />
         </Group>
         <Group>
-          <SettingsRow first icon="download-simple" label="Export data (CSV)" onClick={() => setSheet('export')} />
-          <SettingsRow icon="clock-counter-clockwise" label="Back up and restore" onClick={() => setSheet('backup')} />
+          <SettingsRow first icon="download-simple" tint="#30B0C7" label="Export data (CSV)" onClick={() => setSheet('export')} />
+          <SettingsRow icon="clock-counter-clockwise" tint="#AC8E68" label="Back up and restore" onClick={() => setSheet('backup')} />
         </Group>
         <Group title="Account">
           <SettingsRow
             first
-            icon="user-circle"
+            icon="user-circle" tint="#8E8E93"
             label={profile.name}
             value={providerLabel(user.providerData.map((p) => p.providerId))}
             onClick={() => navigate('/settings/account')}
           />
-          <SettingsRow icon="lock-simple" label="Lock app now" chevron={false} onClick={lockNow} />
+          <SettingsRow icon="lock-simple" tint="#8E8E93" label="Lock app now" chevron={false} onClick={lockNow} />
         </Group>
         <Group title="Appearance">
-          <SettingsRow first icon="drop-half" label="Glass" chevron={false}>
+          <SettingsRow first icon="drop-half" tint="#0A84FF" label="Glass" chevron={false}>
             <div className="glass-seg" role="radiogroup" aria-label="Glass">
               {(['tinted', 'classic', 'clear'] as GlassStyle[]).map((g) => (
                 <button key={g} role="radio" aria-checked={glass === g} className={`glass-seg-item${glass === g ? ' on' : ''}`} onClick={() => setGlass(g)}>
@@ -195,12 +195,12 @@ export function Settings() {
           </SettingsRow>
         </Group>
         <Group>
-          {!standalone && <SettingsRow first icon="device-mobile" label="Add to Home Screen" onClick={install} />}
-          <SettingsRow first={!!standalone} icon="info" label="About Spendr" onClick={() => setSheet('about')} />
+          {!standalone && <SettingsRow first icon="device-mobile" tint="#8E8E93" label="Add to Home Screen" onClick={install} />}
+          <SettingsRow first={!!standalone} icon="info" tint="#8E8E93" label="About Spendr" onClick={() => setSheet('about')} />
         </Group>
         <div className="settings-footer">Spendr · Version 1.0</div>
       </div>
-      <Fades topHeight={70} />
+      <Fades />
       {sheet === 'install' && (
         <ActionSheet
           title="Add to Home Screen"
@@ -262,7 +262,7 @@ export function Settings() {
         />
       )}
       {sheet === 'export-month' && (
-        <Sheet onClose={() => setSheet(null)} label="Export a month" top="max(58px, calc(100% - 330px))">
+        <Sheet onClose={() => setSheet(null)} label="Export a month" top="max(calc(var(--top) + 4px), calc(100% - 330px))">
           <SheetHeader title="Export a month" onCancel={() => setSheet(null)} />
           <MonthHeader month={exportMonth} onChange={setExportMonth} />
           <span className="page-sub export-month-year">{monthYear(exportMonth)}</span>

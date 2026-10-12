@@ -1,12 +1,15 @@
-/* Design tokens. Values copied from Pockets.dc.html (dark "Midnight" theme). */
-@font-face {
-  font-family: Involve;
-  src: url('/fonts/Involve-VF.ttf') format('truetype');
-  font-weight: 100 900;
-  font-display: swap;
-}
-
+/* Design tokens. Colours from the design (dark "Midnight" theme); type, radii and spacing follow iOS. */
 :root {
+  /* Apple's system font (San Francisco) on iPhone, iPad and Mac; the platform font elsewhere. */
+  --font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  /* SF Pro Rounded for amounts, as in Apple Wallet and Health. */
+  /* Top of the usable screen: below the status bar when installed, near the top in Safari. */
+  --top: max(env(safe-area-inset-top, 0px), 8px);
+  --bottom: env(safe-area-inset-bottom, 0px);
+  /* One corner radius for every card, list, menu and sheet group. */
+  --r-card: 22px;
+  --font-num: ui-rounded, 'SF Pro Rounded', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+
   --bg: radial-gradient(120% 45% at 50% 0%, rgba(14, 74, 160, 0.95) 0%, rgba(14, 74, 160, 0) 70%),
     linear-gradient(180deg, #0a2a55 0%, #07111f 45%, #05080f 100%);
   --edge-top: rgba(10, 42, 85, 0.92);
