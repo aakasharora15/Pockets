@@ -196,7 +196,7 @@
 }
 .setup-list {
   position: absolute;
-  inset: calc(var(--top) + 196px) 20px 120px;
+  inset: calc(var(--top) + 196px) var(--gutter) 120px;
   overflow-y: auto;
   scrollbar-width: none;
 }
@@ -321,7 +321,7 @@
 .month-head {
   position: relative;
   height: 44px;
-  margin: 0 -20px;
+  margin: 0 calc(-1 * var(--gutter));
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -347,7 +347,7 @@
   right: -18px;
 }
 .cards-wrap {
-  margin: 0 -20px;
+  margin: 0 calc(-1 * var(--gutter));
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -358,15 +358,15 @@
   overflow-x: auto;
   scroll-snap-type: x mandatory;
   scrollbar-width: none;
-  padding: 0 20px;
-  scroll-padding: 0 20px;
+  padding: 0 var(--gutter);
+  scroll-padding: 0 var(--gutter);
 }
 .cur-card {
   flex: none;
   scroll-snap-align: start;
   background: var(--card);
   border-radius: var(--r-card);
-  padding: 18px 20px 20px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -1219,7 +1219,7 @@
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  padding: 0 4px;
+  padding: 0;
   gap: 8px;
 }
 .tx-month {
@@ -1250,8 +1250,8 @@
   -webkit-appearance: none;
 }
 .tx-chips {
-  margin: 0 -20px;
-  padding: 0 20px;
+  margin: 0 calc(-1 * var(--gutter));
+  padding: 0 var(--gutter);
   display: flex;
   align-items: center;
   gap: 8px;
@@ -1274,7 +1274,7 @@
 .tx-day {
   font-size: 15px;
   font-weight: 600;
-  padding: 0 6px;
+  padding: 0 16px;
 }
 .empty-note {
   margin-top: 40px;
@@ -1426,7 +1426,7 @@
   gap: 20px;
 }
 .settings-title {
-  padding: 0 4px;
+  padding: 0;
 }
 .settings-footer {
   text-align: center;
@@ -1868,13 +1868,13 @@
   background: #05080f;
   display: flex;
   flex-direction: column;
-  padding: calc(var(--top) + 56px) 20px 34px;
+  padding: calc(var(--top) + 56px) var(--gutter) 34px;
   gap: 16px;
 }
 .viewer-close {
   position: absolute;
   top: calc(var(--top) + 4px);
-  right: 16px;
+  right: var(--gutter);
 }
 .viewer-photo {
   flex: 1;
@@ -1910,7 +1910,7 @@
 .top-right {
   position: absolute;
   top: calc(var(--top) + 4px);
-  right: 16px;
+  right: var(--gutter);
   z-index: 15;
 }
 .tag-totals {

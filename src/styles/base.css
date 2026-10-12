@@ -115,7 +115,7 @@ textarea::placeholder {
   overflow-y: auto;
   overflow-x: hidden;
   scrollbar-width: none;
-  padding: calc(var(--top) + 56px) 20px 140px;
+  padding: calc(var(--top) + 56px) var(--gutter) 140px;
   display: flex;
   flex-direction: column;
   -webkit-overflow-scrolling: touch;

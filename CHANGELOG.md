@@ -4,7 +4,7 @@
 
 ### Changed
 
-- **Looks and feels like an iPhone app.** Apple's system font, screens that slide in and out, swipe back from the left edge in the installed app, a blurred bar behind the top buttons when you scroll, smaller top buttons, consistent corners, Settings icons coloured from Spendr's own palette, and labels on the tabs. No gap at the top in Safari.
+- **Looks and feels like an iPhone app.** Apple's system font, screens that slide in and out, swipe back from the left edge in the installed app, a blurred bar behind the top buttons when you scroll, smaller top buttons, consistent corners, one 16 pt margin that buttons, cards and the tab bar share, separators that stop short of the card edge, softer glass outlines, Settings icons coloured from Spendr's own palette, and labels on the tabs. No gap at the top in Safari.
 
 ### Added
 
