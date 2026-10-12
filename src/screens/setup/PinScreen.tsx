@@ -40,7 +40,7 @@ export function SetPinScreen({ step, onBack, onDone }: SetProps) {
   }, [digits]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div className="screen">
+    <div className="screen pin-screen">
       {onBack && <BackButton onClick={first !== null ? () => (setFirst(null), setDigits('')) : onBack} />}
       {step !== undefined && <Progress step={step} />}
       <div className="pin-head">
@@ -80,7 +80,7 @@ export function UnlockScreen({ onUnlock, onForgot }: { onUnlock: (pin: string) =
   }, [digits]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <div className="screen">
+    <div className="screen pin-screen">
       <div className="unlock-logo">
         <Logo />
       </div>
