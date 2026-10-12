@@ -13,6 +13,20 @@
     <link rel="apple-touch-icon" href="/icons/icon-180.png" />
     <link rel="icon" type="image/svg+xml" href="/icons/spendr-icon-dark.svg" />
     <title>Spendr</title>
+    <script>
+      // Theme before first paint (see src/lib/theme.ts). The light theme needs dark status bar text.
+      (function () {
+        var s = 'dark';
+        try { s = localStorage.getItem('spendr.theme') || 'dark'; } catch (e) {}
+        var t = s === 'auto' ? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark') : s === 'light' ? 'light' : 'dark';
+        document.documentElement.dataset.theme = t;
+        if (t === 'light') {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#F2F2F7');
+          document.querySelector('meta[name="color-scheme"]').setAttribute('content', 'light');
+          document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]').setAttribute('content', 'default');
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

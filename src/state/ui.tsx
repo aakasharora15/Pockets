@@ -4,6 +4,7 @@ import { subscribePending } from '../data/pending';
 import type { Expense } from '../data/types';
 import { isCurrencyCode, type CurrencyCode } from '../lib/currencies';
 import { currentMonth } from '../lib/dates';
+import { applyTheme, readThemeSetting, resolveTheme, THEME_KEY, type ThemeSetting } from '../lib/theme';
 
 export type GlassStyle = 'tinted' | 'classic' | 'clear';
 
@@ -19,6 +20,8 @@ interface Ui {
   setMonth: (m: string) => void;
   glass: GlassStyle;
   setGlass: (g: GlassStyle) => void;
+  theme: ThemeSetting;
+  setTheme: (t: ThemeSetting) => void;
   online: boolean;
   pendingExpenses: number;
   sheet: ExpenseSheetRequest | null;
@@ -61,6 +64,7 @@ export function UiProvider({ children }: { children: ReactNode }) {
   const timer = useRef<number>(undefined);
   const [month, setMonth] = useState(currentMonth());
   const [glass, setGlassState] = useState<GlassStyle>(readGlass);
+  const [theme, setThemeState] = useState<ThemeSetting>(readThemeSetting);
   const [online, setOnline] = useState(navigator.onLine);
   const [inFlight, setInFlight] = useState(0);
   const [inOutbox, setInOutbox] = useState(0);
@@ -90,6 +94,25 @@ export function UiProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     document.documentElement.dataset.glass = glass;
   }, [glass]);
+
+  // Automatic follows the phone's Light/Dark setting as it changes.
+  useEffect(() => {
+    const media = window.matchMedia('(prefers-color-scheme: light)');
+    const apply = () => applyTheme(resolveTheme(theme));
+    apply();
+    if (theme !== 'auto') return;
+    media.addEventListener('change', apply);
+    return () => media.removeEventListener('change', apply);
+  }, [theme]);
+
+  const setTheme = (t: ThemeSetting) => {
+    setThemeState(t);
+    try {
+      localStorage.setItem(THEME_KEY, t);
+    } catch {
+      /* storage unavailable */
+    }
+  };
 
   const setGlass = (g: GlassStyle) => {
     setGlassState(g);
@@ -124,6 +147,8 @@ export function UiProvider({ children }: { children: ReactNode }) {
         setMonth,
         glass,
         setGlass,
+        theme,
+        setTheme,
         online,
         pendingExpenses,
         sheet,

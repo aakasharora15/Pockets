@@ -16,6 +16,7 @@ import { MonthHeader } from '../Home';
 import { useLock } from '../../state/lock';
 import { useCurrentPocket, usePockets } from '../../state/pockets';
 import { useMe } from '../../state/session';
+import type { ThemeSetting } from '../../lib/theme';
 import { useUi, type GlassStyle } from '../../state/ui';
 
 export const REPO_URL = 'https://github.com/aakasharora15/Spendr';
@@ -30,11 +31,17 @@ interface InstallPrompt extends Event {
   prompt: () => Promise<void>;
 }
 
+const THEMES: [ThemeSetting, string][] = [
+  ['dark', 'Dark'],
+  ['light', 'Light'],
+  ['auto', 'Auto'],
+];
+
 export function Settings() {
   const pocket = useCurrentPocket();
   const { categories, pockets } = usePockets();
   const { user, profile } = useMe();
-  const { glass, setGlass, showToast, month, combinedFor, setCombined } = useUi();
+  const { glass, setGlass, theme, setTheme, showToast, month, combinedFor, setCombined } = useUi();
   const { lockNow } = useLock();
   const navigate = useNavigate();
   const [sheet, setSheet] = useState<'install' | 'about' | 'export' | 'export-tag' | 'export-month' | 'backup' | 'combined' | null>(null);
@@ -183,7 +190,16 @@ export function Settings() {
           <SettingsRow icon="lock-simple" tint="#8E8E93" label="Lock app now" chevron={false} onClick={lockNow} />
         </Group>
         <Group title="Appearance">
-          <SettingsRow first icon="drop-half" tint="#0A84FF" label="Glass" chevron={false}>
+          <SettingsRow first icon="moon" tint="#5E5CE6" label="Theme" chevron={false}>
+            <div className="glass-seg" role="radiogroup" aria-label="Theme">
+              {THEMES.map(([t, label]) => (
+                <button key={t} role="radio" aria-checked={theme === t} className={`glass-seg-item${theme === t ? ' on' : ''}`} onClick={() => setTheme(t)}>
+                  {label}
+                </button>
+              ))}
+            </div>
+          </SettingsRow>
+          <SettingsRow icon="drop-half" tint="#0A84FF" label="Glass" chevron={false}>
             <div className="glass-seg" role="radiogroup" aria-label="Glass">
               {(['tinted', 'classic', 'clear'] as GlassStyle[]).map((g) => (
                 <button key={g} role="radio" aria-checked={glass === g} className={`glass-seg-item${glass === g ? ' on' : ''}`} onClick={() => setGlass(g)}>

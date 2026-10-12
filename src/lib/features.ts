@@ -7,6 +7,4 @@ export const FEATURES = {
   appleSignIn: false,
   /** Monthly recap sheet and Home recap card. */
   monthlyRecap: false,
-  /** Light theme. The app is dark only for now; the light icon is in public/icons. */
-  lightTheme: false,
 } as const;
