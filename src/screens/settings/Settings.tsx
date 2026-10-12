@@ -213,7 +213,7 @@ export function Settings() {
           {!standalone && <SettingsRow first icon="device-mobile" tint="#8E8E93" label="Add to Home Screen" onClick={install} />}
           <SettingsRow first={!!standalone} icon="info" tint="#8E8E93" label="About Spendr" onClick={() => setSheet('about')} />
         </Group>
-        <div className="settings-footer">Spendr · Version 1.0</div>
+        <div className="settings-footer">Spendr · Version {__APP_VERSION__}</div>
       </div>
       <Fades />
       {sheet === 'install' && (
@@ -324,7 +324,7 @@ export function Settings() {
       />
       {sheet === 'about' && (
         <ActionSheet
-          title="Spendr · Version 1.0"
+          title={`Spendr · Version ${__APP_VERSION__}`}
           message="Open-source expense tracker for you and the people you share costs with. MIT licence."
           actions={[{ label: 'View source on GitHub', onClick: () => window.open(REPO_URL, '_blank', 'noopener') }]}
           onCancel={() => setSheet(null)}
