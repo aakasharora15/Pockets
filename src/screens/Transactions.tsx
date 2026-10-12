@@ -1,9 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import { Fades } from '../components/Chrome';
-import { categoryOf, SwipeRow } from '../components/ExpenseRow';
+import { categoryOf, SwipeRow, useSwipeRows } from '../components/ExpenseRow';
 import { ListSkeleton } from '../components/Skeletons';
-import { deleteExpense } from '../data/expenses';
 import type { Expense } from '../data/types';
 import { useExpenses } from '../data/useExpenses';
 import { currency, type CurrencyCode } from '../lib/currencies';
@@ -16,7 +15,7 @@ import { useUi } from '../state/ui';
 export function Transactions() {
   const pocket = useCurrentPocket();
   const { categories } = usePockets();
-  const { month, openExpenseSheet, showToast } = useUi();
+  const { month } = useUi();
   const location = useLocation();
   const nav = (location.state ?? {}) as { search?: boolean; currency?: CurrencyCode };
   const { expenses, loading, error } = useExpenses(pocket.id, month);
@@ -24,7 +23,7 @@ export function Transactions() {
   const [person, setPerson] = useState<string | null>(null);
   const [cur, setCur] = useState<CurrencyCode | null>(nav.currency ?? null);
   const [showFilters, setShowFilters] = useState(true);
-  const [openRow, setOpenRow] = useState<string | null>(null);
+  const swipe = useSwipeRows(pocket.id);
   const searchRef = useRef<HTMLInputElement>(null);
   const shared = pocket.type === 'shared';
 
@@ -59,7 +58,7 @@ export function Transactions() {
   }, [filtered]);
 
   return (
-    <div className="screen" onClick={() => openRow && setOpenRow(null)}>
+    <div className="screen">
       <div className="scroll tx-scroll">
         <div className="tx-head">
           <span className="page-title">Transactions</span>
@@ -106,28 +105,7 @@ export function Transactions() {
               <span className="tx-day">{groupLabel(g.day)}</span>
               <div className="list-card">
                 {g.items.map((e, i) => (
-                  <SwipeRow
-                    key={e.id}
-                    expense={e}
-                    categories={categories}
-                    first={i === 0}
-                    open={openRow === e.id}
-                    onOpenChange={(o) => setOpenRow(o ? e.id : null)}
-                    onOpen={() => openExpenseSheet({ mode: 'edit', expense: e, pocketId: pocket.id })}
-                    onEdit={() => {
-                      setOpenRow(null);
-                      openExpenseSheet({ mode: 'edit', expense: e, pocketId: pocket.id });
-                    }}
-                    onDelete={async () => {
-                      setOpenRow(null);
-                      try {
-                        await deleteExpense(pocket.id, e.id);
-                        showToast('Expense deleted');
-                      } catch {
-                        showToast("Couldn't delete. Try again");
-                      }
-                    }}
-                  />
+                  <SwipeRow key={e.id} expense={e} categories={categories} first={i === 0} {...swipe(e)} />
                 ))}
               </div>
             </div>

@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
+import { deleteExpense } from '../data/expenses';
 import type { Category, Expense } from '../data/types';
 import { OTHER_ID } from '../lib/categories';
 import { longDate } from '../lib/dates';
 import { Icon } from '../lib/icons';
 import { formatMoney } from '../lib/money';
+import { useUi } from '../state/ui';
 
 export function categoryOf(categories: Category[], id: string): Category | undefined {
   return categories.find((c) => c.id === id) ?? categories.find((c) => c.id === OTHER_ID);
@@ -67,8 +69,10 @@ function useLasting(on: boolean, ms: number): boolean {
 }
 
 const ACTIONS_W = 148;
+/** Swiping past this share of the row deletes it without tapping Delete, as in iOS Mail. */
+const FULL_SWIPE = 0.6;
 
-/** Transactions row: swipe left to reveal Edit and Delete. */
+/** Expense row with swipe left to reveal Edit and Delete, or a long swipe to delete. */
 export function SwipeRow({
   open,
   onOpenChange,
@@ -76,15 +80,19 @@ export function SwipeRow({
   onDelete,
   ...row
 }: RowProps & { open: boolean; onOpenChange: (open: boolean) => void; onEdit: () => void; onDelete: () => void }) {
+  const box = useRef<HTMLDivElement>(null);
   const start = useRef<{ x: number; y: number; base: number } | null>(null);
   const [drag, setDrag] = useState<number | null>(null);
+  const [removing, setRemoving] = useState(false);
   const moved = useRef(false);
+  const width = () => box.current?.clientWidth ?? 350;
   const base = open ? -ACTIONS_W : 0;
-  const x = drag ?? base;
+  const x = removing ? -width() : drag ?? base;
+  const full = removing || (drag !== null && drag < -width() * FULL_SWIPE);
 
   return (
-    <div className={`ex-swipe${row.first ? '' : ' sep-swipe'}`}>
-      <div className="ex-actions" aria-hidden={!open}>
+    <div ref={box} data-swipe-id={row.expense.id} className={`ex-swipe${row.first ? '' : ' sep-swipe'}`}>
+      <div className={`ex-actions${full ? ' full' : ''}`} aria-hidden={!open} style={{ width: Math.max(ACTIONS_W, -x) }}>
         <button className="ex-action edit" onClick={onEdit} tabIndex={open ? 0 : -1}>
           <Icon name="pencil-simple" size={20} />
           Edit
@@ -111,10 +119,15 @@ export function SwipeRow({
             return;
           }
           moved.current = true;
-          setDrag(Math.max(-ACTIONS_W - 30, Math.min(0, s.base + dx)));
+          setDrag(Math.max(-width(), Math.min(0, s.base + dx)));
         }}
         onPointerUp={() => {
-          if (moved.current && drag !== null) onOpenChange(drag < -ACTIONS_W / 2);
+          if (moved.current && drag !== null) {
+            if (drag < -width() * FULL_SWIPE) {
+              setRemoving(true);
+              window.setTimeout(onDelete, 220);
+            } else onOpenChange(drag < -ACTIONS_W / 2);
+          }
           start.current = null;
           setDrag(null);
         }}
@@ -136,4 +149,42 @@ export function SwipeRow({
       </div>
     </div>
   );
+}
+
+/**
+ * Swipe actions for a list of expenses: one row open at a time, closed by tapping anywhere else;
+ * Edit opens the sheet, Delete (or a long swipe) deletes straight away.
+ */
+export function useSwipeRows(pocketId: string) {
+  const { openExpenseSheet, showToast } = useUi();
+  const [openRow, setOpenRow] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!openRow) return;
+    const close = (e: PointerEvent) => {
+      const t = e.target as Element | null;
+      if (!t?.closest?.(`[data-swipe-id="${openRow}"]`)) setOpenRow(null);
+    };
+    document.addEventListener('pointerdown', close, true);
+    return () => document.removeEventListener('pointerdown', close, true);
+  }, [openRow]);
+
+  return (e: Expense) => ({
+    open: openRow === e.id,
+    onOpenChange: (o: boolean) => setOpenRow(o ? e.id : null),
+    onOpen: () => openExpenseSheet({ mode: 'edit', expense: e, pocketId }),
+    onEdit: () => {
+      setOpenRow(null);
+      openExpenseSheet({ mode: 'edit', expense: e, pocketId });
+    },
+    onDelete: async () => {
+      setOpenRow(null);
+      try {
+        await deleteExpense(pocketId, e.id, !!e.receipt);
+        showToast('Expense deleted');
+      } catch {
+        showToast("Couldn't delete. Try again");
+      }
+    },
+  });
 }

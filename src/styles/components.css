@@ -495,8 +495,17 @@
   color: #ffffff;
 }
 .ex-action.del {
-  background: var(--destructive-bg);
-  color: var(--destructive);
+  flex: 1;
+  background: #ff453a;
+  color: #ffffff;
+}
+.ex-actions.full .ex-action.edit {
+  width: 0;
+  overflow: hidden;
+  padding: 0;
+}
+.ex-action {
+  transition: width 0.2s ease;
 }
 
 

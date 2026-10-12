@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Avatar } from '../components/Avatar';
 import { Fades } from '../components/Chrome';
-import { categoryOf, ExpenseRow } from '../components/ExpenseRow';
+import { categoryOf, SwipeRow, useSwipeRows } from '../components/ExpenseRow';
 import { ListSkeleton } from '../components/Skeletons';
 import type { Expense, PocketWithMembers } from '../data/types';
 import { useCombined } from '../data/useCombined';
@@ -24,7 +24,7 @@ import { PocketPill, PocketSwitcher } from './pockets/PocketSwitcher';
 export function Home() {
   const pocket = useCurrentPocket();
   const { categories } = usePockets();
-  const { month, setMonth, openExpenseSheet } = useUi();
+  const { month, setMonth } = useUi();
   const navigate = useNavigate();
   const prev = addMonths(month, -1);
   const { expenses: both, loading } = useExpenses(pocket.id, prev, month);
@@ -33,6 +33,7 @@ export function Home() {
   const [cur, setCur] = useState<CurrencyCode>(pocket.currencies[0]);
   const [switcher, setSwitcher] = useState(false);
   const [newPocket, setNewPocket] = useState(false);
+  const swipe = useSwipeRows(pocket.id);
 
   useEffect(() => {
     if (!pocket.currencies.includes(cur)) setCur(pocket.currencies[0]);
@@ -66,13 +67,7 @@ export function Home() {
                 </div>
                 <div className="list-card">
                   {expenses.slice(0, 5).map((e, i) => (
-                    <ExpenseRow
-                      key={e.id}
-                      expense={e}
-                      categories={categories}
-                      first={i === 0}
-                      onOpen={() => openExpenseSheet({ mode: 'edit', expense: e, pocketId: pocket.id })}
-                    />
+                    <SwipeRow key={e.id} expense={e} categories={categories} first={i === 0} {...swipe(e)} />
                   ))}
                 </div>
               </div>
