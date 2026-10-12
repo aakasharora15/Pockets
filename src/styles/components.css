@@ -1073,3 +1073,46 @@
 .switch.on .switch-knob {
   left: 22px;
 }
+
+/*
+ * Flow screens (welcome, sign-up, log-in, setup, join): content at the top, actions at the bottom.
+ * The actions stay in place and the content above them scrolls when the screen is short
+ * (smaller phones, Safari's toolbars, the keyboard), so nothing can slide under a button.
+ */
+.flow {
+  display: flex;
+  flex-direction: column;
+}
+.flow-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior-y: contain;
+  padding: 130px 24px 16px;
+  display: flex;
+  flex-direction: column;
+}
+.flow-body > * {
+  flex: none;
+}
+.flow-foot {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px 24px max(46px, env(safe-area-inset-bottom));
+}
+.flow .flow-head,
+.flow .auth-stack,
+.flow .terms,
+.flow .bottom-primary,
+.flow .bottom-link {
+  position: static;
+}
+.flow .flow-foot .bottom-primary {
+  width: 100%;
+}
+.flow .flow-foot .bottom-link {
+  margin: 0 -24px;
+}
