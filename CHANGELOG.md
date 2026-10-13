@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Added
+
+- **Choose how you start.** The last setup step offers Just me, Create a shared Pocket (and name it) or Join a shared Pocket, with an option to also keep a Personal Pocket.
+- **Hide the Personal Pocket.** People who only use shared Pockets can hide Personal (Settings › Account › Personal Pocket). It comes back on its own if you leave every shared Pocket or an expense has to be saved there.
+
 ### Fixed
 
 - The selected tab's icon is no longer filled in; the selected tab is shown by its brighter icon and label, as designed.

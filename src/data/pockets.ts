@@ -78,7 +78,10 @@ export async function completeSetup(opts: {
   name: string;
   initials: string;
   currencies: CurrencyCode[];
-  share: boolean;
+  /** Name of a shared Pocket to create with the account, if any. */
+  sharedName?: string;
+  /** Keep the Personal Pocket out of sight (it's still created, as a fallback). */
+  hidePersonal: boolean;
 }): Promise<{ personalId: string; sharedId?: string }> {
   const batch = writeBatch(db);
   batch.set(userRef(opts.uid), {
@@ -87,6 +90,7 @@ export async function completeSetup(opts: {
     email: opts.email,
     createdAt: serverTimestamp(),
     pocketIds: [],
+    ...(opts.hidePersonal ? { hidePersonal: true } : {}),
   });
   const owner = { uid: opts.uid, name: opts.name, initials: opts.initials };
   const personalId = addPocketCreation(batch, {
@@ -97,8 +101,8 @@ export async function completeSetup(opts: {
     owner,
   });
   let sharedId: string | undefined;
-  if (opts.share) {
-    sharedId = addPocketCreation(batch, { name: 'Home', type: 'shared', currencies: opts.currencies, owner });
+  if (opts.sharedName) {
+    sharedId = addPocketCreation(batch, { name: opts.sharedName, type: 'shared', currencies: opts.currencies, owner });
   }
   await commit(batch);
   return { personalId, sharedId };

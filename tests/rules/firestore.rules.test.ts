@@ -424,4 +424,9 @@ describe('users', () => {
     await assertFails(updateDoc(doc(as(STRANGER), 'users', STRANGER), { lastPocketId: 42 }));
     await assertFails(updateDoc(doc(as(STRANGER), 'users', STRANGER), { somethingElse: true }));
   });
+
+  it('a user can hide their Personal Pocket', async () => {
+    await assertSucceeds(updateDoc(doc(as(STRANGER), 'users', STRANGER), { hidePersonal: true }));
+    await assertFails(updateDoc(doc(as(STRANGER), 'users', STRANGER), { hidePersonal: 'yes' }));
+  });
 });

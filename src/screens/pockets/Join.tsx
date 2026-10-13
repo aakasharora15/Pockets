@@ -134,17 +134,20 @@ export function Join() {
                 <Avatar initials={initials} size={36} />
               </label>
             </div>
-            <div className="join-choice">
-              <span className="field-label">Your existing expenses</span>
-              <div className="segmented" role="radiogroup" aria-label="Your existing expenses">
-                <button role="radio" aria-checked={!move} className={`seg${!move ? ' on' : ''}`} onClick={() => setMove(false)}>
-                  Keep in Personal
-                </button>
-                <button role="radio" aria-checked={move} className={`seg${move ? ' on' : ''}`} onClick={() => setMove(true)}>
-                  Move to {invite.pocketName}
-                </button>
+            {/* Only asked of people who keep a Personal Pocket. */}
+            {!profile.hidePersonal && (
+              <div className="join-choice">
+                <span className="field-label">Your existing expenses</span>
+                <div className="segmented" role="radiogroup" aria-label="Your existing expenses">
+                  <button role="radio" aria-checked={!move} className={`seg${!move ? ' on' : ''}`} onClick={() => setMove(false)}>
+                    Keep in Personal
+                  </button>
+                  <button role="radio" aria-checked={move} className={`seg${move ? ' on' : ''}`} onClick={() => setMove(true)}>
+                    Move to {invite.pocketName}
+                  </button>
+                </div>
               </div>
-            </div>
+            )}
           </>
         )}
       </div>

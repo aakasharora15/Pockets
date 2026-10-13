@@ -8,8 +8,13 @@ import { markServerSync } from '../data/syncStatus';
 import { useSession } from './session';
 
 interface PocketsState {
-  /** All Pockets the user belongs to: Personal first, then shared by creation. */
+  /** Pockets to show: Personal first (unless hidden), then shared by creation. */
   pockets: PocketWithMembers[];
+  /** Every Pocket the user belongs to, the hidden Personal one included (backups, background work). */
+  allPockets: PocketWithMembers[];
+  /** Personal is hidden: the account asked for it and is in at least one shared Pocket. */
+  personalHidden: boolean;
+  setHidePersonal: (hide: boolean) => void;
   loading: boolean;
   error: boolean;
   current: PocketWithMembers | null;
@@ -89,7 +94,7 @@ export function PocketsProvider({ children }: { children: ReactNode }) {
     return () => unsubs.forEach((u) => u());
   }, [idsKey]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const pockets = useMemo<PocketWithMembers[]>(() => {
+  const allPockets = useMemo<PocketWithMembers[]>(() => {
     if (!ids) return [];
     const list = ids
       .map((id) => docs[id])
@@ -107,6 +112,13 @@ export function PocketsProvider({ children }: { children: ReactNode }) {
   if (!stillLoading && profile) loadedOnce.current = true;
   if (!profile) loadedOnce.current = false;
   const loading = stillLoading && !loadedOnce.current;
+
+  // Personal only hides while there's a shared Pocket to show instead; leave the last one and it's back.
+  const personalHidden = !!profile?.hidePersonal && allPockets.some((p) => p.type === 'shared');
+  const pockets = useMemo(
+    () => (personalHidden ? allPockets.filter((p) => p.type !== 'personal') : allPockets),
+    [allPockets, personalHidden],
+  );
 
   const current = useMemo(() => {
     if (!uid || pockets.length === 0) return null;
@@ -130,8 +142,15 @@ export function PocketsProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const setHidePersonal = (hide: boolean) => {
+    if (uid) updateDoc(userRef(uid), { hidePersonal: hide }).catch(() => {});
+  };
+
   const value: PocketsState = {
     pockets,
+    allPockets,
+    personalHidden,
+    setHidePersonal,
     loading,
     error,
     current,

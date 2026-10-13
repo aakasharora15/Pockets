@@ -159,7 +159,7 @@ function MainRoutes() {
 
 /** Tells existing members when someone new joins one of their shared Pockets. */
 function JoinWatcher() {
-  const { pockets } = usePockets();
+  const { allPockets: pockets } = usePockets();
   const { user } = useSession();
   const { showToast } = useUi();
   const seen = useRef<Map<string, Set<string>>>(new Map());
@@ -182,10 +182,17 @@ function JoinWatcher() {
 function OutboxRunner() {
   const { user } = useSession();
   const { showToast } = useUi();
+  const { personalHidden, setHidePersonal } = usePockets();
+  // Rescued expenses go to Personal, so a hidden Personal comes back to show them.
+  const reveal = useRef<() => void>(() => {});
+  reveal.current = () => personalHidden && setHidePersonal(false);
   const uid = user?.uid;
   useEffect(() => {
     if (!uid) return;
-    onMovedToPersonal((n) => showToast(`Saved ${n} ${n === 1 ? 'expense' : 'expenses'} to Personal: its Pocket isn't available`));
+    onMovedToPersonal((n) => {
+      reveal.current();
+      showToast(`Saved ${n} ${n === 1 ? 'expense' : 'expenses'} to Personal: its Pocket isn't available`);
+    });
     const run = () => void replayOutbox(uid);
     const onVisible = () => document.visibilityState === 'visible' && run();
     // Give Firestore a moment to send its own queue first.
@@ -209,7 +216,7 @@ function OutboxRunner() {
  * the app comes back to the front and every half hour. Whoever opens Spendr first logs them.
  */
 function RecurringRunner() {
-  const { pockets } = usePockets();
+  const { allPockets: pockets } = usePockets();
   const { showToast } = useUi();
   const ids = pockets.map((p) => p.id).join(',');
   const last = useRef(0);
@@ -240,7 +247,7 @@ function RecurringRunner() {
 
 /** Adds categories introduced in later versions to older Pockets, once per Pocket. */
 function DefaultsRunner() {
-  const { pockets, categoriesFor } = usePockets();
+  const { allPockets: pockets, categoriesFor } = usePockets();
   const done = useRef(new Set<string>());
   useEffect(() => {
     if (!navigator.onLine) return;

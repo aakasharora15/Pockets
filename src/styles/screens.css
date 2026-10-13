@@ -226,6 +226,11 @@
   top: calc(var(--top) + 216px);
   left: 24px;
   right: 24px;
+  /* Scrolls above the Continue button when the extra options don't fit. */
+  bottom: calc(max(var(--bottom), 16px) + 84px);
+  overflow-y: auto;
+  scrollbar-width: none;
+  padding-bottom: 8px;
   display: flex;
   flex-direction: column;
   gap: 12px;
@@ -242,6 +247,41 @@
 }
 .choice.on {
   box-shadow: inset 0 0 0 1.5px var(--text);
+}
+.choice-stack > * {
+  flex: none;
+}
+.setup-extra-row.sep {
+  background-position: 16px top;
+  background-size: calc(100% - 32px) 0.5px;
+}
+.setup-extra-row {
+  min-height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+}
+.setup-extra-row input {
+  flex: 1;
+  min-width: 0;
+  text-align: right;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font: inherit;
+  font-size: 17px;
+}
+.setup-extra-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.setup-extra-sub {
+  font-size: 13px;
+  color: var(--text2);
 }
 .choice-tile {
   width: 44px;

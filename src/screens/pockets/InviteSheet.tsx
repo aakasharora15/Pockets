@@ -137,7 +137,7 @@ export function InviteSheet({ pocketId, onClose }: { pocketId: string; onClose: 
           <Icon name="x" weight="bold" />
         </button>
       </div>
-      <span className="invite-sub">They'll see your {pocket.name} expenses, not your Personal Pocket.</span>
+      <span className="invite-sub">They'll see only your {pocket.name} expenses, nothing else.</span>
       <div className="qr-box">
         {qr ? (
           <svg viewBox={`0 0 ${qr.size} ${qr.size}`} width="196" height="196" shapeRendering="crispEdges" role="img" aria-label="Invite QR code">

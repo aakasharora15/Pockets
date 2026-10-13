@@ -9,6 +9,8 @@ export interface UserProfile {
   pocketIds: string[];
   /** The Pocket last opened on any phone; new sessions open on it. */
   lastPocketId?: string;
+  /** Hide the Personal Pocket while the account is in a shared one. It still exists as a fallback. */
+  hidePersonal?: boolean;
 }
 
 export type PocketType = 'personal' | 'shared';

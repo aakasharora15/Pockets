@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Fades } from '../../components/Chrome';
 import { Group, SettingsMenuRow, SettingsRow } from '../../components/Rows';
+import { Switch } from '../../components/Switch';
 import { ActionSheet, Sheet, SheetHeader } from '../../components/Sheet';
 import { createBackup, restoreBackup } from '../../data/backup';
 import { allExpenses, expensesBetween } from '../../data/expenses';
@@ -66,7 +67,8 @@ const GLASSES: [GlassStyle, string][] = [
 
 export function Settings() {
   const pocket = useCurrentPocket();
-  const { categories, pockets } = usePockets();
+  const { categories, allPockets: pockets, personalHidden, setHidePersonal } = usePockets();
+  const inShared = pockets.some((p) => p.type === 'shared');
   const { user, profile } = useMe();
   const { glass, setGlass, theme, setTheme, showToast, month, combinedFor, setCombined, online } = useUi();
   const waiting = useOutbox().filter((e) => e.uid === user.uid);
@@ -215,6 +217,18 @@ export function Settings() {
             value={providerLabel(user.providerData.map((p) => p.providerId))}
             onClick={() => navigate('/settings/account')}
           />
+          {inShared && (
+            <SettingsRow icon="user" tint={TINT.neutral} label="Personal Pocket" chevron={false}>
+              <Switch
+                on={!personalHidden}
+                label="Show Personal Pocket"
+                onChange={(show) => {
+                  setHidePersonal(!show);
+                  showToast(show ? 'Personal Pocket shown' : 'Personal Pocket hidden. Its expenses are kept');
+                }}
+              />
+            </SettingsRow>
+          )}
           <SettingsRow
             icon="cloud-arrow-up" tint={TINT.neutral}
             label="Sync status"

@@ -21,7 +21,7 @@ const RECENT_LOGIN_MS = 5 * 60 * 1000;
 export function Account() {
   const { user, profile } = useMe();
   const { logOut } = useSession();
-  const { pockets, setCurrent } = usePockets();
+  const { pockets, allPockets, setCurrent } = usePockets();
   const { showToast } = useUi();
   const navigate = useNavigate();
   const [editing, setEditing] = useState(false);
@@ -53,7 +53,7 @@ export function Account() {
     setConfirm(null);
     setBusy(true);
     try {
-      await deleteAccount(user, pockets);
+      await deleteAccount(user, allPockets);
     } catch (e) {
       setBusy(false);
       showToast(authMessage(e) || "Couldn't delete your account. Try again");
@@ -148,7 +148,7 @@ export function Account() {
 
 function NameSheet({ onClose }: { onClose: () => void }) {
   const { user, profile } = useMe();
-  const { pockets } = usePockets();
+  const { allPockets: pockets } = usePockets();
   const { showToast } = useUi();
   const [name, setName] = useState(profile.name);
   const [initials, setInitials] = useState(profile.initials);
