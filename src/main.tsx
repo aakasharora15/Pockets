@@ -7,7 +7,19 @@ import './styles/base.css';
 import './styles/components.css';
 import './styles/screens.css';
 
-registerSW({ immediate: true });
+// New versions install in the background and the app reloads into them. An installed app on iPhone
+// can stay open in the background for days, so also look for one whenever it comes back to the front.
+registerSW({
+  immediate: true,
+  onRegisteredSW(_url, registration) {
+    if (!registration) return;
+    const check = () => {
+      if (document.visibilityState === 'visible' && navigator.onLine) registration.update().catch(() => {});
+    };
+    document.addEventListener('visibilitychange', check);
+    window.setInterval(check, 60 * 60 * 1000);
+  },
+});
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
