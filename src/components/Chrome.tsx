@@ -37,7 +37,7 @@ export function TabBar() {
             aria-current={on ? 'page' : undefined}
             onClick={() => navigate(t.path, { replace: true })}
           >
-            <Icon name={t.icon} size={24} weight={on ? 'fill' : 'regular'} />
+            <Icon name={t.icon} size={24} />
             <span className="tab-label">{t.label}</span>
           </button>
         );

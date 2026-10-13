@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Fixed
+
+- The selected tab's icon is no longer filled in; the selected tab is shown by its brighter icon and label, as designed.
+
 ## 1.2.0 (2026-10-12)
 
 ### Changed
