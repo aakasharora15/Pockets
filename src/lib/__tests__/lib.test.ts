@@ -134,7 +134,7 @@ describe('csv', () => {
       members,
     );
     const lines = csv.trim().split('\r\n');
-    expect(lines[0]).toBe('date,name,category,currency,amount,added by,note,tag,repeats monthly');
+    expect(lines[0]).toBe('date,name,category,currency,amount,paid by,note,tag,repeats monthly');
     expect(lines[1]).toBe("2026-09-01,'=SUM(A1),Other,INR,4500,TR,,,");
     expect(lines[2]).toBe('2026-09-18,"Tesco, weekly",Groceries,GBP,86.40,Prernaa Singh,"Big ""shop""",Goa trip,yes');
   });

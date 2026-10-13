@@ -1,6 +1,6 @@
 # Spendr
 
-**Spendr** is an open-source expense tracker for you and the people you share costs with. Every account gets a private Personal Pocket. Create shared Pockets with a partner or flatmates, invite them by link, code or QR, and see who spent what. Each expense keeps its own currency, and totals are never converted or mixed. It installs on your phone as a web app, works offline, and syncs in real time. Run your own copy with a free Firebase project.
+**Spendr** is an open-source expense tracker for you and the people you share costs with. Every account gets a private Personal Pocket. Create shared Pockets with a partner or flatmates, invite them by link, code or QR, and see who paid for what. Each expense keeps its own currency, and totals are never converted or mixed. It installs on your phone as a web app, works offline, and syncs in real time. Run your own copy with a free Firebase project.
 
 <p>
   <img src="docs/screenshots/home.png" width="220" alt="Home">
@@ -12,7 +12,7 @@
 
 - **Personal and shared Pockets.** A private Personal Pocket for every account, plus any number of shared ones. Everyone in a shared Pocket sees all its expenses and who added each.
 - **Many currencies, never mixed.** Pick the currencies each Pocket uses (£, ₹, $, €, A$, C$, S$, NZ$). Totals, budgets and charts are always per currency.
-- **Home at a glance.** Month totals with budget bars, weekly spend, where it went, who spent what, and recent expenses.
+- **Home at a glance.** Month totals with budget bars, weekly spend, where it went, who paid what, and recent expenses.
 - **Fast entry.** Amount, category, done. Optional name, date and note.
 - **Transactions and Calendar.** Search, filter by person or currency, swipe to edit or delete. Month grid with category dots.
 - **Invites.** By link, 6-character code, QR code or email. Single use, 48 hours. An emailed invite only works for that address.

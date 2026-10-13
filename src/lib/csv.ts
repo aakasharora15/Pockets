@@ -8,11 +8,11 @@ function cell(v: string): string {
   return /[",\n\r]/.test(s) ? `"${s.replace(/"/g, '""')}"` : s;
 }
 
-/** CSV: date, name, category, currency, amount (major units), added by, note, tag, repeats. */
+/** CSV: date, name, category, currency, amount (major units), paid by, note, tag, repeats. */
 export function expensesToCsv(expenses: Expense[], categories: Category[], members: Member[]): string {
   const catName = new Map(categories.map((c) => [c.id, c.name]));
   const memberName = new Map(members.map((m) => [m.uid, m.name]));
-  const rows = [['date', 'name', 'category', 'currency', 'amount', 'added by', 'note', 'tag', 'repeats monthly']];
+  const rows = [['date', 'name', 'category', 'currency', 'amount', 'paid by', 'note', 'tag', 'repeats monthly']];
   for (const e of [...expenses].sort((a, b) => (a.date < b.date ? -1 : a.date > b.date ? 1 : 0))) {
     rows.push([
       e.date,

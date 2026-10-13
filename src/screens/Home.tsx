@@ -356,7 +356,7 @@ function ByPerson({ expenses, code, pocket }: { expenses: Expense[]; code: strin
   const total = totalIn(expenses, code);
   return (
     <div className="card by-person">
-      <span className="card-title">By person</span>
+      <span className="card-title">Paid by</span>
       {people.map(([uid, p]) => (
         <div key={uid} className="person-row">
           <Avatar initials={p.initials} size={42} />

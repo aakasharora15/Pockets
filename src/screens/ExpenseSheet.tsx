@@ -52,7 +52,8 @@ export function ExpenseSheet({ request }: { request: ExpenseSheetRequest }) {
   const [typed, setTyped] = useState(original ? minorToTyped(original.amountMinor, original.currency) : '');
   const [name, setName] = useState(original?.name ?? '');
   const [categoryId, setCategoryId] = useState<string | null>(original?.categoryId ?? null);
-  const [who, setWho] = useState(user.uid);
+  // Who paid: the person this expense counts against in a shared Pocket.
+  const [who, setWho] = useState(original?.byUid ?? user.uid);
   const [date, setDate] = useState<string>(original?.date ?? (request.mode === 'new' ? request.date : undefined) ?? todayKey());
   const [note, setNote] = useState(original?.note ?? '');
   const [detent, setDetent] = useState<'medium' | 'large'>(editing ? 'large' : 'medium');
@@ -97,6 +98,11 @@ export function ExpenseSheet({ request }: { request: ExpenseSheetRequest }) {
   const category = categories.find((c) => c.id === categoryId) ?? null;
   const shared = pocket.type === 'shared';
   const members = pocket.members;
+  // Someone who has left can still be the payer of an older expense.
+  const payers =
+    original && !members.some((m) => m.uid === original.byUid) && pocket.id === editing?.pocketId
+      ? [...members, { uid: original.byUid, initials: original.byInitials }]
+      : members;
 
   const choosePocket = (p: PocketWithMembers) => {
     setPocketId(p.id);
@@ -118,7 +124,7 @@ export function ExpenseSheet({ request }: { request: ExpenseSheetRequest }) {
       return;
     }
     setBusy(true);
-    const by = members.find((m) => m.uid === (editing ? original!.byUid : who));
+    const by = payers.find((m) => m.uid === who);
     const moving = !!editing && editing.pocketId !== pocket.id;
     // A repeat lives in its Pocket: moving the expense starts a new one there.
     const keepRepeat = repeatOn && !!linkedRepeat && !moving;
@@ -128,8 +134,8 @@ export function ExpenseSheet({ request }: { request: ExpenseSheetRequest }) {
       amountMinor,
       name: name.trim() || category.name,
       categoryId: category.id,
-      byUid: editing ? original!.byUid : who,
-      byInitials: editing ? original!.byInitials : by?.initials ?? '?',
+      byUid: who,
+      byInitials: by?.initials ?? original?.byInitials ?? '?',
       date,
       note,
       tag: rememberTag(pocket, tag),
@@ -140,7 +146,7 @@ export function ExpenseSheet({ request }: { request: ExpenseSheetRequest }) {
     try {
       let id = newId;
       if (editing) {
-        id = await saveExpenseEdit(original!, editing.pocketId, pocket.id, input, shared ? who : user.uid);
+        id = await saveExpenseEdit(original!, editing.pocketId, pocket.id, input, user.uid);
         showToast('Expense updated');
       } else {
         await addExpense(pocket.id, input, newId);
@@ -308,9 +314,9 @@ export function ExpenseSheet({ request }: { request: ExpenseSheetRequest }) {
                       <Icon name="user-circle" size={19} />
                     </span>
                     <div className="detail-body sep">
-                      <span className="detail-label">{editing ? 'Edited by' : 'Added by'}</span>
-                      <div className="mini-seg" role="radiogroup" aria-label={editing ? 'Edited by' : 'Added by'}>
-                        {members.map((m) => (
+                      <span className="detail-label">Paid by</span>
+                      <div className="mini-seg" role="radiogroup" aria-label="Paid by">
+                        {payers.map((m) => (
                           <button key={m.uid} role="radio" aria-checked={who === m.uid} className={`mini-seg-item${who === m.uid ? ' on' : ''}`} onClick={() => setWho(m.uid)}>
                             {m.initials}
                           </button>

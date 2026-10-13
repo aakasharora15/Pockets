@@ -5,10 +5,12 @@
 ### Added
 
 - **Choose how you start.** The last setup step offers Just me, Create a shared Pocket (and name it) or Join a shared Pocket, with an option to also keep a Personal Pocket.
+- **Paid by.** In a shared Pocket every expense records who paid (replacing Added by and Edited by), and it can be changed when editing. Home's person card and CSV exports say Paid by.
 - **Hide the Personal Pocket.** People who only use shared Pockets can hide Personal (Settings › Account › Personal Pocket). It comes back on its own if you leave every shared Pocket or an expense has to be saved there.
 
 ### Fixed
 
+- The installed app now checks for a new version each time it comes back to the front, so phones that keep Spendr open in the background no longer stay on an old version.
 - The selected tab's icon is no longer filled in; the selected tab is shown by its brighter icon and label, as designed.
 
 ## 1.2.0 (2026-10-12)
