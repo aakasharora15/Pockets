@@ -5,7 +5,7 @@ import { Fades } from '../components/Chrome';
 import { categoryOf, SwipeRow, useSwipeRows } from '../components/ExpenseRow';
 import { ListSkeleton } from '../components/Skeletons';
 import type { Expense, PocketWithMembers } from '../data/types';
-import { useCombined } from '../data/useCombined';
+import { useCombined, useCombinedByPayer } from '../data/useCombined';
 import { useExpenses } from '../data/useExpenses';
 import { OTHER_ID } from '../lib/categories';
 import { currency, type CurrencyCode } from '../lib/currencies';
@@ -336,34 +336,56 @@ function WhereItWent({ expenses, code, onSeeAll }: { expenses: Expense[]; code: 
   );
 }
 
+/**
+ * Who paid, in the currency of the card you've swiped to. Expenses in other currencies are converted
+ * at their own day's exchange rate, so each person's total covers everything they paid.
+ */
 function ByPerson({ expenses, code, pocket }: { expenses: Expense[]; code: string; pocket: PocketWithMembers }) {
   const { user } = useSession();
+  const target = code as CurrencyCode;
+  const converted = useCombinedByPayer(expenses, target);
+  const others = useMemo(() => [...new Set(expenses.map((e) => e.currency).filter((c) => c !== target))], [expenses, target]);
+  const hasOther = useMemo(() => {
+    const s = new Set<string>();
+    for (const e of expenses) if (e.currency !== target) s.add(e.byUid);
+    return s;
+  }, [expenses, target]);
   const people = useMemo(() => {
     const sums = new Map<string, { initials: string; name: string; total: number }>();
     for (const m of pocket.members) {
       const name = firstName(m.name) + (m.uid === user?.uid ? ' (you)' : '');
       sums.set(m.uid, { initials: m.initials, name, total: 0 });
     }
-    for (const e of expenses) {
-      if (e.currency !== code) continue;
-      // People who left keep their initials on their expenses.
-      const p = sums.get(e.byUid) ?? { initials: e.byInitials, name: e.byInitials, total: 0 };
-      p.total += e.amountMinor;
-      sums.set(e.byUid, p);
-    }
+    // People who left keep their initials on their expenses.
+    for (const e of expenses) if (!sums.has(e.byUid)) sums.set(e.byUid, { initials: e.byInitials, name: e.byInitials, total: 0 });
+    for (const [uid, p] of sums) p.total = converted.totals.get(uid) ?? 0;
     return [...sums.entries()].sort((a, b) => b[1].total - a[1].total);
-  }, [expenses, code, pocket.members, user?.uid]);
-  const total = totalIn(expenses, code);
+  }, [expenses, converted.totals, pocket.members, user?.uid]);
+  const total = people.reduce((n, [, p]) => n + p.total, 0);
+  const otherNames = others.map((c) => currency(c).plural.toLowerCase()).join(' and ');
+  const note = !others.length
+    ? null
+    : converted.error
+      ? `Only ${currency(target).plural.toLowerCase()} for now: converting ${otherNames} needs a connection`
+      : converted.loading
+        ? 'Converting…'
+        : `Includes ${otherNames}, converted at each day's rate${converted.missing ? ` (${converted.missing} not included yet)` : ''}`;
   return (
     <div className="card by-person">
-      <span className="card-title">Paid by</span>
+      <div className="by-person-head">
+        <span className="card-title">Paid by</span>
+        {note && <span className="by-person-note">{note}</span>}
+      </div>
       {people.map(([uid, p]) => (
         <div key={uid} className="person-row">
           <Avatar initials={p.initials} size={42} />
           <div className="person-body">
             <div className="person-top">
               <span className="person-name">{p.name}</span>
-              <span className="person-amt num">{formatMoney(p.total, code)}</span>
+              <span className="person-amt num">
+                {hasOther.has(uid) && !converted.error ? '≈ ' : ''}
+                {formatMoney(p.total, target)}
+              </span>
             </div>
             <div className="person-track">
               <div className="person-fill" style={{ width: total ? `${(p.total / total) * 100}%` : 0 }} />

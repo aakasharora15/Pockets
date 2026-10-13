@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
-import { combine, rateOn, type DailyRates } from '../rates';
+import { afterEach, describe, expect, it, vi } from 'vitest';
+import { combine, combinedTotalsBy, rateOn, type DailyRates } from '../rates';
 
 // Base GBP: units of each currency per £1.
 const rates: DailyRates = {
@@ -44,5 +44,29 @@ describe('exchange rates', () => {
   it('rounds to the nearest minor unit', () => {
     // ₹1,000 at 112.5 = £8.888… → £8.89
     expect(combine([{ currency: 'INR', amountMinor: 100000, date: '2026-10-02' }], 'GBP', (c, d) => rateOn(rates, c, d)).total).toBe(889);
+  });
+
+  describe('per payer', () => {
+    afterEach(() => vi.unstubAllGlobals());
+
+    it('converts each payer\'s expenses into one currency', async () => {
+      // A flat ₹112.50 to the pound on every working day of September 2026.
+      vi.stubGlobal('fetch', async (url: string) => {
+        const u = new URL(url);
+        const rows = [];
+        for (let d = new Date(`${u.searchParams.get('from')}T12:00:00Z`); d.toISOString().slice(0, 10) <= u.searchParams.get('to')!; d.setUTCDate(d.getUTCDate() + 1)) {
+          rows.push({ date: d.toISOString().slice(0, 10), base: 'GBP', quote: 'INR', rate: 112.5 });
+        }
+        return new Response(JSON.stringify(rows), { status: 200 });
+      });
+      const expenses = [
+        { currency: 'GBP' as const, amountMinor: 5000, date: '2026-09-10', by: 'PS' }, // £50
+        { currency: 'INR' as const, amountMinor: 1125000, date: '2026-09-11', by: 'PS' }, // ₹11,250 = £100
+        { currency: 'INR' as const, amountMinor: 225000, date: '2026-09-12', by: 'AA' }, // ₹2,250 = £20
+      ];
+      const by = await combinedTotalsBy(expenses, 'GBP', (i) => expenses[i].by);
+      expect(by.get('PS')).toEqual({ total: 15000, missing: 0 });
+      expect(by.get('AA')).toEqual({ total: 2000, missing: 0 });
+    });
   });
 });

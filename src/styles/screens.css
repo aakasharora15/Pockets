@@ -623,6 +623,15 @@
   flex-direction: column;
   gap: 16px;
 }
+.by-person-head {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.by-person-note {
+  font-size: 13px;
+  color: var(--text2);
+}
 .person-row {
   display: flex;
   align-items: center;
