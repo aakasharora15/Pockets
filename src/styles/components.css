@@ -891,6 +891,23 @@
   border: none;
   box-shadow: none;
 }
+/* Each key holds an invisible switch over its whole area (iPhone plays a tick when it flips). */
+.pin-key,
+.amount-key {
+  position: relative;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.key-haptic {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
 /* Lights up on touch and fades out on release, like the iPhone passcode keys. */
 .pin-key:not(.blank),
 .amount-key:not(.blank) {

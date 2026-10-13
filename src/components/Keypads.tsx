@@ -1,5 +1,31 @@
+import type { ReactNode } from 'react';
 import { tap } from '../lib/haptics';
 import { Icon } from '../lib/icons';
+
+/**
+ * A keypad key with an invisible iOS switch inside. Your tap flips the switch, and flipping a
+ * switch is what makes an iPhone play its haptic tick (a web app can't trigger one from code on
+ * recent iOS). Android vibrates instead (see haptics.ts).
+ */
+function Key({ className, label, onPress, children }: { className: string; label: string; onPress: () => void; children: ReactNode }) {
+  return (
+    <label
+      className={`${className} press`}
+      role="button"
+      aria-label={label}
+      tabIndex={0}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onPress();
+        }
+      }}
+    >
+      <input ref={(el) => el?.setAttribute('switch', '')} type="checkbox" className="key-haptic" tabIndex={-1} aria-hidden="true" onChange={onPress} />
+      {children}
+    </label>
+  );
+}
 
 const PIN_KEYS: [string, string][] = [
   ['1', ''], ['2', 'ABC'], ['3', 'DEF'], ['4', 'GHI'], ['5', 'JKL'], ['6', 'MNO'],
@@ -18,15 +44,15 @@ export function PinPad({ onKey: send }: { onKey: (k: string) => void }) {
         if (!d) return <div key={i} className="pin-key blank" />;
         if (d === 'del')
           return (
-            <button key={i} className="pin-key blank press" aria-label="Delete" onClick={() => onKey('del')}>
+            <Key key={i} className="pin-key blank" label="Delete" onPress={() => onKey('del')}>
               <Icon name="backspace" size={26} />
-            </button>
+            </Key>
           );
         return (
-          <button key={i} className="pin-key press" onClick={() => onKey(d)}>
+          <Key key={i} className="pin-key" label={d} onPress={() => onKey(d)}>
             <span className="pin-digit">{d}</span>
             {letters && <span className="pin-letters">{letters}</span>}
-          </button>
+          </Key>
         );
       })}
     </div>
@@ -56,14 +82,14 @@ export function AmountPad({ onKey: send, decimals }: { onKey: (k: string) => voi
         if (k === '.' && !decimals) return <div key={k} className="amount-key blank" />;
         if (k === 'del')
           return (
-            <button key={k} className="amount-key blank press" aria-label="Delete" onClick={() => onKey('del')}>
+            <Key key={k} className="amount-key blank" label="Delete" onPress={() => onKey('del')}>
               <Icon name="backspace" size={28} />
-            </button>
+            </Key>
           );
         return (
-          <button key={k} className="amount-key press" onClick={() => onKey(k)}>
+          <Key key={k} className="amount-key" label={k === '.' ? 'Decimal point' : k} onPress={() => onKey(k)}>
             {k}
-          </button>
+          </Key>
         );
       })}
     </div>

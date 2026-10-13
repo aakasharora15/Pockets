@@ -1,7 +1,7 @@
 /**
- * Haptic feedback for key presses. Android has the Vibration API. Safari on iPhone doesn't, but
- * from iOS 18 toggling a switch-style checkbox plays the system haptic, so a hidden one is toggled
- * through its label. Older iPhones and desktops get nothing.
+ * Haptic feedback. Android has the Vibration API. Safari on iPhone doesn't: keypad keys get their
+ * tick from the real switch inside each key (see Keypads.tsx). For a wrong PIN there's no tap to
+ * hang it on, so a hidden switch is flipped from code, which some iOS versions ignore.
  */
 
 let toggle: HTMLLabelElement | null = null;
@@ -29,9 +29,11 @@ function safely(fn: () => void) {
   }
 }
 
-/** One light tick, for a key press. Call from a click handler. */
+/** One light tick for a key press on Android. iPhone ticks from the key's own switch. */
 export function tap() {
-  safely(() => (typeof navigator.vibrate === 'function' ? navigator.vibrate(8) : iosTick()));
+  safely(() => {
+    if (typeof navigator.vibrate === 'function') navigator.vibrate(12);
+  });
 }
 
 /** Two ticks, for a wrong PIN. */

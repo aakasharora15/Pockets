@@ -14,6 +14,7 @@
 
 ### Fixed
 
+- **Keypad vibration on iPhone.** Recent iOS versions reportedly ignore vibration a web app triggers from code. Each PIN and amount key now holds an invisible switch that your tap flips, which plays iPhone's own tick. Android taps are slightly stronger.
 - The installed app now checks for a new version each time it comes back to the front, so phones that keep Spendr open in the background no longer stay on an old version.
 - The selected tab's icon is no longer filled in; the selected tab is shown by its brighter icon and label, as designed.
 
