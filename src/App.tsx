@@ -4,7 +4,7 @@ import { OfflineToast, PlusButton, TabBar, Toast } from './components/Chrome';
 import { RouteStage } from './components/RouteStage';
 import { HomeSkeleton } from './components/Skeletons';
 import { onMovedToPersonal, replayOutbox } from './data/outbox';
-import { addMissingDefaults } from './data/categories';
+import { upgradeDefaults } from './data/categories';
 import { logDueRecurring } from './data/recurring';
 import { DEFAULTS_VERSION } from './lib/categories';
 import { configMissing } from './firebase';
@@ -245,7 +245,7 @@ function RecurringRunner() {
   return null;
 }
 
-/** Adds categories introduced in later versions to older Pockets, once per Pocket. */
+/** Brings older Pockets' categories up to the current defaults, once per Pocket. */
 function DefaultsRunner() {
   const { allPockets: pockets, categoriesFor } = usePockets();
   const done = useRef(new Set<string>());
@@ -255,7 +255,7 @@ function DefaultsRunner() {
       const cats = categoriesFor(p.id);
       if ((p.defaultsVersion ?? 1) >= DEFAULTS_VERSION || cats.length === 0 || done.current.has(p.id)) continue;
       done.current.add(p.id);
-      addMissingDefaults(p.id, cats).catch(() => done.current.delete(p.id));
+      upgradeDefaults(p.id, cats, p.defaultsVersion ?? 1).catch(() => done.current.delete(p.id));
     }
   }, [pockets, categoriesFor]);
   return null;

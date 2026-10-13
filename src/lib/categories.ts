@@ -18,7 +18,7 @@ export const DEFAULT_CATEGORIES: CategorySeed[] = [
   { id: 'counciltax', name: 'Council tax', icon: 'bank', colour: '#B38E5D' },
   { id: 'water', name: 'Water bill', icon: 'drop', colour: '#4FD1E8' },
   { id: 'household', name: 'Household', icon: 'couch', colour: '#73A6A0' },
-  { id: 'transport', name: 'Transport', icon: 'train-simple', colour: '#F09A55' },
+  { id: 'transport', name: 'Travel', icon: 'train-simple', colour: '#F09A55' },
   { id: 'gifts', name: 'Gifts', icon: 'gift', colour: '#EE86B4' },
   { id: 'self', name: 'Self improvement', icon: 'book-open', colour: '#E2725E' },
   { id: 'entertainment', name: 'Entertainment', icon: 'ticket', colour: '#EE6F7C' },
@@ -27,11 +27,14 @@ export const DEFAULT_CATEGORIES: CategorySeed[] = [
 ];
 
 /**
- * Version of the default category set. Pockets created before a version get its new categories
- * added once (see addMissingDefaults), so nobody has to add them by hand.
+ * Version of the default category set. Pockets created before a version are brought up to date
+ * once (see upgradeDefaults), so nobody has to do it by hand.
+ *   2: adds Amazon, Rent, Council tax, Water bill and Household
+ *   3: renames Transport to Travel
  */
-export const DEFAULTS_VERSION = 2;
+export const DEFAULTS_VERSION = 3;
 export const ADDED_IN_V2 = ['amazon', 'rent', 'counciltax', 'water', 'household'];
+export const RENAMED_IN_V3: Record<string, [from: string, to: string]> = { transport: ['Transport', 'Travel'] };
 
 /** Chart colours handed out in turn to new categories. */
 export const CATEGORY_PALETTE = ['#4FC48A', '#5AA0F0', '#A884F0', '#8FA0B8', '#F09A55', '#EE86B4', '#E2725E', '#EE6F7C', '#E8B83E', '#9AA0AA'];

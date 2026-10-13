@@ -1,6 +1,6 @@
 import { doc, writeBatch } from 'firebase/firestore';
 import { db } from '../firebase';
-import { ADDED_IN_V2, CATEGORY_PALETTE, DEFAULT_CATEGORIES, DEFAULTS_VERSION, ORDER_STEP, OTHER_ID } from '../lib/categories';
+import { ADDED_IN_V2, RENAMED_IN_V3, CATEGORY_PALETTE, DEFAULT_CATEGORIES, DEFAULTS_VERSION, ORDER_STEP, OTHER_ID } from '../lib/categories';
 import { recategorise } from './expenses';
 import { commit } from './pockets';
 import { categoriesCol, categoryRef, pocketRef } from './refs';
@@ -49,14 +49,16 @@ export async function reorderCategories(pid: string, orderedIds: string[]): Prom
 }
 
 /**
- * Adds default categories introduced after a Pocket was created (once per Pocket), just above
- * Other. Skips any the Pocket already has, by id or by name, so nothing is duplicated, and marks
- * the Pocket so a category someone deletes later doesn't come back.
+ * Brings a Pocket's categories up to the current default set, once per Pocket. Version 2 adds
+ * categories just above Other, skipping any the Pocket already has by id or name. Version 3
+ * renames defaults, but only ones still called by their old name. The Pocket is then marked, so a
+ * category someone deletes or renames later is left alone.
  */
-export async function addMissingDefaults(pid: string, existing: Category[]): Promise<number> {
+export async function upgradeDefaults(pid: string, existing: Category[], fromVersion: number): Promise<number> {
   const names = new Set(existing.map((c) => c.name.trim().toLowerCase()));
   const ids = new Set(existing.map((c) => c.id));
-  const toAdd = DEFAULT_CATEGORIES.filter((c) => ADDED_IN_V2.includes(c.id) && !ids.has(c.id) && !names.has(c.name.toLowerCase()));
+  const toAdd =
+    fromVersion < 2 ? DEFAULT_CATEGORIES.filter((c) => ADDED_IN_V2.includes(c.id) && !ids.has(c.id) && !names.has(c.name.toLowerCase())) : [];
   const sorted = [...existing].sort((a, b) => a.order - b.order);
   const other = sorted.find((c) => c.id === OTHER_ID);
   const last = sorted.filter((c) => c.id !== OTHER_ID).pop()?.order ?? 0;
@@ -64,8 +66,14 @@ export async function addMissingDefaults(pid: string, existing: Category[]): Pro
   toAdd.forEach((c, i) => {
     batch.set(categoryRef(pid, c.id), { name: c.name, icon: c.icon, colour: c.colour, order: last + (i + 1) * ORDER_STEP, system: false });
   });
-  if (other && other.order <= last + toAdd.length * ORDER_STEP) {
+  if (toAdd.length && other && other.order <= last + toAdd.length * ORDER_STEP) {
     batch.update(categoryRef(pid, OTHER_ID), { order: last + (toAdd.length + 1) * ORDER_STEP });
+  }
+  if (fromVersion < 3) {
+    for (const [id, [from, to]] of Object.entries(RENAMED_IN_V3)) {
+      const c = existing.find((x) => x.id === id);
+      if (c && c.name === from && !names.has(to.toLowerCase())) batch.update(categoryRef(pid, id), { name: to });
+    }
   }
   batch.update(pocketRef(pid), { defaultsVersion: DEFAULTS_VERSION });
   await commit(batch);

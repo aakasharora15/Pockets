@@ -35,7 +35,7 @@ const CATS = [
   ['groceries', 'Groceries', 'basket', '#5AA0F0'],
   ['shopping', 'Shopping', 'bag-simple', '#A884F0'],
   ['bills', 'Bills & Utilities', 'receipt', '#8FA0B8'],
-  ['transport', 'Transport', 'train-simple', '#F09A55'],
+  ['transport', 'Travel', 'train-simple', '#F09A55'],
   ['gifts', 'Gifts', 'gift', '#EE86B4'],
   ['self', 'Self improvement', 'book-open', '#E2725E'],
   ['entertainment', 'Entertainment', 'ticket', '#EE6F7C'],
