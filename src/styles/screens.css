@@ -623,18 +623,9 @@
   flex-direction: column;
   gap: 16px;
 }
-.by-person-head {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.by-person-note {
-  font-size: 13px;
-  color: var(--text2);
-}
 .person-row {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 12px;
 }
 .person-body {
@@ -644,21 +635,25 @@
   flex-direction: column;
   gap: 8px;
 }
-.person-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  gap: 8px;
-}
 .person-name {
   font-size: 17px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.person-line {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.person-line .person-track {
+  flex: 1;
+}
 .person-amt {
   font-size: 17px;
   font-weight: 600;
+  min-width: 96px;
+  text-align: right;
 }
 .person-track {
   height: 6px;

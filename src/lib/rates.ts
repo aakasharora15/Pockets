@@ -118,23 +118,6 @@ export async function combinedTotal(
   return combine(expenses, target, lookup);
 }
 
-/** Like combinedTotal, but one total per group (for example, per person who paid). */
-export async function combinedTotalsBy<K>(
-  expenses: Pick<Expense, 'currency' | 'amountMinor' | 'date'>[],
-  target: CurrencyCode,
-  keyOf: (i: number) => K,
-): Promise<Map<K, { total: number; missing: number }>> {
-  const lookup = await ratesFor(expenses, target);
-  const groups = new Map<K, Pick<Expense, 'currency' | 'amountMinor' | 'date'>[]>();
-  expenses.forEach((e, i) => {
-    const k = keyOf(i);
-    groups.set(k, [...(groups.get(k) ?? []), e]);
-  });
-  const out = new Map<K, { total: number; missing: number }>();
-  for (const [k, list] of groups) out.set(k, combine(list, target, lookup));
-  return out;
-}
-
 /** Rates covering every month these expenses fall in. Throws only if none could be loaded. */
 async function ratesFor(
   expenses: Pick<Expense, 'currency' | 'amountMinor' | 'date'>[],

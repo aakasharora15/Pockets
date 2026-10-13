@@ -5,8 +5,12 @@
 ### Added
 
 - **Choose how you start.** The last setup step offers Just me, Create a shared Pocket (and name it) or Join a shared Pocket, with an option to also keep a Personal Pocket.
-- **Paid by.** In a shared Pocket every expense records who paid (replacing Added by and Edited by), and it can be changed when editing. Home's person card and CSV exports say Paid by. On each currency card, Paid by shows everything each person paid in that currency, converting other currencies at each expense's own day's rate.
+- **Paid by.** In a shared Pocket every expense records who paid (replacing Added by and Edited by), and it can be changed when editing. Home's person card and CSV exports say Paid by. Paid by sits on one card for every currency: each person gets a line and bar per currency they paid in, never converted.
 - **Hide the Personal Pocket.** People who only use shared Pockets can hide Personal (Settings › Account › Personal Pocket). It comes back on its own if you leave every shared Pocket or an expense has to be saved there.
+
+### Changed
+
+- **Transport is now Travel.** Existing Pockets are renamed once, unless you've already renamed the category yourself.
 
 ### Fixed
 
