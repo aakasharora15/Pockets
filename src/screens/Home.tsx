@@ -44,7 +44,7 @@ export function Home() {
     <div className="screen">
       <div className="scroll home-scroll">
         <MonthHeader month={month} onChange={setMonth} />
-        <CurrencyCards pocket={pocket} month={month} expenses={expenses} prevExpenses={prevExpenses} empty={empty} onSelect={setCur} />
+        <CurrencyCards pocket={pocket} month={month} expenses={expenses} prevExpenses={prevExpenses} empty={empty} selected={cur} onSelect={setCur} />
         {loading ? (
           <>
             <div className="skel skel-card" />
@@ -126,12 +126,17 @@ export function MonthHeader({ month, onChange }: { month: string; onChange: (m: 
   );
 }
 
+/**
+ * Month totals per currency. One currency: a single large card. Several: side by side, two to a
+ * row, and tapping one picks the currency the charts below show.
+ */
 function CurrencyCards({
   pocket,
   month,
   expenses,
   prevExpenses,
   empty,
+  selected,
   onSelect,
 }: {
   pocket: PocketWithMembers;
@@ -139,82 +144,85 @@ function CurrencyCards({
   expenses: Expense[];
   prevExpenses: Expense[];
   empty: boolean;
+  selected: CurrencyCode;
   onSelect: (c: CurrencyCode) => void;
 }) {
-  const track = useRef<HTMLDivElement>(null);
-  const [index, setIndex] = useState(0);
   const { combinedFor } = useUi();
   // Optional extra card: everything converted into one currency (Settings › Combined total).
   const combinedCode = pocket.currencies.length > 1 ? combinedFor(pocket.id) : null;
   const many = pocket.currencies.length > 1;
-  const slides = pocket.currencies.length + (combinedCode ? 1 : 0);
 
-  const onScroll = () => {
-    const el = track.current;
-    if (!el) return;
-    const i = Math.round(el.scrollLeft / (326 + 12));
-    if (i !== index && i < slides) {
-      setIndex(i);
-      // The cards below keep following the last single currency.
-      if (pocket.currencies[i]) onSelect(pocket.currencies[i]);
+  const card = (code: CurrencyCode) => {
+    const c = currency(code);
+    const total = totalIn(expenses, code);
+    const t = trend(total, totalIn(prevExpenses, code));
+    const budget = pocket.budgets[code];
+    const left = budget ? budget - total : 0;
+    const amount = empty ? '0' : formatNumber(total, code);
+    const trendChip =
+      !empty && t !== null && t !== 0 ? (
+        <div className="trend" style={{ color: t < 0 ? 'var(--good)' : 'var(--bad)' }}>
+          <Icon name={t < 0 ? 'arrow-down' : 'arrow-up'} weight="bold" size={12} />
+          {Math.abs(t)}% vs {monthShort(addMonths(month, -1))}
+        </div>
+      ) : null;
+    const budgetBar = budget ? (
+      <div className="budget">
+        <div className="budget-track">
+          <div className="budget-fill" style={{ width: `${Math.min(100, (total / budget) * 100)}%` }} />
+        </div>
+        <span className="budget-text">
+          {many
+            ? `${formatWhole(Math.abs(left), code)} ${left >= 0 ? 'left' : 'over'}`
+            : empty
+              ? `${formatWhole(0, code)} of ${formatWhole(budget, code)} budget`
+              : `${formatWholeDown(total, code)} of ${formatWhole(budget, code)} · ${formatWhole(Math.abs(left), code)} ${left >= 0 ? 'left' : 'over'}`}
+        </span>
+      </div>
+    ) : null;
+
+    if (!many) {
+      return (
+        <div key={code} className="cur-card">
+          <div className="cur-card-head">
+            <span className="cur-card-label">
+              {c.plural} · {monthName(month)}
+            </span>
+            {trendChip}
+          </div>
+          <div className="cur-card-amount num">
+            <span className="cur-card-sym">{c.symbol}</span>
+            <span className="cur-card-num">{amount}</span>
+          </div>
+          {budgetBar}
+        </div>
+      );
     }
+    const on = code === selected;
+    return (
+      <button
+        key={code}
+        className={`cur-card compact press${on ? ' on' : ''}`}
+        aria-pressed={on}
+        aria-label={`${c.plural}: ${c.symbol}${amount}. Show ${c.plural.toLowerCase()} below`}
+        onClick={() => onSelect(code)}
+      >
+        <span className="cur-card-label">{c.plural}</span>
+        <div className="cur-card-amount num">
+          <span className="cur-card-sym">{c.symbol}</span>
+          {/* Long amounts get a smaller size so they fit half the width. */}
+          <span className={`cur-card-num${amount.length > 8 ? ' long' : ''}`}>{amount}</span>
+        </div>
+        {trendChip}
+        {budgetBar}
+      </button>
+    );
   };
 
-  useEffect(() => {
-    track.current?.scrollTo({ left: 0 });
-    setIndex(0);
-  }, [pocket.id]);
-
   return (
-    <div className="cards-wrap">
-      <div className="cards-track" ref={track} onScroll={onScroll}>
-        {pocket.currencies.map((code) => {
-          const c = currency(code);
-          const total = totalIn(expenses, code);
-          const t = trend(total, totalIn(prevExpenses, code));
-          const budget = pocket.budgets[code];
-          const left = budget ? budget - total : 0;
-          return (
-            <div key={code} className="cur-card" style={{ width: many ? 326 : '100%' }}>
-              <div className="cur-card-head">
-                <span className="cur-card-label">
-                  {c.plural} · {monthName(month)}
-                </span>
-                {!empty && t !== null && t !== 0 && (
-                  <div className="trend" style={{ color: t < 0 ? 'var(--good)' : 'var(--bad)' }}>
-                    <Icon name={t < 0 ? 'arrow-down' : 'arrow-up'} weight="bold" size={12} />
-                    {Math.abs(t)}% vs {monthShort(addMonths(month, -1))}
-                  </div>
-                )}
-              </div>
-              <div className="cur-card-amount num">
-                <span className="cur-card-sym">{c.symbol}</span>
-                <span className="cur-card-num">{empty ? '0' : formatNumber(total, code)}</span>
-              </div>
-              {budget ? (
-                <div className="budget">
-                  <div className="budget-track">
-                    <div className="budget-fill" style={{ width: `${Math.min(100, (total / budget) * 100)}%` }} />
-                  </div>
-                  <span className="budget-text">
-                    {empty
-                      ? `${formatWhole(0, code)} of ${formatWhole(budget, code)} budget`
-                      : `${formatWholeDown(total, code)} of ${formatWhole(budget, code)} · ${formatWhole(Math.abs(left), code)} ${left >= 0 ? 'left' : 'over'}`}
-                  </span>
-                </div>
-              ) : null}
-            </div>
-          );
-        })}
-        {combinedCode && <CombinedCard code={combinedCode} month={month} expenses={expenses} empty={empty} />}
-      </div>
-      {many && (
-        <div className="dots">
-          {Array.from({ length: slides }, (_, i) => (
-            <span key={i} className={`dot${i === index ? ' on' : ''}`} />
-          ))}
-        </div>
-      )}
+    <div className={many ? 'cards-grid' : 'cards-single'}>
+      {pocket.currencies.map(card)}
+      {combinedCode && <CombinedCard code={combinedCode} month={month} expenses={expenses} empty={empty} />}
     </div>
   );
 }
@@ -229,7 +237,7 @@ function CombinedCard({ code, month, expenses, empty }: { code: CurrencyCode; mo
   else if (missing) note = `${missing} not included yet: no rate for their date`;
   else if (!others && !empty) note = `Everything this month is in ${c.plural.toLowerCase()}`;
   return (
-    <div className="cur-card combined-card" style={{ width: 326 }}>
+    <div className="cur-card combined-card">
       <div className="cur-card-head">
         <span className="cur-card-label">
           All in {c.plural.toLowerCase()} · {monthName(month)}
