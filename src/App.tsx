@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { Suspense, useEffect, useRef, useState } from 'react';
 import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { OfflineToast, PlusButton, TabBar, Toast } from './components/Chrome';
 import { RouteStage } from './components/RouteStage';
@@ -8,32 +8,35 @@ import { logDueRecurring } from './data/recurring';
 import { DEFAULTS_VERSION } from './lib/categories';
 import { configMissing } from './firebase';
 import { firstName } from './lib/initials';
+import { lazyScreen } from './lib/lazy';
 import { AuthForm } from './screens/auth/AuthForm';
 import { Welcome } from './screens/auth/Welcome';
-import { Calendar } from './screens/Calendar';
 import { ExpenseSheet } from './screens/ExpenseSheet';
 import { Home } from './screens/Home';
-import { InviteSheet } from './screens/pockets/InviteSheet';
-import { Join } from './screens/pockets/Join';
-import { People } from './screens/pockets/People';
-import { Account } from './screens/settings/Account';
-import { Budgets } from './screens/settings/Budgets';
-import { Categories } from './screens/settings/Categories';
-import { Currencies } from './screens/settings/Currencies';
-import { Recurring } from './screens/settings/Recurring';
-import { Settings } from './screens/settings/Settings';
-import { Tags } from './screens/tags/Tags';
-import { TagView } from './screens/tags/TagView';
 import { SetPinScreen, UnlockScreen } from './screens/setup/PinScreen';
-import { Setup } from './screens/setup/Setup';
 import { Loading } from './screens/StillLoading';
 import { SetupNeeded } from './screens/SetupNeeded';
-import { Transactions } from './screens/Transactions';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { LockProvider, useLock } from './state/lock';
 import { PocketsProvider, usePockets } from './state/pockets';
 import { SessionProvider, useSession } from './state/session';
 import { UiProvider, useUi } from './state/ui';
+
+// Screens past Home load on first use (the tabs are fetched once Home is up), keeping start-up small.
+const Calendar = lazyScreen(() => import('./screens/Calendar'), 'Calendar');
+const InviteSheet = lazyScreen(() => import('./screens/pockets/InviteSheet'), 'InviteSheet');
+const Join = lazyScreen(() => import('./screens/pockets/Join'), 'Join');
+const People = lazyScreen(() => import('./screens/pockets/People'), 'People');
+const Account = lazyScreen(() => import('./screens/settings/Account'), 'Account');
+const Budgets = lazyScreen(() => import('./screens/settings/Budgets'), 'Budgets');
+const Categories = lazyScreen(() => import('./screens/settings/Categories'), 'Categories');
+const Currencies = lazyScreen(() => import('./screens/settings/Currencies'), 'Currencies');
+const Recurring = lazyScreen(() => import('./screens/settings/Recurring'), 'Recurring');
+const Settings = lazyScreen(() => import('./screens/settings/Settings'), 'Settings');
+const Tags = lazyScreen(() => import('./screens/tags/Tags'), 'Tags');
+const TagView = lazyScreen(() => import('./screens/tags/TagView'), 'TagView');
+const Setup = lazyScreen(() => import('./screens/setup/Setup'), 'Setup');
+const Transactions = lazyScreen(() => import('./screens/Transactions'), 'Transactions');
 
 const JOIN_KEY = 'spendr.join';
 
@@ -91,7 +94,12 @@ function Gate() {
     return profileError ? <SetupNeeded offline /> : <Loading waitingFor={profile === undefined ? 'your account' : "this phone's PIN"} />;
   }
 
-  if (profile === null) return <Setup />;
+  if (profile === null)
+    return (
+      <Suspense fallback={<div className="screen" />}>
+        <Setup />
+      </Suspense>
+    );
 
   if (lock.state === 'none') return <SetPinScreen onDone={lock.createPin} />;
   if (lock.state === 'locked') return <UnlockScreen onUnlock={lock.unlock} onReset={lock.resetPin} onSignOut={() => void lock.forgot()} />;
@@ -116,6 +124,16 @@ function MainRoutes() {
     return () => document.removeEventListener('scroll', onScroll, true);
   }, []);
 
+  // Fetch the other tabs while the phone is idle, so switching to them never waits.
+  useEffect(() => {
+    const t = window.setTimeout(() => {
+      void Transactions.preload();
+      void Calendar.preload();
+      void Settings.preload();
+    }, 1200);
+    return () => window.clearTimeout(t);
+  }, []);
+
   // Open a remembered invite link once everything is ready.
   useEffect(() => {
     const code = sessionStorage.getItem(JOIN_KEY);
@@ -134,26 +152,28 @@ function MainRoutes() {
       <RecurringRunner />
       <DefaultsRunner />
       <RouteStage>
-        <Routes>
-          <Route element={<Tabs />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/transactions" element={<Transactions />} />
-            <Route path="/calendar" element={<Calendar />} />
-            <Route path="/settings" element={<Settings />} />
-          </Route>
-          <Route path="/settings/people" element={<People />} />
-          <Route path="/settings/currencies" element={<Currencies />} />
-          <Route path="/settings/budgets" element={<Budgets />} />
-          <Route path="/settings/categories" element={<Categories />} />
-          <Route path="/settings/account" element={<Account />} />
-          <Route path="/settings/tags" element={<Tags />} />
-          <Route path="/settings/tags/:tag" element={<TagView />} />
-          <Route path="/settings/recurring" element={<Recurring />} />
-          <Route path="/join" element={<Join />} />
-          <Route path="/join/:code" element={<Join />} />
-          <Route path="/welcome" element={<Navigate to="/" replace />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+        <Suspense fallback={<div className="screen" />}>
+          <Routes>
+            <Route element={<Tabs />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/transactions" element={<Transactions />} />
+              <Route path="/calendar" element={<Calendar />} />
+              <Route path="/settings" element={<Settings />} />
+            </Route>
+            <Route path="/settings/people" element={<People />} />
+            <Route path="/settings/currencies" element={<Currencies />} />
+            <Route path="/settings/budgets" element={<Budgets />} />
+            <Route path="/settings/categories" element={<Categories />} />
+            <Route path="/settings/account" element={<Account />} />
+            <Route path="/settings/tags" element={<Tags />} />
+            <Route path="/settings/tags/:tag" element={<TagView />} />
+            <Route path="/settings/recurring" element={<Recurring />} />
+            <Route path="/join" element={<Join />} />
+            <Route path="/join/:code" element={<Join />} />
+            <Route path="/welcome" element={<Navigate to="/" replace />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Suspense>
       </RouteStage>
       <Overlays />
     </>
@@ -322,7 +342,11 @@ function Overlays() {
   return (
     <>
       {sheet && <ExpenseSheet request={sheet} />}
-      {invitePocketId && <InviteSheet pocketId={invitePocketId} onClose={() => setInvitePocketId(null)} />}
+      {invitePocketId && (
+        <Suspense fallback={null}>
+          <InviteSheet pocketId={invitePocketId} onClose={() => setInvitePocketId(null)} />
+        </Suspense>
+      )}
     </>
   );
 }

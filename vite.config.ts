@@ -70,5 +70,21 @@ export default defineConfig({
     }),
   ],
   server: { host: true, port: 5173 },
-  build: { target: 'es2022', sourcemap: true },
+  build: {
+    target: 'es2022',
+    sourcemap: true,
+    rollupOptions: {
+      output: {
+        // Libraries change far less often than the app: in their own files, an update only
+        // re-downloads Spendr's code. Firebase is most of the start-up weight.
+        manualChunks(id: string) {
+          if (!id.includes('node_modules')) return undefined;
+          if (/[\\/]node_modules[\\/](@firebase|firebase|re2js)[\\/]/.test(id)) return 'firebase';
+          if (/[\\/]node_modules[\\/](react|react-dom|react-router|react-router-dom|@remix-run|scheduler)[\\/]/.test(id)) return 'react';
+          if (/[\\/]node_modules[\\/]@phosphor-icons[\\/]/.test(id)) return 'icons';
+          return undefined;
+        },
+      },
+    },
+  },
 });

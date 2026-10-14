@@ -66,3 +66,15 @@ test('resets a forgotten PIN with the account password', async ({ page }) => {
   await page.locator('button[type=submit]').click();
   await expect(page.locator('.pin-title')).toHaveText(/Set an app PIN/);
 });
+
+test('opens every tab and a Settings page (screens that load on demand)', async ({ page }) => {
+  await signIn(page, 'prernaa@example.com');
+  await page.getByRole('button', { name: 'Transactions' }).click();
+  await expect(page.getByRole('button', { name: 'Transactions' })).toHaveAttribute('aria-current', 'page');
+  await page.getByRole('button', { name: 'Calendar' }).click();
+  await expect(page.getByRole('button', { name: 'Calendar' })).toHaveAttribute('aria-current', 'page');
+  await page.getByRole('button', { name: 'Settings' }).click();
+  await expect(page.locator('.page-title')).toHaveText('Settings');
+  await page.getByText('Monthly budgets').click();
+  await expect(page).toHaveURL(/\/settings\/budgets$/);
+});
