@@ -9,7 +9,7 @@
 ### Fixed
 
 - **Rupees take paise.** Amounts in rupees can have up to two decimal places (₹1.03). Whole amounts still show without decimals (₹8,830).
-- **Full screen on newer iPhones.** The installed app fills the whole screen: no band below the tab bar on recent iOS, which reports a screen shorter than it is, and no strips down the sides on wider iPhones.
+- **Full width on wider iPhones.** No more empty strips down the sides.
 
 ## 1.3.0 (2026-10-14)
 

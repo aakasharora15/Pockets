@@ -20,18 +20,6 @@
         try { s = localStorage.getItem('spendr.theme') || 'dark'; } catch (e) {}
         var t = s === 'auto' ? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark') : s === 'light' ? 'light' : 'dark';
         document.documentElement.dataset.theme = t;
-        // Installed on iPhone, recent iOS reports a viewport shorter than the screen by the status
-        // bar's height, leaving a band at the bottom. The app has the whole screen, so size to it.
-        if (navigator.standalone === true) {
-          var fit = function () {
-            var portrait = matchMedia('(orientation: portrait)').matches;
-            var h = portrait ? Math.max(screen.width, screen.height) : Math.min(screen.width, screen.height);
-            document.documentElement.style.setProperty('--app-h', h + 'px');
-          };
-          fit();
-          addEventListener('resize', fit);
-          addEventListener('orientationchange', fit);
-        }
         if (t === 'light') {
           document.querySelector('meta[name="theme-color"]').setAttribute('content', '#F2F2F7');
           document.querySelector('meta[name="color-scheme"]').setAttribute('content', 'light');
