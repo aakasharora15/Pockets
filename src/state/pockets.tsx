@@ -4,7 +4,7 @@ import { categoriesCol, membersCol, personalPocketId, pocketRef, userRef } from 
 import type { Category, Member, Pocket, PocketWithMembers } from '../data/types';
 import { db } from '../firebase';
 import { listen } from '../data/listen';
-import { markServerSync } from '../data/syncStatus';
+import { markListenError, markServerSync } from '../data/syncStatus';
 import { useSession } from './session';
 
 interface PocketsState {
@@ -16,7 +16,6 @@ interface PocketsState {
   personalHidden: boolean;
   setHidePersonal: (hide: boolean) => void;
   loading: boolean;
-  error: boolean;
   current: PocketWithMembers | null;
   setCurrent: (id: string) => void;
   /** Categories of the current Pocket, in order. */
@@ -44,8 +43,10 @@ export function PocketsProvider({ children }: { children: ReactNode }) {
   const [docs, setDocs] = useState<Record<string, Pocket | null>>({});
   const [members, setMembers] = useState<Record<string, Member[]>>({});
   const [cats, setCats] = useState<Record<string, Category[]>>({});
-  const [error, setError] = useState(false);
   const [currentId, setCurrentId] = useState<string | null>(null);
+
+  const pocketIdsRef = useRef<string[]>([]);
+  pocketIdsRef.current = profile?.pocketIds ?? [];
 
   // Which Pockets am I in? One query across every Pocket's members.
   useEffect(() => {
@@ -62,7 +63,13 @@ export function PocketsProvider({ children }: { children: ReactNode }) {
         if (!snap.metadata.fromCache) markServerSync();
         setIds(snap.docs.map((d) => d.ref.parent.parent!.id));
       },
-      () => setError(true),
+      (err) => {
+        // The query across Pockets failed: fall back to the list kept on the account. A Pocket
+        // I've since left just fails its own listener and drops out.
+        markListenError(`Pockets list: ${err.code}`);
+        const fallback = [...new Set([personalPocketId(uid), ...pocketIdsRef.current])];
+        setIds((cur) => (cur && cur.length ? [...new Set([...cur, ...fallback])] : fallback));
+      },
     );
   }, [uid, !!profile]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -108,7 +115,7 @@ export function PocketsProvider({ children }: { children: ReactNode }) {
 
   // Only the first load shows skeletons; a Pocket appearing later (create, join) loads in place.
   const loadedOnce = useRef(false);
-  const stillLoading = !!profile && !error && (ids === null || ids.some((id) => !(id in docs)));
+  const stillLoading = !!profile && (ids === null || ids.some((id) => !(id in docs)));
   if (!stillLoading && profile) loadedOnce.current = true;
   if (!profile) loadedOnce.current = false;
   const loading = stillLoading && !loadedOnce.current;
@@ -152,7 +159,6 @@ export function PocketsProvider({ children }: { children: ReactNode }) {
     personalHidden,
     setHidePersonal,
     loading,
-    error,
     current,
     setCurrent,
     categories: current ? cats[current.id] ?? [] : [],

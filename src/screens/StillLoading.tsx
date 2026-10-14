@@ -1,7 +1,7 @@
 import { clearIndexedDbPersistence, terminate } from 'firebase/firestore';
 import { useEffect, useState } from 'react';
 import { HomeSkeleton } from '../components/Skeletons';
-import { lastServerSync } from '../data/syncStatus';
+import { lastListenError, lastServerSync } from '../data/syncStatus';
 import { auth, db } from '../firebase';
 import { Logo } from './auth/Logo';
 
@@ -48,6 +48,7 @@ function StillLoading({ waitingFor }: { waitingFor: string }) {
     `Waiting for ${waitingFor}`,
     online ? 'online' : 'offline',
     last ? `server reached ${Math.round((Date.now() - last) / 1000)} s ago` : 'server not reached yet',
+    lastListenError(),
     auth.currentUser?.email,
     `build ${__APP_BUILD__}`,
   ]

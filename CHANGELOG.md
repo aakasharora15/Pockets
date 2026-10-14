@@ -9,6 +9,7 @@
 
 ### Fixed
 
+- **Pockets load even when the lookup across Pockets fails.** A phone opening Spendr for the first time found your Pockets with one query; if the server refused it, the app waited forever. It now falls back to the list of Pockets saved on your account, and the Still loading screen shows the error.
 - **No more endless loading.** If Spendr is still on the placeholder cards after 10 seconds, it says what it's waiting for and offers Try again or Repair this phone's copy, which downloads your data afresh. The PIN and anything waiting to upload are kept.
 - **No more stuck old versions.** An installed copy now checks which version is live, and if it's behind and the normal update doesn't happen, it clears its cached copy and reloads. Your expenses, unsynced items and settings aren't touched. Settings › About shows the build.
 - **Rupees take paise.** Amounts in rupees can have up to two decimal places (₹1.03). Whole amounts still show without decimals (₹8,830).
