@@ -13,7 +13,7 @@
   --font-num: ui-rounded, 'SF Pro Rounded', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 
   /* Neutral charcoal with a faint dot grid and a soft light at the top; colour comes only from the accent. */
-  --dots: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1.4px) 0 0 / 22px 22px;
+  --dots: radial-gradient(rgba(255, 255, 255, 0.035) 1px, transparent 1.4px) 0 0 / 22px 22px;
   --bg: var(--dots), radial-gradient(110% 40% at 50% 0%, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0) 70%),
     linear-gradient(180deg, #1b1c20 0%, #111215 45%, #0b0c0e 100%);
   --edge-top: rgba(27, 28, 32, 0.92);
@@ -118,7 +118,7 @@
 /* Light: iOS grouped-list colours, neutral, with the same dot grid. */
 :root[data-theme='light'] {
   color-scheme: light;
-  --dots: radial-gradient(rgba(60, 60, 67, 0.09) 1px, transparent 1.4px) 0 0 / 22px 22px;
+  --dots: radial-gradient(rgba(60, 60, 67, 0.045) 1px, transparent 1.4px) 0 0 / 22px 22px;
   --bg: var(--dots), radial-gradient(110% 40% at 50% 0%, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 70%),
     linear-gradient(180deg, #ececf1 0%, #f2f2f7 45%, #f2f2f7 100%);
   --card-edge: 0 1px 2px rgba(0, 0, 0, 0.04);
