@@ -16,5 +16,5 @@ export async function signIn(page: Page, email: string, pin = '1234') {
   await expect(page.locator('.pin-title')).toHaveText(/Set an app PIN/);
   await typePin(page, pin);
   await typePin(page, pin);
-  await expect(page.locator('.pocket-toggle')).toBeVisible();
+  await expect(page.locator('.deck-front')).toBeVisible();
 }

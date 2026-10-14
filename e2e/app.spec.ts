@@ -14,18 +14,15 @@ test('signs in, sets a PIN and shows Home with totals inside their cards', async
   }
 });
 
-test('switches Pocket from the toggle', async ({ page }) => {
+test('switches Pocket from the deck', async ({ page }) => {
   await signIn(page, 'prernaa@example.com');
-  const open = page.locator('.pt-seg.on .pt-name');
-  const before = await open.textContent();
-  const other = page.locator('.pt-seg:not(.on)').first();
-  const target = await other.locator('.pt-name').textContent();
+  const front = page.locator('.deck-front .deck-name');
+  const before = await front.textContent();
+  const other = page.locator('.deck-card:not(.deck-add)').first();
+  const target = await other.locator('.deck-card-name').textContent();
   await other.click();
-  await expect(open).toHaveText(target!);
+  await expect(front).toHaveText(target!);
   expect(target).not.toBe(before);
-  // Tapping the open Pocket shows the full list.
-  await page.locator('.pt-seg.on').click();
-  await expect(page.getByRole('menuitem', { name: /New shared Pocket/ })).toBeVisible();
 });
 
 test('adds an expense and shows it in Recent', async ({ page }) => {
@@ -54,7 +51,7 @@ test('locks on reload and unlocks with the PIN', async ({ page }) => {
   await expect(page.getByLabel('0 of 4 digits entered')).toBeVisible();
   await expect(page.locator('.pin-title')).toHaveText(/Enter your PIN/);
   await typePin(page, '2468');
-  await expect(page.locator('.pocket-toggle')).toBeVisible();
+  await expect(page.locator('.deck-front')).toBeVisible();
 });
 
 test('resets a forgotten PIN with the account password', async ({ page }) => {

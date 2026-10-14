@@ -56,6 +56,10 @@
   font-size: 20px;
   flex: none;
 }
+.spacer-52 {
+  width: 44px;
+  height: 52px;
+}
 .primary-btn {
   height: 52px;
   border-radius: 26px;

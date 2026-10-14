@@ -23,6 +23,11 @@
   --card: #1d1e22;
   /* A hairline of light along the top edge of cards. */
   --card-edge: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  /* Pocket deck: the cards behind the open Pocket, and the ring round avatars on the lit card. */
+  --deck-edge: rgba(255, 255, 255, 0.1);
+  /* Silver mirror for the cards behind the open Pocket. */
+  --mirror: linear-gradient(165deg, #f4f4f7 0%, #b9bbc2 38%, #e6e7eb 62%, #8f9198 100%);
+  --mirror-text: rgba(20, 20, 24, 0.72);
   /* Frosted glass for the month totals, with the accent glowing through. */
   --frost: linear-gradient(150deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.05) 55%, rgba(255, 255, 255, 0.1) 100%);
   --frost-base: rgba(29, 30, 34, 0.72);
@@ -44,6 +49,12 @@
   --on-accent: #ffffff;
   --soft-link: #8ab4ff;
   --insight: rgba(var(--accent-rgb), 0.16);
+  /* The lit card at the front of the Pocket deck. */
+  --deck-front:
+    radial-gradient(120% 120% at 90% 100%, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0) 60%), linear-gradient(150deg, #5d98ff 0%, #2f66d0 100%);
+  --deck-glow: rgba(47, 102, 208, 0.32);
+  --deck-ring: #4a82ee;
+  --deck-sub: rgba(255, 255, 255, 0.78);
 
   --destructive: #ff8a84;
   --destructive-bg: #4a2230;
@@ -118,6 +129,8 @@
     var(--dots), radial-gradient(110% 40% at 50% 0%, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 70%),
     linear-gradient(180deg, #ececf1 0%, #f2f2f7 45%, #f2f2f7 100%);
   --card-edge: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --deck-edge: rgba(60, 60, 67, 0.12);
+  --mirror: linear-gradient(165deg, #ffffff 0%, #d4d6dc 38%, #f6f6f9 62%, #b7b9c0 100%);
   --frost: linear-gradient(150deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.62) 55%, rgba(255, 255, 255, 0.8) 100%);
   --frost-base: rgba(255, 255, 255, 0.75);
   --edge-top: rgba(236, 236, 241, 0.92);

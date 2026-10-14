@@ -1,0 +1,199 @@
+/* ---------- Combined card, export month ---------- */
+.combined-card .cur-card-amount.loading {
+  opacity: 0.5;
+}
+.export-month-year {
+  text-align: center;
+  margin-top: -8px;
+}
+.still-details {
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--text2);
+}
+
+/* ---------- Pocket deck (Home hero) ---------- */
+.deck {
+  display: flex;
+  height: 76px;
+  flex: none;
+  perspective: 700px;
+}
+.deck-front {
+  position: relative;
+  z-index: 30;
+  flex: 0 0 58%;
+  min-width: 0;
+  border-radius: 22px;
+  padding: 0 14px 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
+  color: var(--on-accent);
+  background: var(--deck-front);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    0 10px 26px var(--deck-glow);
+}
+.deck-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.deck-name {
+  font-size: 19px;
+  font-weight: 600;
+  line-height: 1.15;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.deck-sub {
+  font-size: 13px;
+  color: var(--deck-sub);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.deck-back {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  padding: 7px 0;
+  margin-left: -20px;
+  perspective: 420px;
+}
+/* The other Pockets wait behind, slightly tilted, each saying Switch and its name. */
+.deck-card {
+  flex: 1 1 96px;
+  min-width: 64px;
+  max-width: 128px;
+  margin-left: -14px;
+  border-radius: 16px;
+  padding: 8px 8px 8px 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 3px;
+  overflow: hidden;
+  text-align: left;
+  color: var(--mirror-text);
+  background: linear-gradient(105deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.65) 46%, rgba(255, 255, 255, 0) 60%), var(--mirror);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    -6px 0 16px rgba(0, 0, 0, 0.22);
+  transform: rotateY(-12deg);
+  transform-origin: left center;
+}
+.deck-card:first-child {
+  margin-left: 0;
+}
+.deck-card-hint {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: rgba(20, 20, 24, 0.5);
+}
+.deck-card-name {
+  max-width: 100%;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--mirror-text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.deck-add {
+  flex: 0 0 46px;
+  justify-content: center;
+  padding: 0 0 0 12px;
+  color: var(--text2);
+  background: transparent;
+  border: 1px dashed var(--deck-edge);
+  box-shadow: none;
+}
+.deck-add::before {
+  display: none;
+}
+
+/* Switching Pockets: the chosen card swings forward, the old one tucks in behind. */
+.deck-enter {
+  animation: deck-enter 0.46s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.deck-return {
+  animation: deck-return 0.46s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@keyframes deck-enter {
+  from {
+    opacity: 0.3;
+    transform: translateX(55%) rotateY(-30deg) scale(0.82);
+  }
+  60% {
+    opacity: 1;
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+@keyframes deck-return {
+  from {
+    opacity: 0.4;
+    transform: translateX(-140%) rotateY(0deg) scale(1.12);
+  }
+  to {
+    opacity: 1;
+    transform: rotateY(-12deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .deck-enter,
+  .deck-return {
+    animation: none;
+  }
+}
+
+/* ---------- Quiet action pills ---------- */
+.action-pills {
+  display: flex;
+  gap: 8px;
+  flex: none;
+  overflow-x: auto;
+  scrollbar-width: none;
+  margin: 0 calc(-1 * var(--gutter));
+  padding: 0 var(--gutter);
+}
+.action-pills::-webkit-scrollbar {
+  display: none;
+}
+.action-pill {
+  flex: none;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+  background: var(--fill-2);
+}
+.action-pill.primary {
+  color: var(--on-accent);
+  background: var(--accent);
+}
+.top-people {
+  display: flex;
+  align-items: center;
+  height: 44px;
+}
