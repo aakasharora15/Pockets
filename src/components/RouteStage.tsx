@@ -8,8 +8,7 @@ export function depthOf(path: string): number {
   return 0;
 }
 
-const standalone = () =>
-  window.matchMedia?.('(display-mode: standalone)').matches || (navigator as { standalone?: boolean }).standalone === true;
+const standalone = () => window.matchMedia?.('(display-mode: standalone)').matches || (navigator as { standalone?: boolean }).standalone === true;
 
 /**
  * Screen transitions as on iOS: a deeper screen slides in from the right, going back slides the

@@ -27,8 +27,7 @@ export function Sheet({ onClose, top = 'calc(var(--top) + 4px)', className = '',
       if (dy > 120) {
         if (onDrag) onDrag('down');
         else onClose();
-      }
-      else if (dy < -60 && onDrag) onDrag('up');
+      } else if (dy < -60 && onDrag) onDrag('up');
     }
     start.current = null;
     setDy(0);

@@ -5,11 +5,7 @@ import { useUi } from '../state/ui';
 export function BackButton({ onClick, to }: { onClick?: () => void; to?: string }) {
   const navigate = useNavigate();
   return (
-    <button
-      className="back-btn glass press"
-      aria-label="Back"
-      onClick={() => (onClick ? onClick() : to ? navigate(to) : navigate(-1))}
-    >
+    <button className="back-btn glass press" aria-label="Back" onClick={() => (onClick ? onClick() : to ? navigate(to) : navigate(-1))}>
       <Icon name="caret-left" weight="bold" />
     </button>
   );

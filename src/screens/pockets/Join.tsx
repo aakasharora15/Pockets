@@ -52,7 +52,12 @@ export function Join() {
     };
   }, [code]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const initials = invite ? uniqueInitials(initialsFor(name) || profile.initials, invite.members.map((m) => m.initials)) : '';
+  const initials = invite
+    ? uniqueInitials(
+        initialsFor(name) || profile.initials,
+        invite.members.map((m) => m.initials),
+      )
+    : '';
 
   const join = async () => {
     if (!invite || busy || !name.trim()) return;
@@ -77,7 +82,9 @@ export function Join() {
       <BackButton to="/" />
       <div className="flow-head join-head">
         <span className="flow-title">Join a Pocket</span>
-        <span className="flow-sub">{owner ? `Enter the code ${owner} shared, or open the invite link.` : 'Enter the code you were sent, or open the invite link.'}</span>
+        <span className="flow-sub">
+          {owner ? `Enter the code ${owner} shared, or open the invite link.` : 'Enter the code you were sent, or open the invite link.'}
+        </span>
       </div>
       <div className="join-body">
         <label className="code-boxes" onClick={() => input.current?.focus()}>

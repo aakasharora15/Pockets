@@ -94,7 +94,17 @@ export function cleanBackupExpense(v: unknown): BackupExpense | null {
   if (!str(currency, 3, 3) || !isCurrencyCode(currency) || !amount(amountMinor)) return null;
   if (!str(name, 100) || !str(categoryId, 40, 1) || !str(byUid, 128) || !str(byInitials, 4, 1)) return null;
   if (!str(date, 10, 10) || !DAY.test(date)) return null;
-  const e: BackupExpense = { id, currency, amountMinor, name, categoryId, byUid, byInitials, date, createdAt: typeof createdAt === 'number' ? createdAt : null };
+  const e: BackupExpense = {
+    id,
+    currency,
+    amountMinor,
+    name,
+    categoryId,
+    byUid,
+    byInitials,
+    date,
+    createdAt: typeof createdAt === 'number' ? createdAt : null,
+  };
   if (str(editedByUid, 128, 1)) e.editedByUid = editedByUid;
   if (str(note, 500, 1)) e.note = note;
   if (str(tag, 40, 1)) e.tag = tag;
@@ -171,7 +181,9 @@ export function parseBackup(text: string): { backup: Backup; skipped: number } {
       type: p.type,
       currencies: currencies.length ? currencies : ['GBP'],
       budgets,
-      tags: arr(p.tags).filter((t): t is string => str(t, 40, 1)).slice(0, 200),
+      tags: arr(p.tags)
+        .filter((t): t is string => str(t, 40, 1))
+        .slice(0, 200),
       members: arr(p.members)
         .filter(obj)
         .map((m) => ({ uid: String(m.uid ?? ''), name: String(m.name ?? ''), initials: String(m.initials ?? ''), role: String(m.role ?? '') })),

@@ -23,11 +23,7 @@ import type { CurrencyCode } from '../lib/currencies';
 const ms = (t: unknown) => (t && typeof (t as TS).toMillis === 'function' ? (t as TS).toMillis() : null);
 
 /** Everything in every Pocket you're in, as a backup file's contents. Needs a connection. */
-export async function createBackup(
-  pockets: PocketWithMembers[],
-  account: { uid: string; name: string; email: string },
-  withPhotos: boolean,
-): Promise<Backup> {
+export async function createBackup(pockets: PocketWithMembers[], account: { uid: string; name: string; email: string }, withPhotos: boolean): Promise<Backup> {
   const out: BackupPocket[] = [];
   for (const p of pockets) {
     const [cats, exps, recs, recs2] = await Promise.all([

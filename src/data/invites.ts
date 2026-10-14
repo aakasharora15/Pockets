@@ -61,13 +61,7 @@ export async function lookupInvite(code: string, uid: string, email: string | nu
  * check the invite is unused, unexpired and being used by the caller. If asked, the caller's
  * Personal expenses then move to the Pocket.
  */
-export async function redeemInvite(opts: {
-  invite: Invite;
-  uid: string;
-  name: string;
-  initials: string;
-  moveExpenses: boolean;
-}): Promise<void> {
+export async function redeemInvite(opts: { invite: Invite; uid: string; name: string; initials: string; moveExpenses: boolean }): Promise<void> {
   const { invite, uid } = opts;
   const batch = writeBatch(db);
   batch.update(inviteRef(invite.code), { usedByUid: uid, usedAt: serverTimestamp() });

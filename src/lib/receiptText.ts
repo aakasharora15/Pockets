@@ -15,11 +15,14 @@ export interface ReceiptGuess {
 // 1,234.56 · 1,23,456.00 · 12.50 · 12,50 (comma decimals) · 450 (₹, whole)
 const MONEY = /(?:£|₹|rs\.?|inr|gbp|\$|€)?\s*(\d{1,3}(?:[,\s]\d{2,3})+(?:[.,]\d{2})?|\d+(?:[.,]\d{2})?)(?!\d)/gi;
 
-const STRONG = /\b(grand\s*total|amount\s*due|balance\s*due|total\s*due|total\s*to\s*pay|to\s*pay|amount\s*payable|net\s*payable|net\s*amount|total\s*amount|bill\s*amount|amount\s*paid)\b/i;
+const STRONG =
+  /\b(grand\s*total|amount\s*due|balance\s*due|total\s*due|total\s*to\s*pay|to\s*pay|amount\s*payable|net\s*payable|net\s*amount|total\s*amount|bill\s*amount|amount\s*paid)\b/i;
 const TOTAL = /\btota[l1]\b/i;
-const NOT_TOTAL = /\b(sub\s*-?\s*tota[l1]|total\s*(savings?|discount|items?|qty|quantity|vat|tax|gst|points?)|savings|discount|change|cash\s*back|tendered|vat\s*@|tax\s*@|items?\s*sold)\b/i;
+const NOT_TOTAL =
+  /\b(sub\s*-?\s*tota[l1]|total\s*(savings?|discount|items?|qty|quantity|vat|tax|gst|points?)|savings|discount|change|cash\s*back|tendered|vat\s*@|tax\s*@|items?\s*sold)\b/i;
 
-const NOT_NAME = /\b(receipt|invoice|tax|vat|gst|gstin|tel|phone|www|http|\.com|\.co\.uk|date|time|till|cashier|order|table|bill\s*no|welcome|thank|customer|copy|store\s*no|reg|no\.?\s*\d)\b/i;
+const NOT_NAME =
+  /\b(receipt|invoice|tax|vat|gst|gstin|tel|phone|www|http|\.com|\.co\.uk|date|time|till|cashier|order|table|bill\s*no|welcome|thank|customer|copy|store\s*no|reg|no\.?\s*\d)\b/i;
 
 function toNumber(raw: string): number | null {
   let s = raw.replace(/\s/g, '');
@@ -81,7 +84,10 @@ function titleCase(s: string): string {
 
 export function guessMerchant(lines: string[]): string | undefined {
   for (const raw of lines.slice(0, 6)) {
-    const line = raw.replace(/[|_*=~#<>«»{}[\]]+/g, ' ').replace(/\s+/g, ' ').trim();
+    const line = raw
+      .replace(/[|_*=~#<>«»{}[\]]+/g, ' ')
+      .replace(/\s+/g, ' ')
+      .trim();
     const letters = (line.match(/[a-z]/gi) ?? []).length;
     if (letters < 3 || letters < line.length * 0.5) continue;
     if (NOT_NAME.test(line) || /\d{3,}/.test(line)) continue;

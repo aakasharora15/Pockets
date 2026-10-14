@@ -310,10 +310,7 @@ function WeeklySpend({ expenses, code, month, empty }: { expenses: Expense[]; co
                 <span className="weekly-val" style={{ color: w.current ? 'var(--text)' : undefined }}>
                   {ghost ? '' : formatShort(w.total, code)}
                 </span>
-                <div
-                  className={`weekly-bar${ghost ? ' ghost' : w.current ? ' current' : ''}`}
-                  style={{ height: ghost ? 8 : Math.max(8, w.total * scale) }}
-                />
+                <div className={`weekly-bar${ghost ? ' ghost' : w.current ? ' current' : ''}`} style={{ height: ghost ? 8 : Math.max(8, w.total * scale) }} />
               </div>
             );
           })}

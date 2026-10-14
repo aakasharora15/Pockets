@@ -8,9 +8,7 @@ import { applyTheme, readThemeSetting, resolveTheme, THEME_KEY, type ThemeSettin
 
 export type GlassStyle = 'tinted' | 'classic' | 'clear';
 
-export type ExpenseSheetRequest =
-  | { mode: 'new'; date?: string }
-  | { mode: 'edit'; expense: Expense; pocketId: string };
+export type ExpenseSheetRequest = { mode: 'new'; date?: string } | { mode: 'edit'; expense: Expense; pocketId: string };
 
 interface Ui {
   toast: string | null;

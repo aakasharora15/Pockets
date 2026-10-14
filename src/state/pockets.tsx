@@ -122,18 +122,11 @@ export function PocketsProvider({ children }: { children: ReactNode }) {
 
   // Personal only hides while there's a shared Pocket to show instead; leave the last one and it's back.
   const personalHidden = !!profile?.hidePersonal && allPockets.some((p) => p.type === 'shared');
-  const pockets = useMemo(
-    () => (personalHidden ? allPockets.filter((p) => p.type !== 'personal') : allPockets),
-    [allPockets, personalHidden],
-  );
+  const pockets = useMemo(() => (personalHidden ? allPockets.filter((p) => p.type !== 'personal') : allPockets), [allPockets, personalHidden]);
 
   const current = useMemo(() => {
     if (!uid || pockets.length === 0) return null;
-    return (
-      pockets.find((p) => p.id === currentId) ??
-      pockets.find((p) => p.id === personalPocketId(uid)) ??
-      pockets[0]
-    );
+    return pockets.find((p) => p.id === currentId) ?? pockets.find((p) => p.id === personalPocketId(uid)) ?? pockets[0];
   }, [pockets, currentId, uid]);
 
   const setCurrent = (id: string) => {
@@ -161,7 +154,7 @@ export function PocketsProvider({ children }: { children: ReactNode }) {
     loading,
     current,
     setCurrent,
-    categories: current ? cats[current.id] ?? [] : [],
+    categories: current ? (cats[current.id] ?? []) : [],
     categoriesLoading: !!current && !cats[current.id],
     categoriesFor: (pid) => cats[pid] ?? [],
   };

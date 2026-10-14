@@ -1,16 +1,4 @@
-import {
-  arrayRemove,
-  arrayUnion,
-  collection,
-  deleteField,
-  doc,
-  getDocs,
-  query,
-  serverTimestamp,
-  where,
-  writeBatch,
-  type WriteBatch,
-} from 'firebase/firestore';
+import { arrayRemove, arrayUnion, collection, deleteField, doc, getDocs, query, serverTimestamp, where, writeBatch, type WriteBatch } from 'firebase/firestore';
 import { db } from '../firebase';
 import { trackExpenseWrite } from './pending';
 import { DEFAULT_CATEGORIES, DEFAULTS_VERSION, ORDER_STEP } from '../lib/categories';

@@ -71,7 +71,12 @@ export function Account() {
         </div>
         <div className="group-card">
           <SettingsRow first icon="user" label="Name" value={profile.name} onClick={() => setEditing(true)} />
-          <SettingsRow icon={provider === 'Google' ? 'google-logo' : provider === 'Apple' ? 'apple-logo' : 'envelope-simple'} label="Signed in with" value={provider} chevron={false} />
+          <SettingsRow
+            icon={provider === 'Google' ? 'google-logo' : provider === 'Apple' ? 'apple-logo' : 'envelope-simple'}
+            label="Signed in with"
+            value={provider}
+            chevron={false}
+          />
           <SettingsRow icon="lock-key" label="App PIN" value="Change" onClick={() => setChangingPin(true)} />
         </div>
         <div className="group">

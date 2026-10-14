@@ -80,5 +80,10 @@ export function useExpenses(pid: string | undefined, fromMonth: string, toMonth:
 
 /** Live expenses of a Pocket with one tag, newest first. */
 export function useTagExpenses(pid: string | undefined, tag: string): ExpensesState {
-  return useExpenseQuery(pid, `tag:${tag}`, (p) => query(expensesCol(p), where('tag', '==', tag)), (e) => e.tag === tag);
+  return useExpenseQuery(
+    pid,
+    `tag:${tag}`,
+    (p) => query(expensesCol(p), where('tag', '==', tag)),
+    (e) => e.tag === tag,
+  );
 }

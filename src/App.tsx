@@ -41,20 +41,20 @@ export default function App() {
   if (configMissing) return <SetupNeeded />;
   return (
     <ErrorBoundary>
-    <BrowserRouter>
-      <UiProvider>
-        <SessionProvider>
-          <LockProvider>
-            <PocketsProvider>
-              <div className="app">
-                <Gate />
-                <Toast />
-              </div>
-            </PocketsProvider>
-          </LockProvider>
-        </SessionProvider>
-      </UiProvider>
-    </BrowserRouter>
+      <BrowserRouter>
+        <UiProvider>
+          <SessionProvider>
+            <LockProvider>
+              <PocketsProvider>
+                <div className="app">
+                  <Gate />
+                  <Toast />
+                </div>
+              </PocketsProvider>
+            </LockProvider>
+          </SessionProvider>
+        </UiProvider>
+      </BrowserRouter>
     </ErrorBoundary>
   );
 }

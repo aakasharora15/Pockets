@@ -44,7 +44,10 @@ async function repair() {
 function StillLoading({ waitingFor }: { waitingFor: string }) {
   const [busy, setBusy] = useState(false);
   useEffect(() => {
-    reportError('still-loading', `Waiting for ${waitingFor}; ${navigator.onLine ? 'online' : 'offline'}; ${lastServerSync() ? 'server reached' : 'server not reached'}; ${lastListenError() || 'no listener error'}`);
+    reportError(
+      'still-loading',
+      `Waiting for ${waitingFor}; ${navigator.onLine ? 'online' : 'offline'}; ${lastServerSync() ? 'server reached' : 'server not reached'}; ${lastListenError() || 'no listener error'}`,
+    );
   }, [waitingFor]);
   const online = navigator.onLine;
   const last = lastServerSync();

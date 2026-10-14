@@ -233,7 +233,11 @@ export function ExpenseSheet({ request }: { request: ExpenseSheetRequest }) {
         label={editing ? 'Edit expense' : 'New expense'}
         onDrag={(dir) => (dir === 'up' ? setDetent('large') : detent === 'large' && !editing ? setDetent('medium') : closeExpenseSheet())}
       >
-        <SheetHeader title={editing ? 'Edit expense' : 'New expense'} onCancel={closeExpenseSheet} action={{ label: 'Save', onClick: save, disabled: !canSave }} />
+        <SheetHeader
+          title={editing ? 'Edit expense' : 'New expense'}
+          onCancel={closeExpenseSheet}
+          action={{ label: 'Save', onClick: save, disabled: !canSave }}
+        />
 
         <div className="cur-pills">
           {pocket.currencies.map((code) => {
@@ -318,7 +322,13 @@ export function ExpenseSheet({ request }: { request: ExpenseSheetRequest }) {
                       <span className="detail-label">Paid by</span>
                       <div className="mini-seg" role="radiogroup" aria-label="Paid by">
                         {payers.map((m) => (
-                          <button key={m.uid} role="radio" aria-checked={who === m.uid} className={`mini-seg-item${who === m.uid ? ' on' : ''}`} onClick={() => setWho(m.uid)}>
+                          <button
+                            key={m.uid}
+                            role="radio"
+                            aria-checked={who === m.uid}
+                            className={`mini-seg-item${who === m.uid ? ' on' : ''}`}
+                            onClick={() => setWho(m.uid)}
+                          >
                             {m.initials}
                           </button>
                         ))}
@@ -352,7 +362,14 @@ export function ExpenseSheet({ request }: { request: ExpenseSheetRequest }) {
                   </span>
                   <div className="detail-body sep">
                     <span className="detail-label">Note</span>
-                    <input className="note-input" placeholder="Optional" aria-label="Note" maxLength={500} value={note} onChange={(e) => setNote(e.target.value)} />
+                    <input
+                      className="note-input"
+                      placeholder="Optional"
+                      aria-label="Note"
+                      maxLength={500}
+                      value={note}
+                      onChange={(e) => setNote(e.target.value)}
+                    />
                     <Icon name="caret-right" weight="bold" size={13} color="var(--chevron)" />
                   </div>
                 </label>

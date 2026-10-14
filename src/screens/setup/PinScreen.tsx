@@ -70,9 +70,7 @@ export function SetPinScreen({ step, onBack, onDone }: SetProps) {
       {step !== undefined && <Progress step={step} />}
       <div className="pin-head">
         <span className="pin-title">{first === null ? 'Set an app PIN' : 'Confirm your PIN'}</span>
-        <span className={`pin-sub${error ? ' error' : ''}`}>
-          {error ? "PINs didn't match. Try again." : '4 digits to open Spendr quickly on this phone.'}
-        </span>
+        <span className={`pin-sub${error ? ' error' : ''}`}>{error ? "PINs didn't match. Try again." : '4 digits to open Spendr quickly on this phone.'}</span>
       </div>
       <PinDots filled={digits.length} error={error} />
       <PinPad onKey={press} />
@@ -204,9 +202,7 @@ function ResetPin({ onBack, onReset, onSignOut }: { onBack: () => void; onReset:
       <div className="flow-body">
         <div className="flow-head" style={{ minHeight: 120 }}>
           <span className="flow-title">Reset your PIN</span>
-          <span className="flow-sub">
-            Confirm it's you{user?.email ? ` (${user.email})` : ''}, then choose a new PIN. You stay signed in.
-          </span>
+          <span className="flow-sub">Confirm it's you{user?.email ? ` (${user.email})` : ''}, then choose a new PIN. You stay signed in.</span>
         </div>
         <div className="auth-stack">
           {google && (

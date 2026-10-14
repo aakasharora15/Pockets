@@ -34,9 +34,12 @@ export function listen<T>(
       };
       return;
     }
-    timer = window.setTimeout(() => {
-      if (!stopped) stop = listen(start, next, giveUp, attempt + 1);
-    }, 500 * 2 ** attempt);
+    timer = window.setTimeout(
+      () => {
+        if (!stopped) stop = listen(start, next, giveUp, attempt + 1);
+      },
+      500 * 2 ** attempt,
+    );
   });
   return () => {
     stopped = true;

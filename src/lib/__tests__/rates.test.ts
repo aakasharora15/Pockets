@@ -45,5 +45,4 @@ describe('exchange rates', () => {
     // ₹1,000 at 112.5 = £8.888… → £8.89
     expect(combine([{ currency: 'INR', amountMinor: 100000, date: '2026-10-02' }], 'GBP', (c, d) => rateOn(rates, c, d)).total).toBe(889);
   });
-
 });

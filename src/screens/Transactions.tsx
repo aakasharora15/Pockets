@@ -65,7 +65,14 @@ export function Transactions() {
         </div>
         <label className="tx-search glass">
           <Icon name="magnifying-glass" size={18} color="var(--text)" />
-          <input ref={searchRef} type="search" placeholder="Search expenses" aria-label="Search expenses" value={search} onChange={(e) => setSearch(e.target.value)} />
+          <input
+            ref={searchRef}
+            type="search"
+            placeholder="Search expenses"
+            aria-label="Search expenses"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
         </label>
         {showFilters && (
           <div className="tx-chips">
@@ -116,7 +123,12 @@ export function Transactions() {
         <button className="circle-52 glass press" aria-label="Search expenses" onClick={() => searchRef.current?.focus()}>
           <Icon name="magnifying-glass" size={22} />
         </button>
-        <button className="circle-44 glass press" aria-label={showFilters ? 'Hide filters' : 'Show filters'} aria-pressed={showFilters} onClick={() => setShowFilters((s) => !s)}>
+        <button
+          className="circle-44 glass press"
+          aria-label={showFilters ? 'Hide filters' : 'Show filters'}
+          aria-pressed={showFilters}
+          onClick={() => setShowFilters((s) => !s)}
+        >
           <Icon name="sliders-horizontal" />
         </button>
       </div>

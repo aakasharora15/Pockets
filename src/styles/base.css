@@ -121,10 +121,14 @@ textarea::placeholder {
   background: var(--glass-pref);
 }
 :root[data-blur='weak'] .glass {
-  background: var(--glass-classic), linear-gradient(var(--glass-base), var(--glass-base)) padding-box;
+  background:
+    var(--glass-classic),
+    linear-gradient(var(--glass-base), var(--glass-base)) padding-box;
 }
 :root[data-blur='weak'] .glass-pref {
-  background: var(--glass-pref), linear-gradient(var(--glass-base), var(--glass-base)) padding-box;
+  background:
+    var(--glass-pref),
+    linear-gradient(var(--glass-base), var(--glass-base)) padding-box;
 }
 
 /* Scrollable page body used by most screens */

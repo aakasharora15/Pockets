@@ -183,11 +183,19 @@ export function Settings() {
         <span className="page-title settings-title">Settings</span>
         <Group title={`This Pocket · ${pocket.name}`}>
           {pocket.type === 'shared' && (
-            <SettingsRow first icon="users-three" tint={TINT.people} label="People" value={pocket.members.length} onClick={() => navigate('/settings/people')} />
+            <SettingsRow
+              first
+              icon="users-three"
+              tint={TINT.people}
+              label="People"
+              value={pocket.members.length}
+              onClick={() => navigate('/settings/people')}
+            />
           )}
           <SettingsRow
             first={pocket.type !== 'shared'}
-            icon="currency-circle-dollar" tint={TINT.currencies}
+            icon="currency-circle-dollar"
+            tint={TINT.currencies}
             label="Currencies"
             value={pocket.currencies.map((c) => currency(c).symbol).join(' ')}
             onClick={() => navigate('/settings/currencies')}
@@ -195,7 +203,8 @@ export function Settings() {
           <SettingsRow icon="target" tint={TINT.budgets} label="Monthly budgets" onClick={() => navigate('/settings/budgets')} />
           {pocket.currencies.length > 1 && (
             <SettingsRow
-              icon="arrows-left-right" tint={TINT.combined}
+              icon="arrows-left-right"
+              tint={TINT.combined}
               label="Combined total"
               value={combined ? `In ${currency(combined).symbol}` : 'Off'}
               onClick={() => setSheet('combined')}
@@ -205,7 +214,13 @@ export function Settings() {
         <Group>
           <SettingsRow first icon="squares-four" tint={TINT.categories} label="Manage categories" onClick={() => navigate('/settings/categories')} />
           <SettingsRow icon="tag" tint={TINT.tags} label="Tags" value={tags.length || undefined} onClick={() => navigate('/settings/tags')} />
-          <SettingsRow icon="repeat" tint={TINT.repeating} label="Repeating expenses" value={repeats.length || undefined} onClick={() => navigate('/settings/recurring')} />
+          <SettingsRow
+            icon="repeat"
+            tint={TINT.repeating}
+            label="Repeating expenses"
+            value={repeats.length || undefined}
+            onClick={() => navigate('/settings/recurring')}
+          />
         </Group>
         <Group>
           <SettingsRow first icon="tray-arrow-down" tint={TINT.export} label="Export data (CSV)" onClick={() => setSheet('export')} />
@@ -214,7 +229,8 @@ export function Settings() {
         <Group title="Account">
           <SettingsRow
             first
-            icon="user-circle" tint={TINT.neutral}
+            icon="user-circle"
+            tint={TINT.neutral}
             label={profile.name}
             value={providerLabel(user.providerData.map((p) => p.providerId))}
             onClick={() => navigate('/settings/account')}
@@ -232,7 +248,8 @@ export function Settings() {
             </SettingsRow>
           )}
           <SettingsRow
-            icon="cloud-arrow-up" tint={TINT.neutral}
+            icon="cloud-arrow-up"
+            tint={TINT.neutral}
             label="Sync status"
             value={!online ? 'Offline' : waiting.length ? `${waiting.length} waiting` : 'Up to date'}
             onClick={() => setSheet('sync')}
@@ -304,11 +321,7 @@ export function Settings() {
         />
       )}
       {sheet === 'export-tag' && (
-        <ActionSheet
-          title="Export a tag"
-          actions={tags.map((t) => ({ label: t, onClick: () => exportCsv({ tag: t }) }))}
-          onCancel={() => setSheet(null)}
-        />
+        <ActionSheet title="Export a tag" actions={tags.map((t) => ({ label: t, onClick: () => exportCsv({ tag: t }) }))} onCancel={() => setSheet(null)} />
       )}
       {sheet === 'export-month' && (
         <Sheet onClose={() => setSheet(null)} label="Export a month" top="max(calc(var(--top) + 4px), calc(100% - 330px))">
@@ -404,7 +417,9 @@ function syncSummary(s: { email: string; provider: string; uid: string; pocket: 
       : last
         ? `Last synced at ${new Date(last).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' })}.`
         : 'Not synced with the server yet in this session.',
-    s.waiting ? `${s.waiting} ${s.waiting === 1 ? 'expense' : 'expenses'} waiting to upload${s.error ? ` (last error: ${s.error})` : ''}.` : 'Nothing waiting to upload.',
+    s.waiting
+      ? `${s.waiting} ${s.waiting === 1 ? 'expense' : 'expenses'} waiting to upload${s.error ? ` (last error: ${s.error})` : ''}.`
+      : 'Nothing waiting to upload.',
   ];
   return lines.join(' ');
 }
@@ -419,7 +434,7 @@ function restoreMessage(b: Backup, skipped: number): string {
   const photos = b.pockets.reduce((s, p) => s + (p.receipts?.length ?? 0), 0);
   const pockets = `${b.pockets.length} ${b.pockets.length === 1 ? 'Pocket' : 'Pockets'}`;
   const parts = [`${pockets}, ${n} ${n === 1 ? 'expense' : 'expenses'}${photos ? `, ${photos} receipt photos` : ''}.`];
-  parts.push("Anything already in Spendr stays as it is; missing items are added back.");
+  parts.push('Anything already in Spendr stays as it is; missing items are added back.');
   if (skipped) parts.push(`${skipped} damaged ${skipped === 1 ? 'entry' : 'entries'} will be left out.`);
   return parts.join(' ');
 }

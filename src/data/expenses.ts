@@ -1,12 +1,4 @@
-import {
-  doc,
-  getCountFromServer,
-  getDocs,
-  orderBy,
-  query,
-  where,
-  writeBatch,
-} from 'firebase/firestore';
+import { doc, getCountFromServer, getDocs, orderBy, query, where, writeBatch } from 'firebase/firestore';
 import { auth, db } from '../firebase';
 import type { CurrencyCode } from '../lib/currencies';
 import { forgetExpense, saveExpenseDoc } from './outbox';
@@ -64,13 +56,7 @@ export async function addExpense(pid: string, input: ExpenseInput, id = newExpen
 }
 
 /** Saves an edit. If the Pocket changed, the expense moves (create in the new one, delete the old). */
-export async function saveExpenseEdit(
-  original: Expense,
-  fromPid: string,
-  toPid: string,
-  input: ExpenseInput,
-  editorUid: string,
-): Promise<string> {
+export async function saveExpenseEdit(original: Expense, fromPid: string, toPid: string, input: ExpenseInput, editorUid: string): Promise<string> {
   const data = { ...cleanExpense(input), editedByUid: editorUid };
   if (fromPid === toPid) {
     // Overwrite so a cleared note is removed; keep the original creation time.

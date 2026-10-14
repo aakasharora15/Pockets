@@ -8,8 +8,17 @@ import { displayTyped, formatMoney, formatShort, formatWhole, formatWholeDown, p
 import { byCategory, totalIn, trend, weeklyBars } from '../stats';
 
 const ex = (o: Partial<Expense>): Expense => ({
-  id: 'x', currency: 'GBP', amountMinor: 100, name: 'n', categoryId: 'other', byUid: 'u', byInitials: 'U',
-  date: '2026-09-01', createdAt: null, updatedAt: null, ...o,
+  id: 'x',
+  currency: 'GBP',
+  amountMinor: 100,
+  name: 'n',
+  categoryId: 'other',
+  byUid: 'u',
+  byInitials: 'U',
+  date: '2026-09-01',
+  createdAt: null,
+  updatedAt: null,
+  ...o,
 });
 
 describe('money', () => {

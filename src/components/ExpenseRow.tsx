@@ -87,7 +87,7 @@ export function SwipeRow({
   const moved = useRef(false);
   const width = () => box.current?.clientWidth ?? 350;
   const base = open ? -ACTIONS_W : 0;
-  const x = removing ? -width() : drag ?? base;
+  const x = removing ? -width() : (drag ?? base);
   const full = removing || (drag !== null && drag < -width() * FULL_SWIPE);
 
   return (

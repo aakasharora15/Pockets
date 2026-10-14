@@ -46,7 +46,7 @@ export function Categories() {
       try {
         count = await countInCategory(pocket.id, cat.id);
       } catch {
-        showToast("You need to be online to delete a category");
+        showToast('You need to be online to delete a category');
         return;
       }
     }
@@ -214,7 +214,14 @@ function NewCategorySheet({ existing, onClose }: { existing: Category[]; onClose
       <span className="field-label sheet-label">Icon</span>
       <div className="icon-grid" role="radiogroup" aria-label="Icon">
         {CATEGORY_ICON_CHOICES.map((n) => (
-          <button key={n} role="radio" aria-checked={icon === n} aria-label={n.replace(/-/g, ' ')} className={`icon-choice press${icon === n ? ' on' : ''}`} onClick={() => setIcon(n)}>
+          <button
+            key={n}
+            role="radio"
+            aria-checked={icon === n}
+            aria-label={n.replace(/-/g, ' ')}
+            className={`icon-choice press${icon === n ? ' on' : ''}`}
+            onClick={() => setIcon(n)}
+          >
             <Icon name={n} />
           </button>
         ))}

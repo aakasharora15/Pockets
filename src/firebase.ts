@@ -1,11 +1,6 @@
 import { initializeApp, type FirebaseOptions } from 'firebase/app';
 import { connectAuthEmulator, getAuth } from 'firebase/auth';
-import {
-  connectFirestoreEmulator,
-  initializeFirestore,
-  persistentLocalCache,
-  persistentMultipleTabManager,
-} from 'firebase/firestore';
+import { connectFirestoreEmulator, initializeFirestore, persistentLocalCache, persistentMultipleTabManager } from 'firebase/firestore';
 
 /** Set VITE_EMULATORS=1 to run against the local Auth and Firestore emulators. */
 export const USE_EMULATORS = import.meta.env.VITE_EMULATORS === '1';

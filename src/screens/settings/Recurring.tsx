@@ -67,7 +67,8 @@ export function Recurring() {
           </div>
         )}
         <div className="footnote">
-          Whoever opens Spendr first on the day logs it, once. To change the amount or name, edit any expense it logged. Repeats need a connection to be logged; if you're offline they're added when you're back.
+          Whoever opens Spendr first on the day logs it, once. To change the amount or name, edit any expense it logged. Repeats need a connection to be logged;
+          if you're offline they're added when you're back.
         </div>
       </div>
       <div className="fade-top" />

@@ -31,7 +31,12 @@ export function expensesToCsv(expenses: Expense[], categories: Category[], membe
 
 /** File-name-safe slug: "India Dec 2026" → "india-dec-2026". */
 export function slug(s: string, fallback = 'pocket'): string {
-  return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || fallback;
+  return (
+    s
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '') || fallback
+  );
 }
 
 export async function shareOrDownload(filename: string, text: string, type: 'text/csv' | 'application/json' = 'text/csv'): Promise<void> {

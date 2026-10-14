@@ -139,7 +139,13 @@ async function send(e: OutboxEntry, write: Promise<void>, expense: boolean): Pro
     })
     .finally(() => inflight.delete(e.key));
   if (!navigator.onLine) return;
-  const r = await Promise.race([settled.then(() => 'ok' as const, (err: unknown) => ({ err })), delay(2500)]);
+  const r = await Promise.race([
+    settled.then(
+      () => 'ok' as const,
+      (err: unknown) => ({ err }),
+    ),
+    delay(2500),
+  ]);
   if (typeof r === 'object') {
     await remove(e.key, e.queuedAt);
     throw r.err;

@@ -1,9 +1,4 @@
-import {
-  assertFails,
-  assertSucceeds,
-  initializeTestEnvironment,
-  type RulesTestEnvironment,
-} from '@firebase/rules-unit-testing';
+import { assertFails, assertSucceeds, initializeTestEnvironment, type RulesTestEnvironment } from '@firebase/rules-unit-testing';
 import {
   arrayUnion,
   Bytes,
@@ -65,10 +60,18 @@ beforeEach(async () => {
       await setDoc(doc(db, 'pockets', HOME, 'members', uid), { uid, name, initials, role, joinedAt: Timestamp.now() });
     }
     await setDoc(doc(db, 'pockets', HOME, 'categories', 'other'), {
-      name: 'Other', icon: 'dots-three', colour: '#9AA0AA', order: 10000, system: true,
+      name: 'Other',
+      icon: 'dots-three',
+      colour: '#9AA0AA',
+      order: 10000,
+      system: true,
     });
     await setDoc(doc(db, 'pockets', HOME, 'categories', 'groceries'), {
-      name: 'Groceries', icon: 'basket', colour: '#5AA0F0', order: 2000, system: false,
+      name: 'Groceries',
+      icon: 'basket',
+      colour: '#5AA0F0',
+      order: 2000,
+      system: false,
     });
     await setDoc(doc(db, 'pockets', HOME, 'expenses', 'e1'), expense({ byUid: OWNER, byInitials: 'PS' }));
     await setDoc(doc(db, 'invites', 'K7PQ2M'), invite());
@@ -114,7 +117,12 @@ function joinBatch(db: Firestore, uid: string, code = 'K7PQ2M', pid = HOME) {
   const b = writeBatch(db);
   b.update(doc(db, 'invites', code), { usedByUid: uid, usedAt: Timestamp.now() });
   b.set(doc(db, 'pockets', pid, 'members', uid), {
-    uid, name: 'Trina', initials: 'TR', role: 'member', joinedAt: Timestamp.now(), inviteCode: code,
+    uid,
+    name: 'Trina',
+    initials: 'TR',
+    role: 'member',
+    joinedAt: Timestamp.now(),
+    inviteCode: code,
   });
   if (uid === STRANGER) b.update(doc(db, 'users', uid), { pocketIds: arrayUnion(pid) });
   return b;
@@ -156,13 +164,26 @@ describe('pockets', () => {
     const pid = `personal_${STRANGER}`;
     const b = writeBatch(db);
     b.set(doc(db, 'pockets', pid), {
-      name: 'Personal', type: 'personal', ownerUid: STRANGER, currencies: ['GBP'], budgets: {}, createdAt: Timestamp.now(),
+      name: 'Personal',
+      type: 'personal',
+      ownerUid: STRANGER,
+      currencies: ['GBP'],
+      budgets: {},
+      createdAt: Timestamp.now(),
     });
     b.set(doc(db, 'pockets', pid, 'members', STRANGER), {
-      uid: STRANGER, name: 'Trina', initials: 'TR', role: 'owner', joinedAt: Timestamp.now(),
+      uid: STRANGER,
+      name: 'Trina',
+      initials: 'TR',
+      role: 'owner',
+      joinedAt: Timestamp.now(),
     });
     b.set(doc(db, 'pockets', pid, 'categories', 'other'), {
-      name: 'Other', icon: 'dots-three', colour: '#9AA0AA', order: 1, system: true,
+      name: 'Other',
+      icon: 'dots-three',
+      colour: '#9AA0AA',
+      order: 1,
+      system: true,
     });
     await assertSucceeds(b.commit());
   });
@@ -172,10 +193,19 @@ describe('pockets', () => {
     const pid = `personal_${OWNER}`;
     const b = writeBatch(db);
     b.set(doc(db, 'pockets', pid), {
-      name: 'Personal', type: 'personal', ownerUid: STRANGER, currencies: ['GBP'], budgets: {}, createdAt: Timestamp.now(),
+      name: 'Personal',
+      type: 'personal',
+      ownerUid: STRANGER,
+      currencies: ['GBP'],
+      budgets: {},
+      createdAt: Timestamp.now(),
     });
     b.set(doc(db, 'pockets', pid, 'members', STRANGER), {
-      uid: STRANGER, name: 'Trina', initials: 'TR', role: 'owner', joinedAt: Timestamp.now(),
+      uid: STRANGER,
+      name: 'Trina',
+      initials: 'TR',
+      role: 'owner',
+      joinedAt: Timestamp.now(),
     });
     await assertFails(b.commit());
   });
@@ -183,7 +213,11 @@ describe('pockets', () => {
   it('cannot add yourself to an existing Pocket as owner', async () => {
     await assertFails(
       setDoc(doc(as(STRANGER), 'pockets', HOME, 'members', STRANGER), {
-        uid: STRANGER, name: 'Trina', initials: 'TR', role: 'owner', joinedAt: Timestamp.now(),
+        uid: STRANGER,
+        name: 'Trina',
+        initials: 'TR',
+        role: 'owner',
+        joinedAt: Timestamp.now(),
       }),
     );
   });
@@ -267,8 +301,18 @@ describe('tags, recurring and receipts', () => {
   });
 
   const rule = (over: Record<string, unknown> = {}) => ({
-    currency: 'GBP', amountMinor: 120000, name: 'Rent', categoryId: 'other', byUid: OWNER, byInitials: 'PS',
-    day: 1, nextDate: '2026-11-01', createdByUid: OWNER, createdAt: Timestamp.now(), updatedAt: Timestamp.now(), ...over,
+    currency: 'GBP',
+    amountMinor: 120000,
+    name: 'Rent',
+    categoryId: 'other',
+    byUid: OWNER,
+    byInitials: 'PS',
+    day: 1,
+    nextDate: '2026-11-01',
+    createdByUid: OWNER,
+    createdAt: Timestamp.now(),
+    updatedAt: Timestamp.now(),
+    ...over,
   });
 
   it('members can create, change and stop recurring expenses', async () => {
@@ -289,7 +333,12 @@ describe('tags, recurring and receipts', () => {
   });
 
   const receipt = (size: number) => ({
-    data: Bytes.fromUint8Array(new Uint8Array(size)), type: 'image/jpeg', width: 800, height: 1200, byUid: MEMBER, createdAt: Timestamp.now(),
+    data: Bytes.fromUint8Array(new Uint8Array(size)),
+    type: 'image/jpeg',
+    width: 800,
+    height: 1200,
+    byUid: MEMBER,
+    createdAt: Timestamp.now(),
   });
 
   it('members can attach a receipt photo; others cannot see it', async () => {
@@ -310,7 +359,11 @@ describe('categories', () => {
     const db = as(MEMBER);
     await assertSucceeds(
       setDoc(doc(db, 'pockets', HOME, 'categories', 'pets'), {
-        name: 'Pets', icon: 'paw-print', colour: '#5AA0F0', order: 9000, system: false,
+        name: 'Pets',
+        icon: 'paw-print',
+        colour: '#5AA0F0',
+        order: 9000,
+        system: false,
       }),
     );
     await assertSucceeds(deleteDoc(doc(db, 'pockets', HOME, 'categories', 'groceries')));
@@ -320,7 +373,11 @@ describe('categories', () => {
   it('cannot mark a new category as system', async () => {
     await assertFails(
       setDoc(doc(as(MEMBER), 'pockets', HOME, 'categories', 'fake'), {
-        name: 'Fake', icon: 'star', colour: '#fff', order: 1, system: true,
+        name: 'Fake',
+        icon: 'star',
+        colour: '#fff',
+        order: 1,
+        system: true,
       }),
     );
   });
@@ -339,7 +396,10 @@ describe('invites', () => {
 
   it('invites must be stamped with the server time', async () => {
     await assertFails(
-      setDoc(doc(as(MEMBER), 'invites', 'ABCDE3'), invite({ code: 'ABCDE3', createdByUid: MEMBER, createdAt: Timestamp.fromMillis(Date.now() + 30 * 24 * hour) })),
+      setDoc(
+        doc(as(MEMBER), 'invites', 'ABCDE3'),
+        invite({ code: 'ABCDE3', createdByUid: MEMBER, createdAt: Timestamp.fromMillis(Date.now() + 30 * 24 * hour) }),
+      ),
     );
   });
 
@@ -360,9 +420,14 @@ describe('invites', () => {
   it('an expired invite does not work', async () => {
     await env.withSecurityRulesDisabled(async (ctx) => {
       // Created 49 hours ago: expired by the server's clock, whatever expiresAt says.
-      await setDoc(doc(ctx.firestore(), 'invites', 'QLDQLD'), invite({
-        code: 'QLDQLD', createdAt: Timestamp.fromMillis(Date.now() - 49 * hour), expiresAt: Timestamp.fromMillis(Date.now() + hour),
-      }));
+      await setDoc(
+        doc(ctx.firestore(), 'invites', 'QLDQLD'),
+        invite({
+          code: 'QLDQLD',
+          createdAt: Timestamp.fromMillis(Date.now() - 49 * hour),
+          expiresAt: Timestamp.fromMillis(Date.now() + hour),
+        }),
+      );
     });
     await assertFails(joinBatch(as(STRANGER), STRANGER, 'QLDQLD').commit());
   });
@@ -370,7 +435,12 @@ describe('invites', () => {
   it('cannot join without marking the invite used', async () => {
     await assertFails(
       setDoc(doc(as(STRANGER), 'pockets', HOME, 'members', STRANGER), {
-        uid: STRANGER, name: 'Trina', initials: 'TR', role: 'member', joinedAt: Timestamp.now(), inviteCode: 'K7PQ2M',
+        uid: STRANGER,
+        name: 'Trina',
+        initials: 'TR',
+        role: 'member',
+        joinedAt: Timestamp.now(),
+        inviteCode: 'K7PQ2M',
       }),
     );
   });
@@ -378,15 +448,19 @@ describe('invites', () => {
   it('cannot use an invite for a different Pocket', async () => {
     await env.withSecurityRulesDisabled(async (ctx) => {
       await setDoc(doc(ctx.firestore(), 'pockets', 'other1'), {
-        name: 'Other', type: 'shared', ownerUid: 'x', currencies: ['GBP'], budgets: {}, createdAt: Timestamp.now(),
+        name: 'Other',
+        type: 'shared',
+        ownerUid: 'x',
+        currencies: ['GBP'],
+        budgets: {},
+        createdAt: Timestamp.now(),
       });
     });
     await assertFails(joinBatch(as(STRANGER), STRANGER, 'K7PQ2M', 'other1').commit());
   });
 
   it('an emailed invite must have a valid, lower-case address', async () => {
-    const make = (code: string, email: string) =>
-      setDoc(doc(as(OWNER), 'invites', code), invite({ code, email, createdAt: serverTimestamp() }));
+    const make = (code: string, email: string) => setDoc(doc(as(OWNER), 'invites', code), invite({ code, email, createdAt: serverTimestamp() }));
     await assertSucceeds(make('MAQWE2', 'trina@example.com'));
     await assertFails(make('MAQWE3', 'Trina@Example.com'));
     await assertFails(make('MAQWE4', 'not an email'));

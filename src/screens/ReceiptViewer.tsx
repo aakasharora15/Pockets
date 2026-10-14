@@ -17,7 +17,9 @@ export function ReceiptViewer({ photo, onClose, onRemove, onFill }: { photo: Pho
       <button className="circle-44 glass press viewer-close" aria-label="Close" onClick={onClose}>
         <Icon name="x" weight="bold" />
       </button>
-      <div className="viewer-photo">{url ? <img src={url} alt="Receipt" /> : <span className="viewer-wait">The photo is still on its way from another phone.</span>}</div>
+      <div className="viewer-photo">
+        {url ? <img src={url} alt="Receipt" /> : <span className="viewer-wait">The photo is still on its way from another phone.</span>}
+      </div>
       <div className="viewer-actions">
         {photo && (
           <button className="primary-btn press" onClick={onFill}>

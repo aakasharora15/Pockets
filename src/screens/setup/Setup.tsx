@@ -215,7 +215,12 @@ export function Setup() {
             {START_OPTIONS.map((o) => {
               const on = draft.start === o.start;
               return (
-                <button key={o.start} className={`choice press${on ? ' on' : ''}`} aria-pressed={on} onClick={() => setDraft((d) => ({ ...d, start: o.start }))}>
+                <button
+                  key={o.start}
+                  className={`choice press${on ? ' on' : ''}`}
+                  aria-pressed={on}
+                  onClick={() => setDraft((d) => ({ ...d, start: o.start }))}
+                >
                   <div className="choice-tile">
                     <Icon name={o.icon} />
                   </div>
@@ -252,11 +257,7 @@ export function Setup() {
             )}
             {error && <span className="helper error">{error}</span>}
           </div>
-          <button
-            className="primary-btn bottom-primary press"
-            disabled={busy || (draft.start === 'create' && !draft.pocketName.trim())}
-            onClick={finish}
-          >
+          <button className="primary-btn bottom-primary press" disabled={busy || (draft.start === 'create' && !draft.pocketName.trim())} onClick={finish}>
             {draft.start === 'join' ? 'Continue to join' : 'Continue'}
           </button>
         </>
