@@ -1,3 +1,5 @@
+import { reportError } from '../lib/report';
+
 /** When this phone last heard from the server (a listener result that didn't come from the cache). */
 let lastServer = 0;
 
@@ -14,6 +16,7 @@ let lastError = '';
 
 export function markListenError(code: string) {
   lastError = code;
+  reportError('listen', code);
 }
 
 export function lastListenError(): string {

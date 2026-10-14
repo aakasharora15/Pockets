@@ -6,7 +6,9 @@ import pkg from './package.json' with { type: 'json' };
 
 /** Short commit id of this build, shown in Settings › About so a phone's version can be identified. */
 function buildId(): string {
-  if (process.env.GITHUB_SHA) return process.env.GITHUB_SHA.slice(0, 7);
+  // BUILD_SHA is the commit being deployed (set by the Deploy workflow, which runs after CI).
+  const sha = process.env.BUILD_SHA || process.env.GITHUB_SHA;
+  if (sha) return sha.slice(0, 7);
   try {
     return execSync('git rev-parse --short HEAD').toString().trim();
   } catch {

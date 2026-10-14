@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { HomeSkeleton } from '../components/Skeletons';
 import { lastListenError, lastServerSync } from '../data/syncStatus';
 import { auth, db } from '../firebase';
+import { reportError } from '../lib/report';
 import { Logo } from './auth/Logo';
 
 const SLOW_MS = 10_000;
@@ -42,6 +43,9 @@ async function repair() {
 
 function StillLoading({ waitingFor }: { waitingFor: string }) {
   const [busy, setBusy] = useState(false);
+  useEffect(() => {
+    reportError('still-loading', `Waiting for ${waitingFor}; ${navigator.onLine ? 'online' : 'offline'}; ${lastServerSync() ? 'server reached' : 'server not reached'}; ${lastListenError() || 'no listener error'}`);
+  }, [waitingFor]);
   const online = navigator.onLine;
   const last = lastServerSync();
   const details = [

@@ -4,6 +4,7 @@ import { createContext, useContext, useEffect, useState, type ReactNode } from '
 import { userRef } from '../data/refs';
 import type { UserProfile } from '../data/types';
 import { auth } from '../firebase';
+import { reportError } from '../lib/report';
 
 interface Session {
   /** undefined while Firebase restores the session. */
@@ -37,7 +38,10 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         if (!snap.exists() && snap.metadata.fromCache) return;
         setProfile(snap.exists() ? (snap.data() as UserProfile) : null);
       },
-      () => setProfileError(true),
+      (err) => {
+        reportError('profile', err.code);
+        setProfileError(true);
+      },
     );
   }, [user]);
 

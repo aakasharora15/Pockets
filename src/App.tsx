@@ -29,6 +29,7 @@ import { Setup } from './screens/setup/Setup';
 import { Loading } from './screens/StillLoading';
 import { SetupNeeded } from './screens/SetupNeeded';
 import { Transactions } from './screens/Transactions';
+import { ErrorBoundary } from './components/ErrorBoundary';
 import { LockProvider, useLock } from './state/lock';
 import { PocketsProvider, usePockets } from './state/pockets';
 import { SessionProvider, useSession } from './state/session';
@@ -39,6 +40,7 @@ const JOIN_KEY = 'spendr.join';
 export default function App() {
   if (configMissing) return <SetupNeeded />;
   return (
+    <ErrorBoundary>
     <BrowserRouter>
       <UiProvider>
         <SessionProvider>
@@ -53,6 +55,7 @@ export default function App() {
         </SessionProvider>
       </UiProvider>
     </BrowserRouter>
+    </ErrorBoundary>
   );
 }
 

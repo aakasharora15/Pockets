@@ -3,6 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { registerSW } from 'virtual:pwa-register';
 import App from './App';
 import { checkFreshness } from './lib/freshness';
+import { installErrorReporting } from './lib/report';
 import './styles/tokens.css';
 import './styles/base.css';
 import './styles/components.css';
@@ -23,6 +24,7 @@ registerSW({
 });
 
 // And if the update itself gets stuck, start clean (see lib/freshness.ts).
+installErrorReporting();
 void checkFreshness();
 document.addEventListener('visibilitychange', () => document.visibilityState === 'visible' && void checkFreshness());
 

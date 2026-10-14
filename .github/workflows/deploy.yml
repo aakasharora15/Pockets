@@ -1,6 +1,7 @@
 name: Deploy
 
-# Deploys to Firebase Hosting (and the Firestore rules and indexes) on every push to main.
+# Deploys to Firebase Hosting (and the Firestore rules and indexes) once CI has passed on main,
+# using exactly the commit CI checked. A red CI run never deploys. It can also be run by hand.
 # Needs three repository secrets (Settings › Secrets and variables › Actions):
 #   FIREBASE_PROJECT_ID       your Firebase project id
 #   FIREBASE_WEB_CONFIG       the web app config as JSON, e.g. {"apiKey":"…","authDomain":"…",…}
@@ -8,7 +9,9 @@ name: Deploy
 # Without them (for example on a fork) the deploy job is skipped.
 
 on:
-  push:
+  workflow_run:
+    workflows: [CI]
+    types: [completed]
     branches: [main]
   workflow_dispatch:
 
@@ -18,8 +21,11 @@ concurrency:
 
 jobs:
   deploy:
+    # From CI: only a successful run of a push to main (not a pull request).
+    if: github.event_name == 'workflow_dispatch' || (github.event.workflow_run.conclusion == 'success' && github.event.workflow_run.event == 'push')
     runs-on: ubuntu-latest
     env:
+      BUILD_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
       HAS_SECRETS: ${{ secrets.FIREBASE_SERVICE_ACCOUNT != '' && secrets.FIREBASE_WEB_CONFIG != '' && secrets.FIREBASE_PROJECT_ID != '' }}
     steps:
       - name: Skip when secrets are missing
@@ -27,6 +33,8 @@ jobs:
         run: echo "Firebase secrets not set; skipping deploy."
       - uses: actions/checkout@v4
         if: env.HAS_SECRETS == 'true'
+        with:
+          ref: ${{ env.BUILD_SHA }}
       - uses: actions/setup-node@v4
         if: env.HAS_SECRETS == 'true'
         with:

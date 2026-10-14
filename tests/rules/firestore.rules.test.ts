@@ -430,3 +430,32 @@ describe('users', () => {
     await assertFails(updateDoc(doc(as(STRANGER), 'users', STRANGER), { hidePersonal: 'yes' }));
   });
 });
+
+describe('error reports', () => {
+  const report = (uid: string, over: Record<string, unknown> = {}) => ({
+    uid,
+    where: 'window',
+    message: 'TypeError: x is undefined',
+    stack: 'at Home (Home.tsx:1)',
+    build: 'abc1234',
+    version: '1.4.0',
+    ua: 'Mozilla/5.0',
+    path: '/',
+    at: serverTimestamp(),
+    ...over,
+  });
+
+  it('a signed-in user can file a report as themselves, and nobody can read it back', async () => {
+    await assertSucceeds(setDoc(doc(as(MEMBER), 'errors', 'r1'), report(MEMBER)));
+    await assertFails(getDoc(doc(as(MEMBER), 'errors', 'r1')));
+    await assertFails(getDocs(collection(as(OWNER), 'errors')));
+    await assertFails(deleteDoc(doc(as(MEMBER), 'errors', 'r1')));
+  });
+
+  it('reports are checked: own uid, signed in, known fields, bounded sizes', async () => {
+    await assertFails(setDoc(doc(as(MEMBER), 'errors', 'r2'), report(OWNER)));
+    await assertFails(setDoc(doc(as(null), 'errors', 'r3'), report(MEMBER)));
+    await assertFails(setDoc(doc(as(MEMBER), 'errors', 'r4'), report(MEMBER, { extra: true })));
+    await assertFails(setDoc(doc(as(MEMBER), 'errors', 'r5'), report(MEMBER, { message: 'x'.repeat(501) })));
+  });
+});

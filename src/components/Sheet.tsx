@@ -24,7 +24,10 @@ export function Sheet({ onClose, top = 'calc(var(--top) + 4px)', className = '',
 
   const end = () => {
     if (start.current !== null) {
-      if (dy > 120) onDrag ? onDrag('down') : onClose();
+      if (dy > 120) {
+        if (onDrag) onDrag('down');
+        else onClose();
+      }
       else if (dy < -60 && onDrag) onDrag('up');
     }
     start.current = null;
