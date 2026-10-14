@@ -1,6 +1,6 @@
 import { doc, writeBatch } from 'firebase/firestore';
 import { db } from '../firebase';
-import { ADDED_IN_V2, RENAMED_IN_V3, CATEGORY_PALETTE, DEFAULT_CATEGORIES, DEFAULTS_VERSION, ORDER_STEP, OTHER_ID } from '../lib/categories';
+import { ADDED_IN, RENAMED_IN_V3, CATEGORY_PALETTE, DEFAULT_CATEGORIES, DEFAULTS_VERSION, ORDER_STEP, OTHER_ID } from '../lib/categories';
 import { recategorise } from './expenses';
 import { commit } from './pockets';
 import { categoriesCol, categoryRef, pocketRef } from './refs';
@@ -49,16 +49,18 @@ export async function reorderCategories(pid: string, orderedIds: string[]): Prom
 }
 
 /**
- * Brings a Pocket's categories up to the current default set, once per Pocket. Version 2 adds
- * categories just above Other, skipping any the Pocket already has by id or name. Version 3
+ * Brings a Pocket's categories up to the current default set, once per Pocket. Versions 2 and 4
+ * add categories just above Other, skipping any the Pocket already has by id or name. Version 3
  * renames defaults, but only ones still called by their old name. The Pocket is then marked, so a
  * category someone deletes or renames later is left alone.
  */
 export async function upgradeDefaults(pid: string, existing: Category[], fromVersion: number): Promise<number> {
   const names = new Set(existing.map((c) => c.name.trim().toLowerCase()));
   const ids = new Set(existing.map((c) => c.id));
-  const toAdd =
-    fromVersion < 2 ? DEFAULT_CATEGORIES.filter((c) => ADDED_IN_V2.includes(c.id) && !ids.has(c.id) && !names.has(c.name.toLowerCase())) : [];
+  const newIds = Object.entries(ADDED_IN)
+    .filter(([v]) => fromVersion < Number(v))
+    .flatMap(([, list]) => list);
+  const toAdd = DEFAULT_CATEGORIES.filter((c) => newIds.includes(c.id) && !ids.has(c.id) && !names.has(c.name.toLowerCase()));
   const sorted = [...existing].sort((a, b) => a.order - b.order);
   const other = sorted.find((c) => c.id === OTHER_ID);
   const last = sorted.filter((c) => c.id !== OTHER_ID).pop()?.order ?? 0;

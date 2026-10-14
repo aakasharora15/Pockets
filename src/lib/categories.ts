@@ -19,6 +19,8 @@ export const DEFAULT_CATEGORIES: CategorySeed[] = [
   { id: 'water', name: 'Water bill', icon: 'drop', colour: '#4FD1E8' },
   { id: 'household', name: 'Household', icon: 'couch', colour: '#73A6A0' },
   { id: 'transport', name: 'Travel', icon: 'train-simple', colour: '#F09A55' },
+  { id: 'health', name: 'Health', icon: 'heartbeat', colour: '#F2777A' },
+  { id: 'personalcare', name: 'Personal care', icon: 'scissors', colour: '#C792EA' },
   { id: 'gifts', name: 'Gifts', icon: 'gift', colour: '#EE86B4' },
   { id: 'self', name: 'Self improvement', icon: 'book-open', colour: '#E2725E' },
   { id: 'entertainment', name: 'Entertainment', icon: 'ticket', colour: '#EE6F7C' },
@@ -31,9 +33,14 @@ export const DEFAULT_CATEGORIES: CategorySeed[] = [
  * once (see upgradeDefaults), so nobody has to do it by hand.
  *   2: adds Amazon, Rent, Council tax, Water bill and Household
  *   3: renames Transport to Travel
+ *   4: adds Health and Personal care
  */
-export const DEFAULTS_VERSION = 3;
-export const ADDED_IN_V2 = ['amazon', 'rent', 'counciltax', 'water', 'household'];
+export const DEFAULTS_VERSION = 4;
+/** Categories each version added, by version. */
+export const ADDED_IN: Record<number, string[]> = {
+  2: ['amazon', 'rent', 'counciltax', 'water', 'household'],
+  4: ['health', 'personalcare'],
+};
 export const RENAMED_IN_V3: Record<string, [from: string, to: string]> = { transport: ['Transport', 'Travel'] };
 
 /** Chart colours handed out in turn to new categories. */

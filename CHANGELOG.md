@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+### Added
+
+- **New categories:** Health and Personal care. Existing Pockets get them once, just above Other.
+
 ## 1.3.0 (2026-10-14)
 
 ### Added
