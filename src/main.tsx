@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { registerSW } from 'virtual:pwa-register';
 import App from './App';
+import { checkFreshness } from './lib/freshness';
 import './styles/tokens.css';
 import './styles/base.css';
 import './styles/components.css';
@@ -20,6 +21,10 @@ registerSW({
     window.setInterval(check, 60 * 60 * 1000);
   },
 });
+
+// And if the update itself gets stuck, start clean (see lib/freshness.ts).
+void checkFreshness();
+document.addEventListener('visibilitychange', () => document.visibilityState === 'visible' && void checkFreshness());
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>

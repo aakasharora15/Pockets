@@ -14,10 +14,21 @@ function buildId(): string {
   }
 }
 
+const BUILD = buildId();
+
 export default defineConfig({
-  define: { __APP_VERSION__: JSON.stringify(pkg.version), __APP_BUILD__: JSON.stringify(buildId()) },
+  define: { __APP_VERSION__: JSON.stringify(pkg.version), __APP_BUILD__: JSON.stringify(BUILD) },
   plugins: [
     react(),
+    // version.json says which build is live. It isn't precached, so an installed copy can compare
+    // itself with it and refresh if it's fallen behind (see src/lib/freshness.ts).
+    {
+      name: 'spendr-version-file',
+      apply: 'build',
+      generateBundle() {
+        this.emitFile({ type: 'asset', fileName: 'version.json', source: JSON.stringify({ version: pkg.version, build: BUILD }) });
+      },
+    },
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: false,

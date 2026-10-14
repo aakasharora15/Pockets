@@ -8,6 +8,7 @@
 
 ### Fixed
 
+- **No more stuck old versions.** An installed copy now checks which version is live, and if it's behind and the normal update doesn't happen, it clears its cached copy and reloads. Your expenses, unsynced items and settings aren't touched. Settings › About shows the build.
 - **Rupees take paise.** Amounts in rupees can have up to two decimal places (₹1.03). Whole amounts still show without decimals (₹8,830).
 - **Full width on wider iPhones.** No more empty strips down the sides.
 - **Full screen in the installed iPhone app on iOS 26.** iOS 26 gives home-screen web apps a window shorter than the screen, which left a band below the tab bar. The app now sizes itself to the full screen. It asks once whether it looks right and puts the old layout back if not.
