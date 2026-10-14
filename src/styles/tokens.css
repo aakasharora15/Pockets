@@ -23,10 +23,16 @@
   /* A hairline of light along the top edge of cards. */
   --card-edge: inset 0 1px 0 rgba(255, 255, 255, 0.06);
   /* Pocket deck: the cards behind the open Pocket, and the ring round avatars on the lit card. */
-  --deck-hi: #34353b;
-  --deck-lo: #1f2024;
   --deck-edge: rgba(255, 255, 255, 0.1);
-  --deck-ring: #4a82ee;
+  /* Silver mirror for the cards behind the open Pocket. */
+  --mirror: linear-gradient(165deg, #f4f4f7 0%, #b9bbc2 38%, #e6e7eb 62%, #8f9198 100%);
+  --mirror-text: rgba(20, 20, 24, 0.72);
+  /* Frosted glass for the month totals, with the accent glowing through. */
+  --frost: linear-gradient(150deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.05) 55%, rgba(255, 255, 255, 0.1) 100%);
+  --frost-base: rgba(29, 30, 34, 0.72);
+  /* Iridescent edge: a thin rainbow along the top-left of glass surfaces. */
+  --rainbow: conic-gradient(from 200deg at 40% 10%, rgba(255, 110, 140, 0) 0deg, rgba(255, 140, 90, 0.95) 30deg, rgba(255, 225, 100, 0.9) 70deg,
+      rgba(100, 240, 165, 0.9) 110deg, rgba(90, 175, 255, 0.95) 155deg, rgba(175, 115, 255, 0.9) 200deg, rgba(255, 105, 195, 0.6) 245deg, rgba(255, 110, 140, 0) 290deg);
   --raised: #2b2c31;
   --avatar: #303137;
   --avatar-ring: #1d1e22;
@@ -39,9 +45,18 @@
   --hair-colour: rgba(255, 255, 255, 0.12);
   --hair: 0.5px solid var(--hair-colour);
 
+  /* Accent (Settings › Appearance › Accent). Blue is the default; Mint overrides below. */
   --accent: #4f8bff;
+  --accent-rgb: 79, 139, 255;
+  --on-accent: #ffffff;
   --soft-link: #8ab4ff;
-  --insight: rgba(79, 139, 255, 0.16);
+  --insight: rgba(var(--accent-rgb), 0.16);
+  /* The lit card at the front of the Pocket deck. */
+  --deck-front: radial-gradient(120% 120% at 90% 100%, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0) 60%),
+    linear-gradient(150deg, #5d98ff 0%, #2f66d0 100%);
+  --deck-glow: rgba(47, 102, 208, 0.32);
+  --deck-ring: #4a82ee;
+  --deck-sub: rgba(255, 255, 255, 0.78);
 
   --destructive: #ff8a84;
   --destructive-bg: #4a2230;
@@ -87,7 +102,7 @@
   /* Liquid glass, Classic (default) */
   --glass-classic: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04)) padding-box,
     linear-gradient(135deg, rgba(255, 255, 255, 0.26), rgba(255, 255, 255, 0.06) 35%, rgba(255, 255, 255, 0.03) 65%, rgba(255, 255, 255, 0.16)) border-box;
-  --glass-tinted: linear-gradient(135deg, rgba(79, 139, 255, 0.34), rgba(79, 139, 255, 0.16)) padding-box,
+  --glass-tinted: linear-gradient(135deg, rgba(var(--accent-rgb), 0.34), rgba(var(--accent-rgb), 0.16)) padding-box,
     linear-gradient(135deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.08) 35%, rgba(255, 255, 255, 0.04) 65%, rgba(255, 255, 255, 0.18)) border-box;
   --glass-clear: linear-gradient(135deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01)) padding-box,
     linear-gradient(135deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.05) 35%, rgba(255, 255, 255, 0.02) 65%, rgba(255, 255, 255, 0.14)) border-box;
@@ -111,9 +126,10 @@
   --bg: var(--dots), radial-gradient(110% 40% at 50% 0%, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 70%),
     linear-gradient(180deg, #ececf1 0%, #f2f2f7 45%, #f2f2f7 100%);
   --card-edge: 0 1px 2px rgba(0, 0, 0, 0.04);
-  --deck-hi: #ffffff;
-  --deck-lo: #e9e9ee;
   --deck-edge: rgba(60, 60, 67, 0.12);
+  --mirror: linear-gradient(165deg, #ffffff 0%, #d4d6dc 38%, #f6f6f9 62%, #b7b9c0 100%);
+  --frost: linear-gradient(150deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.62) 55%, rgba(255, 255, 255, 0.8) 100%);
+  --frost-base: rgba(255, 255, 255, 0.75);
   --edge-top: rgba(236, 236, 241, 0.92);
   --edge-bot: rgba(242, 242, 247, 0.92);
   --page: #f2f2f7;
@@ -138,8 +154,9 @@
   --line: rgba(60, 60, 67, 0.3);
 
   --accent: #2f6fe8;
+  --accent-rgb: 47, 111, 232;
   --soft-link: #2f6fe8;
-  --insight: rgba(47, 111, 232, 0.1);
+  --insight: rgba(var(--accent-rgb), 0.1);
 
   --destructive: #ff3b30;
   --destructive-bg: #ffe5e3;
@@ -171,7 +188,7 @@
 
   --glass-classic: linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.52)) padding-box,
     linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.4) 35%, rgba(255, 255, 255, 0.3) 65%, rgba(255, 255, 255, 0.9)) border-box;
-  --glass-tinted: linear-gradient(135deg, rgba(79, 139, 255, 0.3), rgba(79, 139, 255, 0.16)) padding-box,
+  --glass-tinted: linear-gradient(135deg, rgba(var(--accent-rgb), 0.3), rgba(var(--accent-rgb), 0.16)) padding-box,
     linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.4) 35%, rgba(255, 255, 255, 0.3) 65%, rgba(255, 255, 255, 0.9)) border-box;
   --glass-clear: linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.2)) padding-box,
     linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.3) 35%, rgba(255, 255, 255, 0.2) 65%, rgba(255, 255, 255, 0.8)) border-box;
@@ -199,4 +216,22 @@
 :root[data-blur='weak'][data-theme='light'] {
   --glass-base: rgba(249, 249, 252, 0.95);
   --edge-top: rgba(236, 236, 241, 0.98);
+}
+
+/* Mint accent: a vivid green with dark text on it, as in the reference. */
+:root[data-accent='mint'] {
+  --accent: #5fdd8b;
+  --accent-rgb: 95, 221, 139;
+  --on-accent: #08200f;
+  --soft-link: #7fe7a3;
+  --deck-front: radial-gradient(120% 120% at 90% 100%, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 60%),
+    linear-gradient(150deg, #86f0ab 0%, #34bf68 100%);
+  --deck-glow: rgba(52, 191, 104, 0.32);
+  --deck-ring: #54d082;
+  --deck-sub: rgba(8, 32, 15, 0.68);
+}
+:root[data-accent='mint'][data-theme='light'] {
+  --accent: #2fb863;
+  --accent-rgb: 47, 184, 99;
+  --soft-link: #1c8f48;
 }

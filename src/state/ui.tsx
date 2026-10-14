@@ -7,6 +7,7 @@ import { currentMonth } from '../lib/dates';
 import { applyTheme, readThemeSetting, resolveTheme, THEME_KEY, type ThemeSetting } from '../lib/theme';
 
 export type GlassStyle = 'tinted' | 'classic' | 'clear';
+export type AccentStyle = 'blue' | 'mint';
 
 export type ExpenseSheetRequest =
   | { mode: 'new'; date?: string }
@@ -20,6 +21,8 @@ interface Ui {
   setMonth: (m: string) => void;
   glass: GlassStyle;
   setGlass: (g: GlassStyle) => void;
+  accent: AccentStyle;
+  setAccent: (a: AccentStyle) => void;
   theme: ThemeSetting;
   setTheme: (t: ThemeSetting) => void;
   online: boolean;
@@ -38,6 +41,7 @@ interface Ui {
 const Ctx = createContext<Ui | null>(null);
 
 const GLASS_KEY = 'spendr.glass';
+export const ACCENT_KEY = 'spendr.accent';
 const combinedKey = (pid: string) => `spendr.combined.${pid}`;
 
 function readCombined(pid: string): CurrencyCode | null {
@@ -46,6 +50,14 @@ function readCombined(pid: string): CurrencyCode | null {
     return v && isCurrencyCode(v) ? v : null;
   } catch {
     return null;
+  }
+}
+
+function readAccent(): AccentStyle {
+  try {
+    return localStorage.getItem(ACCENT_KEY) === 'mint' ? 'mint' : 'blue';
+  } catch {
+    return 'blue';
   }
 }
 
@@ -64,6 +76,7 @@ export function UiProvider({ children }: { children: ReactNode }) {
   const timer = useRef<number>(undefined);
   const [month, setMonth] = useState(currentMonth());
   const [glass, setGlassState] = useState<GlassStyle>(readGlass);
+  const [accent, setAccentState] = useState<AccentStyle>(readAccent);
   const [theme, setThemeState] = useState<ThemeSetting>(readThemeSetting);
   const [online, setOnline] = useState(navigator.onLine);
   const [inFlight, setInFlight] = useState(0);
@@ -95,6 +108,10 @@ export function UiProvider({ children }: { children: ReactNode }) {
     document.documentElement.dataset.glass = glass;
   }, [glass]);
 
+  useEffect(() => {
+    document.documentElement.dataset.accent = accent;
+  }, [accent]);
+
   // Automatic follows the phone's Light/Dark setting as it changes.
   useEffect(() => {
     const media = window.matchMedia('(prefers-color-scheme: light)');
@@ -109,6 +126,15 @@ export function UiProvider({ children }: { children: ReactNode }) {
     setThemeState(t);
     try {
       localStorage.setItem(THEME_KEY, t);
+    } catch {
+      /* storage unavailable */
+    }
+  };
+
+  const setAccent = (a: AccentStyle) => {
+    setAccentState(a);
+    try {
+      localStorage.setItem(ACCENT_KEY, a);
     } catch {
       /* storage unavailable */
     }
@@ -147,6 +173,8 @@ export function UiProvider({ children }: { children: ReactNode }) {
         setMonth,
         glass,
         setGlass,
+        accent,
+        setAccent,
         theme,
         setTheme,
         online,

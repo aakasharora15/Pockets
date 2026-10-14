@@ -19,7 +19,7 @@ export function SettingsRow({ icon, tint, label, value, first, chevron = true, o
   const body = (
     <>
       <div className={`row-tile${tint ? ' tinted' : ''}`} style={tint ? { color: tint } : undefined}>
-        <Icon name={icon} weight={tint ? 'fill' : 'regular'} />
+        <Icon name={icon} weight="regular" />
       </div>
       <div className={`row-body${first ? '' : ' sep'}`}>
         <span className="row-label">{label}</span>
@@ -77,7 +77,7 @@ export function SettingsMenuRow<T extends string>({
     <>
       <button className="row press-row" onClick={open} aria-haspopup="menu" aria-expanded={!!at}>
         <div className={`row-tile${tint ? ' tinted' : ''}`} style={tint ? { color: tint } : undefined}>
-          <Icon name={icon} weight={tint ? 'fill' : 'regular'} />
+          <Icon name={icon} weight="regular" />
         </div>
         <div className={`row-body${first ? '' : ' sep'}`}>
           <span className="row-label">{label}</span>

@@ -396,8 +396,25 @@
 }
 .cards-single,
 .cards-grid {
+  position: relative;
+  isolation: isolate;
   display: grid;
   gap: 10px;
+}
+/* A soft pool of the accent behind the frosted totals. */
+.cards-single::before,
+.cards-grid::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  left: 8%;
+  top: -12%;
+  width: 62%;
+  height: 120%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(var(--accent-rgb), 0.5), rgba(var(--accent-rgb), 0));
+  filter: blur(18px);
+  pointer-events: none;
 }
 .cards-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -407,13 +424,35 @@
   grid-column: 1 / -1;
 }
 .cur-card {
-  background: var(--card);
+  position: relative;
+  background: var(--frost);
+  backdrop-filter: blur(26px) saturate(170%);
+  -webkit-backdrop-filter: blur(26px) saturate(170%);
   border-radius: var(--r-card);
   padding: 16px;
   display: flex;
   flex-direction: column;
   gap: 12px;
   box-shadow: var(--card-edge), 0 2px 12px rgba(0, 0, 0, 0.05);
+}
+:root[data-blur='weak'] .cur-card {
+  background: var(--frost), var(--frost-base);
+}
+/* Iridescent rim, drawn as a 1px ring masked out of a rainbow. */
+.cur-card::after,
+.tabbar::after,
+.deck-front::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1.5px;
+  background: var(--rainbow);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  opacity: 0.85;
+  pointer-events: none;
 }
 .cur-card-head {
   display: flex;
@@ -510,6 +549,72 @@
 .budget-text {
   font-size: 13px;
   color: var(--text2);
+}
+.weekly {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.weekly-chart {
+  position: relative;
+  height: 130px;
+}
+.avg-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  border-top: 1.5px dashed var(--line);
+}
+.weekly-cols {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  column-gap: 12px;
+}
+.weekly-col {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.weekly-val {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text2);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.weekly-bar {
+  width: 100%;
+  max-width: 40px;
+  border-radius: 10px;
+  background: color-mix(in srgb, var(--accent) 38%, transparent);
+}
+.weekly-bar.current {
+  background: var(--accent);
+  box-shadow: 0 6px 18px color-mix(in srgb, var(--accent) 40%, transparent);
+}
+.weekly-bar.ghost {
+  background: transparent;
+  border: 1.5px dashed var(--line);
+}
+.weekly-labels {
+  display: grid;
+  column-gap: 12px;
+  margin-top: -6px;
+}
+.weekly-labels span {
+  text-align: center;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text2);
+  white-space: nowrap;
+}
+.weekly-labels span.on {
+  font-weight: 600;
+  color: var(--text);
 }
 .weekly-avg {
   font-size: 13px;
@@ -864,7 +969,7 @@
   padding: 0 16px;
   border-radius: 18px;
   background: var(--accent);
-  color: #ffffff;
+  color: var(--on-accent);
   font-size: 15px;
   font-weight: 600;
 }
@@ -2008,10 +2113,9 @@
   align-items: center;
   gap: 10px;
   text-align: left;
-  color: #ffffff;
-  background: radial-gradient(120% 120% at 90% 100%, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0) 60%),
-    linear-gradient(150deg, #5d98ff 0%, #2f66d0 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 10px 26px rgba(47, 102, 208, 0.32);
+  color: var(--on-accent);
+  background: var(--deck-front);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 10px 26px var(--deck-glow);
 }
 .deck-text {
   flex: 1;
@@ -2030,7 +2134,7 @@
 }
 .deck-sub {
   font-size: 13px;
-  color: rgba(255, 255, 255, 0.78);
+  color: var(--deck-sub);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2054,10 +2158,10 @@
   display: flex;
   align-items: center;
   overflow: hidden;
-  color: var(--text);
-  background: linear-gradient(160deg, var(--deck-hi), var(--deck-lo));
-  border: 1px solid var(--deck-edge);
-  box-shadow: inset 0 1px 0 var(--deck-edge), -6px 0 16px rgba(0, 0, 0, 0.18);
+  color: var(--mirror-text);
+  background: linear-gradient(105deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.65) 46%, rgba(255, 255, 255, 0) 60%), var(--mirror);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), -6px 0 16px rgba(0, 0, 0, 0.22);
   transform: rotateY(-26deg);
   transform-origin: left center;
 }
@@ -2068,8 +2172,8 @@
   writing-mode: vertical-rl;
   transform: rotate(180deg);
   font-size: 12px;
-  font-weight: 500;
-  color: var(--text2);
+  font-weight: 600;
+  color: var(--mirror-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2083,6 +2187,9 @@
   background: transparent;
   border: 1px dashed var(--deck-edge);
   box-shadow: none;
+}
+.deck-add::before {
+  display: none;
 }
 
 /* Switching Pockets: the chosen card swings forward, the old one tucks in behind. */
@@ -2149,7 +2256,7 @@
   background: var(--fill-2);
 }
 .action-pill.primary {
-  color: #ffffff;
+  color: var(--on-accent);
   background: var(--accent);
 }
 .top-people {
@@ -2158,103 +2265,3 @@
   height: 44px;
 }
 
-/* ---------- Day by day timeline ---------- */
-.tl-plot {
-  position: relative;
-  height: 112px;
-  margin-top: 10px;
-}
-.tl-ticks {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 22px;
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: minmax(0, 1fr);
-  justify-items: center;
-  align-items: end;
-}
-.tl-tick {
-  width: 1.5px;
-  height: 8px;
-  border-radius: 1px;
-  background: var(--text3);
-}
-.tl-tick.week {
-  height: 16px;
-  background: var(--text2);
-}
-.tl-tick.ahead {
-  opacity: 0.4;
-}
-.tl-tick.today {
-  width: 2px;
-  height: 22px;
-  opacity: 1;
-  background: var(--accent);
-}
-.tl-dot {
-  position: absolute;
-  width: 8px;
-  height: 8px;
-  margin: 0 0 -4px -4px;
-  border-radius: 50%;
-  background: var(--accent);
-  opacity: 0.85;
-}
-.tl-dot.peak {
-  width: 11px;
-  height: 11px;
-  margin: 0 0 -5.5px -5.5px;
-  opacity: 1;
-  box-shadow: 0 0 12px var(--accent);
-}
-.tl-peak {
-  position: absolute;
-  transform: translateX(-50%);
-  font-size: 12px;
-  color: var(--text2);
-  white-space: nowrap;
-}
-.tl-today {
-  position: absolute;
-  top: 0;
-  transform: translateX(-50%);
-  height: 26px;
-  padding: 0 12px;
-  border-radius: 13px;
-  display: flex;
-  align-items: center;
-  font-size: 13px;
-  font-weight: 500;
-  color: #ffffff;
-  background: var(--accent);
-  box-shadow: 0 4px 14px rgba(79, 139, 255, 0.35);
-}
-.tl-labels {
-  position: relative;
-  height: 16px;
-  margin-top: 6px;
-}
-.tl-labels span {
-  position: absolute;
-  transform: translateX(-50%);
-  font-size: 12px;
-  color: var(--text2);
-  white-space: nowrap;
-}
-.tl-labels span.first {
-  transform: none;
-}
-/* A faint line from Today down to its tick. */
-.tl-now {
-  position: absolute;
-  top: 26px;
-  bottom: 22px;
-  width: 1px;
-  margin-left: -0.5px;
-  background: linear-gradient(180deg, var(--accent), transparent);
-  opacity: 0.5;
-}

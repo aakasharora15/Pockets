@@ -6,14 +6,15 @@
 
 - **Pocket deck on Home.** Your Pockets sit at the top as a deck of cards: the open one in front, lit in blue, the others standing behind like folders. Tap one to open it and the cards swap places; tap the front card for the full list, New and Join.
 - **Quick actions on Home:** Add expense, Export and Tags.
-- **Day by day.** Weekly spend is now a timeline of the month: a tick for every day, a dot for each day you spent (higher for bigger days), the biggest day labelled and Today marked.
+- **Accent colour.** Settings › Appearance › Accent: Blue (as before) or Mint, a vivid green with dark text on it. The open Pocket, Add expense, charts and links follow it.
 - **The Spendr icon follows the theme.** In Light, the logo on Welcome and the PIN screen, the browser tab icon and the icon iPhone uses when you add Spendr to the Home Screen are the light version; in Dark, the dark one.
 - **New categories:** Health and Personal care. Existing Pockets get them once, just above Other.
 - **Reset a forgotten PIN.** Forgot PIN? now asks you to confirm it's you with Google or your password (with Forgot password? if you need a new one), then lets you choose a new PIN. You stay signed in. Log out is still there if you'd rather.
 
 ### Changed
 
-- **Calmer look.** A neutral charcoal background with a faint dot grid replaces the navy glow, with blue kept for what matters. Totals have their pence dimmed, headings sit at a medium weight, cards have a fine top edge, and Settings icons sit on neutral tiles.
+- **Calmer look.** A neutral charcoal background with a faint dot grid replaces the navy glow, with blue kept for what matters. Month totals are frosted glass with the accent glowing through and a thin rainbow rim (as are the open Pocket and the tab bar), the Pockets behind it are silver mirror cards, icons are thin outlines, totals are bold with pence dimmed, and Settings icons sit on neutral tiles.
+- **Totals always show pence and paise.** £3,936.50 and ₹18,299.00 follow the same rule, with the decimals dimmed.
 
 ### Fixed
 

@@ -7,7 +7,7 @@ import {
   ForkKnifeIcon, GameControllerIcon, GasPumpIcon, GearSixIcon, GiftIcon, GoogleLogoIcon, GraduationCapIcon,
   HandHeartIcon, HeartbeatIcon, HourglassSimpleIcon, HouseIcon, InfoIcon, LightningIcon, ListIcon, LockKeyIcon,
   LockSimpleIcon, MagnifyingGlassIcon, MinusCircleIcon, MoonIcon, TrayArrowDownIcon, ArchiveIcon, MusicNotesIcon, NotePencilIcon, PawPrintIcon, PencilSimpleIcon,
-  PiggyBankIcon, PillIcon, PlantIcon, PlusIcon, QrCodeIcon, ReceiptIcon, RepeatIcon, ScissorsIcon,
+  PaletteIcon, PiggyBankIcon, PillIcon, PlantIcon, PlusIcon, QrCodeIcon, ReceiptIcon, RepeatIcon, ScissorsIcon,
   SlidersHorizontalIcon, SparkleIcon, SquaresFourIcon, StarIcon, TagIcon, TargetIcon, TextTIcon, TicketIcon,
   TrainSimpleIcon, TrashIcon, TShirtIcon, UserCircleIcon, UserIcon, UserPlusIcon, UsersThreeIcon, WifiHighIcon,
   WifiSlashIcon, WineIcon, WrenchIcon, XIcon,
@@ -31,7 +31,7 @@ const REGISTRY: Record<string, PhIcon> = {
   info: InfoIcon, lightning: LightningIcon, list: ListIcon, 'lock-key': LockKeyIcon, 'lock-simple': LockSimpleIcon,
   'magnifying-glass': MagnifyingGlassIcon, 'minus-circle': MinusCircleIcon, 'music-notes': MusicNotesIcon,
   'note-pencil': NotePencilIcon, 'paw-print': PawPrintIcon, 'pencil-simple': PencilSimpleIcon, 'piggy-bank': PiggyBankIcon,
-  pill: PillIcon, plant: PlantIcon, plus: PlusIcon, 'qr-code': QrCodeIcon, receipt: ReceiptIcon, repeat: RepeatIcon,
+  palette: PaletteIcon, pill: PillIcon, plant: PlantIcon, plus: PlusIcon, 'qr-code': QrCodeIcon, receipt: ReceiptIcon, repeat: RepeatIcon,
   scissors: ScissorsIcon, 'sliders-horizontal': SlidersHorizontalIcon, sparkle: SparkleIcon, 'squares-four': SquaresFourIcon,
   star: StarIcon, tag: TagIcon, target: TargetIcon, 'text-t': TextTIcon, ticket: TicketIcon, 'train-simple': TrainSimpleIcon,
   trash: TrashIcon, 't-shirt': TShirtIcon, 'user-circle': UserCircleIcon, user: UserIcon, 'user-plus': UserPlusIcon,
@@ -50,7 +50,7 @@ export interface IconProps {
 }
 
 /** Renders a Phosphor icon as inline SVG. */
-export function Icon({ name, weight = 'regular', size, color, style, label }: IconProps) {
+export function Icon({ name, weight = 'light', size, color, style, label }: IconProps) {
   const C = REGISTRY[name] ?? DotsThreeIcon;
   return (
     <C

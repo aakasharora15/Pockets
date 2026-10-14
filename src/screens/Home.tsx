@@ -9,11 +9,11 @@ import { useCombined } from '../data/useCombined';
 import { useExpenses } from '../data/useExpenses';
 import { OTHER_ID } from '../lib/categories';
 import { currency, type CurrencyCode } from '../lib/currencies';
-import { addMonths, currentMonth, monthName, monthShort } from '../lib/dates';
+import { addMonths, monthName, monthShort } from '../lib/dates';
 import { Icon } from '../lib/icons';
 import { firstName } from '../lib/initials';
 import { formatMoney, formatNumber, formatShort, formatWhole, formatWholeDown } from '../lib/money';
-import { byCategory, dailySpend, inMonth, totalIn, trend } from '../lib/stats';
+import { byCategory, inMonth, totalIn, trend, weeklyBars } from '../lib/stats';
 import { useCurrentPocket, usePockets } from '../state/pockets';
 import { useSession } from '../state/session';
 import { useUi } from '../state/ui';
@@ -68,7 +68,7 @@ export function Home() {
           </>
         ) : (
           <>
-            <SpendTimeline expenses={expenses} code={cur} month={month} empty={empty} />
+            <WeeklySpend expenses={expenses} code={cur} month={month} empty={empty} />
             {!empty && <WhereItWent expenses={expenses} code={cur} onSeeAll={() => navigate('/transactions', { state: { currency: cur } })} />}
             {!empty && pocket.type === 'shared' && <ByPerson expenses={expenses} pocket={pocket} />}
             <Insight pocketId={pocket.id} month={month} expenses={expenses} code={cur} empty={empty} />
@@ -172,6 +172,8 @@ function CurrencyCards({
   // Optional extra card: everything converted into one currency (Settings › Combined total).
   const combinedCode = pocket.currencies.length > 1 ? combinedFor(pocket.id) : null;
   const many = pocket.currencies.length > 1;
+  // Side-by-side cards share one size: smaller for all of them if any amount is long.
+  const long = pocket.currencies.some((code) => formatNumber(empty ? 0 : totalIn(expenses, code), code, currency(code).dp).length > 8);
 
   const card = (code: CurrencyCode) => {
     const c = currency(code);
@@ -179,7 +181,8 @@ function CurrencyCards({
     const t = trend(total, totalIn(prevExpenses, code));
     const budget = pocket.budgets[code];
     const left = budget ? budget - total : 0;
-    const amount = empty ? '0' : formatNumber(total, code);
+    // Totals always show the currency's decimals (dimmed), so £ and ₹ cards read the same way.
+    const amount = formatNumber(empty ? 0 : total, code, c.dp);
     const trendChip =
       !empty && t !== null && t !== 0 ? (
         <div className="trend" style={{ color: t < 0 ? 'var(--good)' : 'var(--bad)' }}>
@@ -232,7 +235,7 @@ function CurrencyCards({
         <div className="cur-card-amount num">
           <span className="cur-card-sym">{c.symbol}</span>
           {/* Long amounts get a smaller size so they fit half the width. */}
-          <Amount className={`cur-card-num${amount.length > 8 ? ' long' : ''}`} value={amount} />
+          <Amount className={`cur-card-num${long ? ' long' : ''}`} value={amount} />
         </div>
         {trendChip}
         {budgetBar}
@@ -278,71 +281,50 @@ function CombinedCard({ code, month, expenses, empty }: { code: CurrencyCode; mo
       </div>
       <div className={`cur-card-amount num${loading && !empty ? ' loading' : ''}`}>
         <span className="cur-card-sym">≈{c.symbol}</span>
-        <Amount className="cur-card-num" value={empty || error ? '0' : formatNumber(total, code)} />
+        <Amount className="cur-card-num" value={formatNumber(empty || error ? 0 : total, code, c.dp)} />
       </div>
       <span className="budget-text">{note}</span>
     </div>
   );
 }
 
-/**
- * The month day by day, as a ruler: a tick for every day (taller at the start of each week), a dot
- * above each day with spending, higher for bigger days, and Today marked in the accent.
- */
-function SpendTimeline({ expenses, code, month, empty }: { expenses: Expense[]; code: string; month: string; empty: boolean }) {
-  const { days, elapsed, perDay } = useMemo(() => dailySpend(expenses, code, month), [expenses, code, month]);
-  const max = Math.max(...days);
-  const today = month === currentMonth() ? elapsed : 0;
-  const n = days.length;
-  const x = (d: number) => `${((d - 0.5) / n) * 100}%`;
-  const biggest = max > 0 ? days.indexOf(max) + 1 : 0;
+function WeeklySpend({ expenses, code, month, empty }: { expenses: Expense[]; code: string; month: string; empty: boolean }) {
+  const { weeks, avg } = useMemo(() => weeklyBars(expenses, code, month), [expenses, code, month]);
+  const scale = 100 / Math.max(1, ...weeks.map((w) => w.total), empty ? 1 : avg);
+  const cols = { gridTemplateColumns: `repeat(${weeks.length}, minmax(0, 1fr))` };
+  const nothingInCurrency = weeks.every((w) => w.total === 0);
   return (
-    <div className="card timeline">
+    <div className="card weekly">
       <div className="card-head">
-        <span className="card-title">Day by day</span>
-        <span className="weekly-avg">{empty || !max ? '' : `Avg ${formatShort(perDay, code)} a day`}</span>
+        <span className="card-title">Weekly spend</span>
+        <span className="weekly-avg">{empty || nothingInCurrency || !avg ? '' : `Avg ${formatShort(avg, code)} a week`}</span>
       </div>
-      <div className="tl-plot">
-        {today > 0 && (
-          <>
-            <span className="tl-now" style={{ left: x(today) }} aria-hidden="true" />
-            <span className="tl-today" style={{ left: `clamp(32px, ${x(today)}, calc(100% - 32px))` }}>
-              Today
-            </span>
-          </>
-        )}
-        {biggest > 0 && (
-          <span className="tl-peak num" style={{ left: `clamp(24px, ${x(biggest)}, calc(100% - 24px))`, bottom: 28 + 32 + 12 }}>
-            {formatShort(max, code)}
-          </span>
-        )}
-        {days.map((v, i) =>
-          v > 0 ? (
-            <span
-              key={i}
-              className={`tl-dot${i + 1 === biggest ? ' peak' : ''}`}
-              style={{ left: x(i + 1), bottom: 28 + Math.round((v / max) * 32) }}
-              aria-hidden="true"
-            />
-          ) : null,
-        )}
-        <div className="tl-ticks" aria-hidden="true">
-          {days.map((_, i) => {
-            const d = i + 1;
-            const week = (d - 1) % 7 === 0;
-            return <span key={d} className={`tl-tick${week ? ' week' : ''}${d === today ? ' today' : ''}${d > (today || n) ? ' ahead' : ''}`} />;
+      <div className="weekly-chart">
+        {!empty && !nothingInCurrency && avg > 0 && <div className="avg-line" style={{ bottom: avg * scale }} />}
+        <div className="weekly-cols" style={cols}>
+          {weeks.map((w) => {
+            const ghost = w.ghost || nothingInCurrency;
+            return (
+              <div key={w.label} className="weekly-col">
+                <span className="weekly-val" style={{ color: w.current ? 'var(--text)' : undefined }}>
+                  {ghost ? '' : formatShort(w.total, code)}
+                </span>
+                <div
+                  className={`weekly-bar${ghost ? ' ghost' : w.current ? ' current' : ''}`}
+                  style={{ height: ghost ? 8 : Math.max(8, w.total * scale) }}
+                />
+              </div>
+            );
           })}
         </div>
-        {(empty || !max) && <div className="weekly-empty">No spending yet this month</div>}
+        {(empty || nothingInCurrency) && <div className="weekly-empty">No spending yet this month</div>}
       </div>
-      <div className="tl-labels">
-        {days.map((_, i) =>
-          (i % 7 === 0) ? (
-            <span key={i} className={i === 0 ? 'first' : undefined} style={{ left: i === 0 ? 0 : x(i + 1) }}>
-              {i === 0 ? `1 ${monthShort(month)}` : i + 1}
-            </span>
-          ) : null,
-        )}
+      <div className="weekly-labels" style={cols}>
+        {weeks.map((w) => (
+          <span key={w.label} className={w.current ? 'on' : undefined}>
+            {w.label}
+          </span>
+        ))}
       </div>
     </div>
   );
