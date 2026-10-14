@@ -31,7 +31,7 @@ jobs:
       - name: Skip when secrets are missing
         if: env.HAS_SECRETS != 'true'
         run: echo "Firebase secrets not set; skipping deploy."
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         if: env.HAS_SECRETS == 'true'
         with:
           ref: ${{ env.BUILD_SHA }}
