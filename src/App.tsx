@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { OfflineToast, PlusButton, TabBar, Toast } from './components/Chrome';
 import { RouteStage } from './components/RouteStage';
-import { HomeSkeleton } from './components/Skeletons';
 import { onMovedToPersonal, replayOutbox } from './data/outbox';
 import { upgradeDefaults } from './data/categories';
 import { logDueRecurring } from './data/recurring';
@@ -27,6 +26,7 @@ import { Tags } from './screens/tags/Tags';
 import { TagView } from './screens/tags/TagView';
 import { SetPinScreen, UnlockScreen } from './screens/setup/PinScreen';
 import { Setup } from './screens/setup/Setup';
+import { Loading } from './screens/StillLoading';
 import { SetupNeeded } from './screens/SetupNeeded';
 import { Transactions } from './screens/Transactions';
 import { LockProvider, useLock } from './state/lock';
@@ -85,7 +85,7 @@ function Gate() {
   }
 
   if (profile === undefined || lock.state === 'checking') {
-    return profileError ? <SetupNeeded offline /> : <HomeSkeleton />;
+    return profileError ? <SetupNeeded offline /> : <Loading waitingFor={profile === undefined ? 'your account' : "this phone's PIN"} />;
   }
 
   if (profile === null) return <Setup />;
@@ -93,7 +93,7 @@ function Gate() {
   if (lock.state === 'none') return <SetPinScreen onDone={lock.createPin} />;
   if (lock.state === 'locked') return <UnlockScreen onUnlock={lock.unlock} onReset={lock.resetPin} onSignOut={() => void lock.forgot()} />;
 
-  if (loading) return <HomeSkeleton />;
+  if (loading) return <Loading waitingFor="your Pockets" />;
 
   return <MainRoutes />;
 }
@@ -122,7 +122,7 @@ function MainRoutes() {
     }
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (!current) return <HomeSkeleton />;
+  if (!current) return <Loading waitingFor="your Pockets" />;
 
   return (
     <>

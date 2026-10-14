@@ -2036,3 +2036,8 @@
   text-align: center;
   margin-top: -8px;
 }
+.still-details {
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--text2);
+}
