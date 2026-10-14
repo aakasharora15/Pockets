@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties } from 'react';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Icon } from '../lib/icons';
 import { useUi } from '../state/ui';
@@ -22,42 +22,81 @@ const TABS = [
 /** How far the lens lifts when pressed, and how much it may stretch while moving fast. */
 const LIFT = 1.24;
 const MAX_STRETCH = 0.22;
+/** Glide to a tab with a little overshoot; lift and settle with a springier one; follow a finger closely. */
+const GLIDE = 'transform 0.4s cubic-bezier(0.3, 1.18, 0.5, 1)';
+const SPRING = 'transform 0.3s cubic-bezier(0.3, 1.3, 0.5, 1)';
+const FOLLOW = 'transform 0.1s ease-out';
 
 /**
  * Tab bar with a Liquid Glass lens, as on iOS 26. At rest a soft capsule sits on the open tab. Press and
- * it lifts into a clear lens that magnifies the icons under it; drag and it follows your finger,
+ * it lifts into a glass lens that magnifies the icons under it; drag and it follows your finger,
  * stretching with speed; let go and it glides to the nearest tab and opens it.
+ *
+ * The lens only ever changes transform, written straight to the element (no re-render per frame), so the
+ * phone's compositor runs the animation and it stays smooth while the next screen renders.
  */
 export function TabBar() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const index = TABS.findIndex((t) => t.path === pathname);
-  const [pos, setPos] = useState(index);
-  const [lifted, setLifted] = useState(false);
-  const [dragging, setDragging] = useState(false);
-  const [stretch, setStretch] = useState(0);
+  const lens = useRef<HTMLSpanElement>(null);
+  const view = useRef<HTMLSpanElement>(null);
+  const state = useRef({ pos: index, lift: 1, stretch: 0 });
   const drag = useRef<{ id: number; moved: boolean; x: number; t: number } | null>(null);
-  const calm = useRef(0);
+  const timers = useRef({ calm: 0, settle: 0, frame: 0 });
 
-  /** Stretch the lens now and let it relax back once it stops moving. */
-  const wobble = (amount: number, after = 90) => {
-    setStretch(Math.min(MAX_STRETCH, amount));
-    window.clearTimeout(calm.current);
-    calm.current = window.setTimeout(() => setStretch(0), after);
+  const apply = (transition: string) => {
+    const l = lens.current;
+    const v = view.current;
+    if (!l || !v) return;
+    const { pos, lift, stretch } = state.current;
+    const t = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'none' : transition;
+    l.style.transition = v.style.transition = t;
+    l.style.transform = `translate3d(${pos * 100}%, 0, 0) scale(${lift * (1 + stretch)}, ${lift * (1 - stretch * 0.45)})`;
+    // The copy of the icons inside stays lined up with the bar; the lens's scale magnifies it.
+    v.style.transform = `translate3d(${pos * -25}%, 0, 0)`;
   };
 
-  // The open tab changed: glide there, stretched for the trip, then set the lens down.
-  useEffect(() => {
-    if (index < 0) return;
-    setPos((p) => {
-      if (Math.abs(p - index) >= 0.5) wobble(0.14, 200);
-      return index;
-    });
-    const t = window.setTimeout(() => setLifted(false), 340);
-    return () => window.clearTimeout(t);
-  }, [index]);
+  const setLifted = (on: boolean) => {
+    state.current.lift = on ? LIFT : 1;
+    lens.current?.classList.toggle('lifted', on);
+  };
 
-  useEffect(() => () => window.clearTimeout(calm.current), []);
+  /** Set the lens down on its tab after a moment. */
+  const settle = (after: number) => {
+    window.clearTimeout(timers.current.settle);
+    timers.current.settle = window.setTimeout(() => {
+      setLifted(false);
+      apply(SPRING);
+    }, after);
+  };
+
+  // The open tab changed: glide there, stretched for a longer trip, then set the lens down.
+  useLayoutEffect(() => {
+    if (index < 0) return;
+    const s = state.current;
+    const far = Math.abs(s.pos - index) >= 0.5;
+    s.pos = index;
+    if (far) {
+      s.stretch = 0.1;
+      apply(GLIDE);
+      window.clearTimeout(timers.current.calm);
+      timers.current.calm = window.setTimeout(() => {
+        s.stretch = 0;
+        apply(GLIDE);
+      }, 160);
+    } else apply(lens.current?.style.transform ? GLIDE : 'none');
+    if (s.lift > 1) settle(340);
+  }, [index]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => {
+    const t = timers.current;
+    return () => {
+      window.clearTimeout(t.calm);
+      window.clearTimeout(t.settle);
+      cancelAnimationFrame(t.frame);
+    };
+  }, []);
 
   const tabAt = (e: React.PointerEvent<HTMLElement>) => {
     const r = e.currentTarget.getBoundingClientRect();
@@ -67,26 +106,29 @@ export function TabBar() {
 
   const release = (to: number) => {
     drag.current = null;
-    setDragging(false);
-    if (to === index) {
-      setPos(index);
-      window.setTimeout(() => setLifted(false), 200);
-    } else navigate(TABS[to].path, { replace: true });
+    cancelAnimationFrame(timers.current.frame);
+    window.clearTimeout(timers.current.calm);
+    const s = state.current;
+    s.pos = to;
+    s.stretch = 0;
+    apply(GLIDE);
+    if (to === index) settle(200);
+    // Start the glide first, then open the screen: the compositor keeps animating while it renders.
+    else requestAnimationFrame(() => requestAnimationFrame(() => navigate(TABS[to].path, { replace: true })));
   };
-
-  const vars = { '--pos': pos, '--lift': lifted ? LIFT : 1, '--stretch': stretch } as CSSProperties;
 
   return (
     <nav
-      className={`tabbar glass-pref${lifted ? ' lifted' : ''}${dragging ? ' dragging' : ''}`}
-      style={vars}
+      className="tabbar glass-pref"
       aria-label="Tabs"
       onPointerDown={(e) => {
         if (e.button !== 0) return;
         e.currentTarget.setPointerCapture(e.pointerId);
         drag.current = { id: e.pointerId, moved: false, x: e.clientX, t: e.timeStamp };
+        window.clearTimeout(timers.current.settle);
         setLifted(true);
-        setPos(tabAt(e));
+        state.current.pos = tabAt(e);
+        apply(SPRING);
       }}
       onPointerMove={(e) => {
         const d = drag.current;
@@ -94,35 +136,40 @@ export function TabBar() {
         if (!d.moved && Math.abs(e.clientX - d.x) < 4) return;
         const speed = Math.abs(e.clientX - d.x) / Math.max(8, e.timeStamp - d.t);
         Object.assign(d, { moved: true, x: e.clientX, t: e.timeStamp });
-        setDragging(true);
-        setPos(tabAt(e));
-        wobble(speed * 0.12);
+        const s = state.current;
+        s.pos = tabAt(e);
+        s.stretch = Math.min(MAX_STRETCH, speed * 0.12);
+        cancelAnimationFrame(timers.current.frame);
+        timers.current.frame = requestAnimationFrame(() => apply(FOLLOW));
+        // Once the finger pauses, the lens springs back to round.
+        window.clearTimeout(timers.current.calm);
+        timers.current.calm = window.setTimeout(() => {
+          s.stretch = 0;
+          apply(SPRING);
+        }, 90);
       }}
       onPointerUp={(e) => drag.current?.id === e.pointerId && release(Math.round(tabAt(e)))}
       onPointerCancel={() => drag.current && release(index)}
     >
-      <div className="tab-row">
-        {TABS.map((t) => {
-          const on = pathname === t.path;
-          return (
-            <button
-              key={t.path}
-              className={`tab${on ? ' on' : ''}`}
-              aria-label={t.label}
-              aria-current={on ? 'page' : undefined}
-              // Taps and drags go through the bar's pointer handlers; this is for the keyboard.
-              onClick={(e) => e.detail === 0 && navigate(t.path, { replace: true })}
-            >
-              {/* Icons only; the open tab is brighter and a touch heavier. Names stay for VoiceOver. */}
-              <Icon name={t.icon} size={26} weight={on ? 'regular' : 'light'} />
-            </button>
-          );
-        })}
-      </div>
+      {TABS.map((t) => {
+        const on = pathname === t.path;
+        return (
+          <button
+            key={t.path}
+            className={`tab${on ? ' on' : ''}`}
+            aria-label={t.label}
+            aria-current={on ? 'page' : undefined}
+            // Taps and drags go through the bar's pointer handlers; this is for the keyboard.
+            onClick={(e) => e.detail === 0 && navigate(t.path, { replace: true })}
+          >
+            {/* Icons only; the open tab is brighter and a touch heavier. Names stay for VoiceOver. */}
+            <Icon name={t.icon} size={26} weight={on ? 'regular' : 'light'} />
+          </button>
+        );
+      })}
       {index >= 0 && (
-        <span className="tab-lens" aria-hidden>
-          {/* A copy of the icons lined up with the bar; the lens's scale magnifies it. */}
-          <span className="tab-lens-view">
+        <span className="tab-lens" ref={lens} aria-hidden>
+          <span className="tab-lens-view" ref={view}>
             {TABS.map((t, i) => (
               <span key={t.path} className={`tab${i === index ? ' on' : ''}`}>
                 <Icon name={t.icon} size={26} weight={i === index ? 'regular' : 'light'} />

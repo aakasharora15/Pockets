@@ -96,11 +96,11 @@
   --menu: rgba(44, 44, 48, 0.98);
 
   --spring: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
-  /* The tab bar's lifted lens: clear glass with a lit rim and a faint split of colour at its edges. */
-  --lens: linear-gradient(180deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.03));
+  /* The tab bar's lifted lens: glass dense enough to hide the icons beneath, with a lit rim and a faint split of colour at its edges. */
+  --lens: linear-gradient(180deg, rgba(86, 88, 96, 0.9), rgba(52, 53, 59, 0.9));
   --lens-edge:
-    inset 0 0 0 0.5px rgba(255, 255, 255, 0.35), inset 0 2px 2px -1px rgba(255, 255, 255, 0.55), inset 0 -2px 2px -1px rgba(255, 255, 255, 0.25),
-    inset 3px 0 4px -2px rgba(130, 190, 255, 0.35), inset -3px 0 4px -2px rgba(255, 180, 130, 0.3), 0 8px 22px rgba(0, 0, 0, 0.3);
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.35), inset 0 2px 2px -1px rgba(255, 255, 255, 0.6), inset 0 -2px 2px -1px rgba(255, 255, 255, 0.25),
+    inset 3px 0 4px -2px rgba(130, 190, 255, 0.4), inset -3px 0 4px -2px rgba(255, 180, 130, 0.35);
 
   /* Liquid glass, Classic (default) */
   --glass-classic:
@@ -204,10 +204,10 @@
     linear-gradient(135deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.2)) padding-box,
     linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.3) 35%, rgba(255, 255, 255, 0.2) 65%, rgba(255, 255, 255, 0.8)) border-box;
   --glass-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.9), 0 10px 30px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08);
-  --lens: linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.25));
+  --lens: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(244, 245, 249, 0.92));
   --lens-edge:
-    inset 0 0 0 0.5px rgba(0, 0, 0, 0.08), inset 0 2px 2px -1px rgba(255, 255, 255, 1), inset 0 -2px 2px -1px rgba(255, 255, 255, 0.7),
-    inset 3px 0 4px -2px rgba(80, 150, 255, 0.3), inset -3px 0 4px -2px rgba(255, 150, 90, 0.25), 0 8px 22px rgba(0, 0, 0, 0.14);
+    inset 0 0 0 0.5px rgba(0, 0, 0, 0.08), inset 0 2px 2px -1px rgba(255, 255, 255, 1), inset 0 -2px 3px -1px rgba(0, 0, 0, 0.06),
+    inset 3px 0 4px -2px rgba(80, 150, 255, 0.35), inset -3px 0 4px -2px rgba(255, 150, 90, 0.3);
   --key-bg:
     linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.66)) padding-box,
     linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.5) 40%, rgba(255, 255, 255, 0.4) 60%, rgba(255, 255, 255, 0.9)) border-box;

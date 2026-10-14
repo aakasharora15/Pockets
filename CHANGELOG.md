@@ -10,7 +10,7 @@
 - **One accent colour.** The Accent setting is gone; Spendr uses its blue everywhere again.
 - **Totals always fit their card.** Pence and paise are smaller as well as dimmed, and long amounts step down in size, so £ and ₹ side by side never spill out of the box.
 - **Tab bar without labels.** Home, Transactions, Calendar and Settings are icons only; the open tab sits on a soft capsule.
-- **Liquid Glass tab bar.** Press the tab bar and the capsule lifts into a clear glass lens that magnifies the icon under it. Drag along the bar and it follows your finger, stretching as it moves; let go and it glides to the nearest tab, as on iOS 26. Switching tabs no longer rebuilds the bar, so the move is smooth.
+- **Liquid Glass tab bar.** Press the tab bar and the capsule lifts into a glass lens that magnifies the icon under it. Drag along the bar and it follows your finger, stretching as it moves; let go and it glides to the nearest tab, as on iOS 26. The lens runs on the phone's graphics compositor, so it stays smooth while the next screen loads.
 - **Settings icons are filled again:** a solid colour tile with a white icon, as in iPhone Settings.
 - **Fainter dot grid** behind every screen, in both themes.
 - **No rainbow rim.** The total cards, the open Pocket and the tab bar lose the rainbow edge.
