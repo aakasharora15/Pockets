@@ -4,6 +4,9 @@
 
 ### Changed
 
+- **Easier to read in Light.** Secondary text now meets the WCAG AA contrast level, and faint text (pence, placeholders) meets the large-text level in both themes.
+- **Faster updates.** Screens past Home load when first opened, and Firebase, React and the icons sit in their own files, so an update downloads about 37 KB of Spendr's code instead of the whole app.
+- **Something went wrong screen.** If a screen ever crashes, you get Reload instead of a blank page, and the problem is reported.
 - **One accent colour.** The Accent setting is gone; Spendr uses its blue everywhere again.
 - **Totals always fit their card.** Pence and paise are smaller as well as dimmed, and long amounts step down in size, so £ and ₹ side by side never spill out of the box.
 - **Tab bar without labels.** Home, Transactions, Calendar and Settings are icons only; the open tab is brighter.
