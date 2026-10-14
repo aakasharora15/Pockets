@@ -10,6 +10,7 @@ import { CODE_ALPHABET, normaliseCode } from '../../lib/inviteCode';
 import { usePockets } from '../../state/pockets';
 import { useMe } from '../../state/session';
 import { useUi } from '../../state/ui';
+import { Segmented } from '../../components/Segmented';
 
 const PROBLEMS: Record<InviteProblem | 'offline', string> = {
   'not-found': "That code doesn't match an invite. Check it and try again.",
@@ -145,14 +146,15 @@ export function Join() {
             {!profile.hidePersonal && (
               <div className="join-choice">
                 <span className="field-label">Your existing expenses</span>
-                <div className="segmented" role="radiogroup" aria-label="Your existing expenses">
-                  <button role="radio" aria-checked={!move} className={`seg${!move ? ' on' : ''}`} onClick={() => setMove(false)}>
-                    Keep in Personal
-                  </button>
-                  <button role="radio" aria-checked={move} className={`seg${move ? ' on' : ''}`} onClick={() => setMove(true)}>
-                    Move to {invite.pocketName}
-                  </button>
-                </div>
+                <Segmented
+                  label="Your existing expenses"
+                  value={move}
+                  onChange={setMove}
+                  options={[
+                    { value: false, label: 'Keep in Personal' },
+                    { value: true, label: `Move to ${invite.pocketName}` },
+                  ]}
+                />
               </div>
             )}
           </>

@@ -11,6 +11,11 @@
 - **Totals always fit their card.** Pence and paise are smaller as well as dimmed, and long amounts step down in size, so £ and ₹ side by side never spill out of the box.
 - **Tab bar without labels.** Home, Transactions, Calendar and Settings are icons only; the open tab sits on a soft capsule.
 - **Liquid Glass tab bar.** Press the tab bar and the capsule lifts into a glass lens that magnifies the icon under it. Drag along the bar and it follows your finger, stretching as it moves; let go and it glides to the nearest tab, as on iOS 26. The lens runs on the phone's graphics compositor, so it stays smooth while the next screen loads.
+- **Tab bar shrinks while you scroll.** Scroll down a screen and the bar tucks into a small round button for the open tab; scroll up or tap it to bring the rest back.
+- **Glass toggles.** Press a switch and its knob lifts into a glass capsule before settling on its new side; choices like Keep in Personal / Move slide a glass thumb across.
+- **Floating half sheets.** Export a month and the Add expense sheet (at half height) float inset from the screen edges with every corner rounded; at full height they fill the screen as before.
+- **Section headers in title case**, larger, as on iOS 26 ("This Pocket · Home" rather than all capitals). The deck's Switch label too.
+- **Reduce Transparency and Increase Contrast.** With either turned on in iPhone Settings › Accessibility, glass becomes solid; Increase Contrast also strengthens secondary text and edges.
 - **Settings icons are filled again:** a solid colour tile with a white icon, as in iPhone Settings.
 - **Fainter dot grid** behind every screen, in both themes.
 - **No rainbow rim.** The total cards, the open Pocket and the tab bar lose the rainbow edge.

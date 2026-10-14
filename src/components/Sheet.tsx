@@ -12,7 +12,9 @@ interface SheetProps {
 }
 
 /** Bottom sheet with backdrop (tap to close) and grabber. */
-export function Sheet({ onClose, top = 'calc(var(--top) + 4px)', className = '', children, onDrag, label }: SheetProps) {
+const FULL = 'calc(var(--top) + 4px)';
+
+export function Sheet({ onClose, top = FULL, className = '', children, onDrag, label }: SheetProps) {
   const start = useRef<number | null>(null);
   const [dy, setDy] = useState(0);
 
@@ -37,7 +39,8 @@ export function Sheet({ onClose, top = 'calc(var(--top) + 4px)', className = '',
     <>
       <div className="sheet-backdrop" onClick={onClose} />
       <div
-        className={`sheet ${className}`}
+        // Shorter than full height, a sheet floats inset from the screen's edges, as on iOS 26.
+        className={`sheet${top === FULL ? '' : ' half'} ${className}`}
         role="dialog"
         aria-modal="true"
         aria-label={label}

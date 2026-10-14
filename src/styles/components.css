@@ -179,11 +179,10 @@
   color: var(--text-sub);
   text-wrap: pretty;
 }
+/* Section headers as on iOS 26: title case as written, not all capitals. */
 .section-label {
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
   color: var(--text2);
   padding: 0 16px;
 }
@@ -532,13 +531,39 @@
 
 /* ---------- Segmented controls & chips ---------- */
 .segmented {
+  position: relative;
   border-radius: 20px;
   background: var(--fill);
   padding: 3px;
   display: flex;
   height: 40px;
 }
+/* One thumb slides to the chosen option and lifts into glass while pressed. */
+.seg-thumb {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  border-radius: 17px;
+  background: var(--segment);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+  pointer-events: none;
+  transition:
+    transform 0.4s cubic-bezier(0.3, 1.18, 0.5, 1),
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.segmented.pressed .seg-thumb {
+  background: var(--knob-glass);
+  box-shadow: var(--knob-glass-edge);
+}
+@media (prefers-reduced-motion: reduce) {
+  .seg-thumb {
+    transition: none;
+  }
+}
 .seg {
+  position: relative;
   flex: 1;
   border-radius: 17px;
   display: flex;
@@ -549,10 +574,8 @@
   color: var(--text2);
 }
 .seg.on {
-  background: var(--segment);
   color: var(--text);
   font-weight: 600;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
 }
 .chip {
   flex: none;
@@ -574,9 +597,10 @@
 
 /* ---------- Tab bar & plus ---------- */
 .tabbar {
+  --tab-right: 90px;
   position: absolute;
   left: var(--gutter);
-  right: 90px;
+  right: var(--tab-right);
   bottom: max(calc(var(--bottom) - 6px), 16px);
   height: 64px;
   border-radius: 32px;
@@ -593,13 +617,42 @@
   touch-action: none;
   -webkit-user-select: none;
   user-select: none;
+  transition: right 0.42s cubic-bezier(0.3, 1.15, 0.5, 1);
+}
+/* Shrunk while scrolling: a round button holding the open tab. The others fade out where the bar was. */
+.tabbar.mini {
+  right: calc(100% - var(--gutter) - 64px);
+}
+.tab-track {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 4px;
+  right: 4px;
+  display: flex;
+  align-items: center;
+  transition: transform 0.42s cubic-bezier(0.3, 1.15, 0.5, 1);
+}
+.tab-track > .tab,
+.tab-lens {
+  transition: opacity 0.25s ease;
+}
+.tabbar.mini .tab:not(.on),
+.tabbar.mini .tab-lens {
+  opacity: 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tabbar,
+  .tab-track {
+    transition: none;
+  }
 }
 .tab-lens {
   position: absolute;
   top: 5px;
   bottom: 5px;
-  left: 4px;
-  width: calc((100% - 8px) / 4);
+  left: 0;
+  width: 25%;
   border-radius: 27px;
   overflow: hidden;
   pointer-events: none;
@@ -717,6 +770,27 @@
   z-index: 55;
   animation: sheet-up 0.38s cubic-bezier(0.25, 1, 0.5, 1);
   transition: top 0.38s cubic-bezier(0.25, 1, 0.5, 1);
+}
+/* Half height: floats inset from the edges with every corner rounded, as on iOS 26. */
+.sheet.half {
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  border-radius: 38px;
+  padding-bottom: 26px;
+  background: var(--sheet-half);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.12),
+    0 12px 40px rgba(0, 0, 0, 0.28);
+}
+.sheet {
+  transition:
+    top 0.38s cubic-bezier(0.25, 1, 0.5, 1),
+    left 0.38s cubic-bezier(0.25, 1, 0.5, 1),
+    right 0.38s cubic-bezier(0.25, 1, 0.5, 1),
+    bottom 0.38s cubic-bezier(0.25, 1, 0.5, 1),
+    border-radius 0.38s cubic-bezier(0.25, 1, 0.5, 1);
 }
 .sheet > * {
   flex: none;
@@ -1167,21 +1241,41 @@
 .switch.on {
   background: #34c759;
 }
+/*
+ * The knob. Pressed, it lifts into a wider Liquid Glass capsule, as on iOS 26, showing the track's colour
+ * through it; let go and it settles on its new side. Transform and opacity only, so it stays smooth.
+ */
 .switch-knob {
   position: absolute;
   top: 2px;
   left: 2px;
   width: 27px;
   height: 27px;
-  border-radius: 50%;
+  border-radius: 14px;
   background: #ffffff;
   box-shadow:
     0 3px 8px rgba(0, 0, 0, 0.15),
     0 1px 1px rgba(0, 0, 0, 0.16);
-  transition: left 0.25s;
+  transition:
+    transform 0.38s cubic-bezier(0.3, 1.35, 0.5, 1),
+    background 0.2s ease,
+    box-shadow 0.2s ease;
 }
 .switch.on .switch-knob {
-  left: 22px;
+  transform: translateX(20px);
+}
+.switch.pressed .switch-knob {
+  transform: translateX(10px) scale(1.55, 1.3);
+  background: var(--knob-glass);
+  box-shadow: var(--knob-glass-edge);
+}
+@media (prefers-reduced-motion: reduce) {
+  .switch-knob {
+    transition: none;
+  }
+  .switch.pressed .switch-knob {
+    transform: translateX(10px);
+  }
 }
 
 /*

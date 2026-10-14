@@ -101,6 +101,13 @@
   --lens-edge:
     inset 0 0 0 0.5px rgba(255, 255, 255, 0.35), inset 0 2px 2px -1px rgba(255, 255, 255, 0.6), inset 0 -2px 2px -1px rgba(255, 255, 255, 0.25),
     inset 3px 0 4px -2px rgba(130, 190, 255, 0.4), inset -3px 0 4px -2px rgba(255, 180, 130, 0.35);
+  /* Toggle and segment knobs while pressed: clear glass over the track. */
+  --knob-glass: linear-gradient(180deg, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0.14));
+  --knob-glass-edge:
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.55), inset 0 1.5px 1px rgba(255, 255, 255, 0.6), inset 0 -1px 1px rgba(255, 255, 255, 0.2),
+    0 4px 12px rgba(0, 0, 0, 0.25);
+  /* Half-height sheets: floating glass; full height stays nearly solid. */
+  --sheet-half: rgba(36, 37, 42, 0.86);
 
   /* Liquid glass, Classic (default) */
   --glass-classic:
@@ -208,6 +215,10 @@
   --lens-edge:
     inset 0 0 0 0.5px rgba(0, 0, 0, 0.08), inset 0 2px 2px -1px rgba(255, 255, 255, 1), inset 0 -2px 3px -1px rgba(0, 0, 0, 0.06),
     inset 3px 0 4px -2px rgba(80, 150, 255, 0.35), inset -3px 0 4px -2px rgba(255, 150, 90, 0.3);
+  --knob-glass: linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.25));
+  --knob-glass-edge:
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.9), inset 0 1.5px 1px rgba(255, 255, 255, 1), inset 0 -1px 1px rgba(0, 0, 0, 0.06), 0 4px 12px rgba(0, 0, 0, 0.14);
+  --sheet-half: rgba(250, 250, 252, 0.86);
   --key-bg:
     linear-gradient(135deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.66)) padding-box,
     linear-gradient(135deg, rgba(255, 255, 255, 1), rgba(255, 255, 255, 0.5) 40%, rgba(255, 255, 255, 0.4) 60%, rgba(255, 255, 255, 0.9)) border-box;
@@ -232,4 +243,38 @@
 :root[data-blur='weak'][data-theme='light'] {
   --glass-base: rgba(249, 249, 252, 0.95);
   --edge-top: rgba(236, 236, 241, 0.98);
+}
+
+/*
+ * Reduce Transparency and Increase Contrast (iOS Settings › Accessibility): glass turns solid, and with
+ * Increase Contrast secondary text and edges get stronger. The behaviour stays the same; only the
+ * material changes. Placed last so it wins over the theme blocks.
+ */
+@media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+  :root[data-theme] {
+    --glass-classic: var(--card);
+    --glass-tinted: var(--card);
+    --glass-clear: var(--card);
+    --glass-pref: var(--card);
+    --glass-filter: none;
+    --frost: var(--card);
+    --frost-base: var(--card);
+    --lens: var(--card);
+    --knob-glass: #ffffff;
+    --sheet-half: var(--page);
+  }
+}
+@media (prefers-contrast: more) {
+  :root[data-theme] {
+    --text2: rgba(235, 235, 245, 0.82);
+    --text3: rgba(235, 235, 245, 0.66);
+    --hair-colour: rgba(255, 255, 255, 0.32);
+    --glass-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+  }
+  :root[data-theme='light'] {
+    --text2: rgba(60, 60, 67, 0.92);
+    --text3: rgba(60, 60, 67, 0.78);
+    --hair-colour: rgba(60, 60, 67, 0.4);
+    --glass-shadow: inset 0 0 0 1px rgba(60, 60, 67, 0.3);
+  }
 }

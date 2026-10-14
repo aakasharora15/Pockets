@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useRef } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Icon } from '../lib/icons';
 import { useUi } from '../state/ui';
@@ -34,6 +34,9 @@ const FOLLOW = 'transform 0.1s ease-out';
  *
  * The lens only ever changes transform, written straight to the element (no re-render per frame), so the
  * phone's compositor runs the animation and it stays smooth while the next screen renders.
+ *
+ * Scrolling down a screen shrinks the bar to the open tab, as on iOS 26; scrolling up or tapping it
+ * brings the rest back.
  */
 export function TabBar() {
   const { pathname } = useLocation();
@@ -44,6 +47,49 @@ export function TabBar() {
   const state = useRef({ pos: index, lift: 1, stretch: 0 });
   const drag = useRef<{ id: number; moved: boolean; x: number; t: number } | null>(null);
   const timers = useRef({ calm: 0, settle: 0, frame: 0 });
+  const bar = useRef<HTMLElement>(null);
+  const track = useRef<HTMLDivElement>(null);
+  const [mini, setMini] = useState(false);
+  const miniNow = useRef(false);
+  const [trackWidth, setTrackWidth] = useState<number | null>(null);
+
+  const minimise = (on: boolean) => {
+    if (miniNow.current === on) return;
+    miniNow.current = on;
+    setMini(on);
+  };
+
+  // The icons sit on a track as wide as the full bar, so they stay put while the bar shrinks around the open one.
+  useLayoutEffect(() => {
+    const nav = bar.current;
+    const box = nav?.parentElement;
+    if (!nav || !box) return;
+    const measure = () => setTrackWidth(box.clientWidth - nav.offsetLeft - parseFloat(getComputedStyle(nav).getPropertyValue('--tab-right')) - 8);
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(box);
+    return () => ro.disconnect();
+  }, []);
+
+  // Shrink on scrolling down a screen, grow back on scrolling up or near the top.
+  useEffect(() => {
+    const last = new WeakMap<Element, number>();
+    const onScroll = (e: Event) => {
+      const el = e.target instanceof Element ? e.target : document.scrollingElement;
+      if (!el || el.closest('.sheet, .tabbar')) return;
+      const top = el.scrollTop;
+      const before = last.get(el);
+      last.set(el, top);
+      if (before === undefined || top === before) return;
+      if (top < 60) minimise(false);
+      else if (top - before > 4) minimise(true);
+      else if (before - top > 8) minimise(false);
+    };
+    document.addEventListener('scroll', onScroll, { capture: true, passive: true });
+    return () => document.removeEventListener('scroll', onScroll, { capture: true });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  useEffect(() => minimise(false), [index]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const apply = (transition: string) => {
     const l = lens.current;
@@ -99,9 +145,8 @@ export function TabBar() {
   }, []);
 
   const tabAt = (e: React.PointerEvent<HTMLElement>) => {
-    const r = e.currentTarget.getBoundingClientRect();
-    const w = (r.width - 8) / TABS.length;
-    return Math.min(TABS.length - 1, Math.max(0, (e.clientX - r.left - 4) / w - 0.5));
+    const r = (track.current ?? e.currentTarget).getBoundingClientRect();
+    return Math.min(TABS.length - 1, Math.max(0, ((e.clientX - r.left) / r.width) * TABS.length - 0.5));
   };
 
   const release = (to: number) => {
@@ -119,10 +164,17 @@ export function TabBar() {
 
   return (
     <nav
-      className="tabbar glass-pref"
+      ref={bar}
+      className={`tabbar glass-pref${mini ? ' mini' : ''}`}
       aria-label="Tabs"
       onPointerDown={(e) => {
         if (e.button !== 0) return;
+        // A shrunk bar opens back up first.
+        if (miniNow.current) {
+          e.preventDefault();
+          minimise(false);
+          return;
+        }
         e.currentTarget.setPointerCapture(e.pointerId);
         drag.current = { id: e.pointerId, moved: false, x: e.clientX, t: e.timeStamp };
         window.clearTimeout(timers.current.settle);
@@ -151,33 +203,48 @@ export function TabBar() {
       onPointerUp={(e) => drag.current?.id === e.pointerId && release(Math.round(tabAt(e)))}
       onPointerCancel={() => drag.current && release(index)}
     >
-      {TABS.map((t) => {
-        const on = pathname === t.path;
-        return (
-          <button
-            key={t.path}
-            className={`tab${on ? ' on' : ''}`}
-            aria-label={t.label}
-            aria-current={on ? 'page' : undefined}
-            // Taps and drags go through the bar's pointer handlers; this is for the keyboard.
-            onClick={(e) => e.detail === 0 && navigate(t.path, { replace: true })}
-          >
-            {/* Icons only; the open tab is brighter and a touch heavier. Names stay for VoiceOver. */}
-            <Icon name={t.icon} size={26} weight={on ? 'regular' : 'light'} />
-          </button>
-        );
-      })}
-      {index >= 0 && (
-        <span className="tab-lens" ref={lens} aria-hidden>
-          <span className="tab-lens-view" ref={view}>
-            {TABS.map((t, i) => (
-              <span key={t.path} className={`tab${i === index ? ' on' : ''}`}>
-                <Icon name={t.icon} size={26} weight={i === index ? 'regular' : 'light'} />
-              </span>
-            ))}
+      <div
+        className="tab-track"
+        ref={track}
+        style={{
+          width: trackWidth ?? undefined,
+          // Shrunk, the track slides so the open tab sits in the small bar.
+          transform: mini && trackWidth ? `translate3d(${-index * (trackWidth / TABS.length) - (trackWidth / TABS.length - 56) / 2}px, 0, 0)` : undefined,
+        }}
+      >
+        {TABS.map((t) => {
+          const on = pathname === t.path;
+          return (
+            <button
+              key={t.path}
+              className={`tab${on ? ' on' : ''}`}
+              aria-label={t.label}
+              aria-current={on ? 'page' : undefined}
+              tabIndex={mini && !on ? -1 : undefined}
+              // Taps and drags go through the bar's pointer handlers; this is for the keyboard.
+              onClick={(e) => {
+                if (e.detail !== 0) return;
+                if (miniNow.current) minimise(false);
+                else navigate(t.path, { replace: true });
+              }}
+            >
+              {/* Icons only; the open tab is brighter and a touch heavier. Names stay for VoiceOver. */}
+              <Icon name={t.icon} size={26} weight={on ? 'regular' : 'light'} />
+            </button>
+          );
+        })}
+        {index >= 0 && (
+          <span className="tab-lens" ref={lens} aria-hidden>
+            <span className="tab-lens-view" ref={view}>
+              {TABS.map((t, i) => (
+                <span key={t.path} className={`tab${i === index ? ' on' : ''}`}>
+                  <Icon name={t.icon} size={26} weight={i === index ? 'regular' : 'light'} />
+                </span>
+              ))}
+            </span>
           </span>
-        </span>
-      )}
+        )}
+      </div>
     </nav>
   );
 }
