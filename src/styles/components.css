@@ -56,10 +56,6 @@
   font-size: 20px;
   flex: none;
 }
-.spacer-52 {
-  width: 44px;
-  height: 52px;
-}
 .primary-btn {
   height: 52px;
   border-radius: 26px;
@@ -585,7 +581,23 @@
   padding: 0 4px;
   z-index: 20;
 }
+.tab-lozenge {
+  position: absolute;
+  top: 5px;
+  bottom: 5px;
+  left: 4px;
+  width: calc((100% - 8px) / 4);
+  border-radius: 27px;
+  background: var(--fill-4);
+  transition: transform 0.38s cubic-bezier(0.3, 1.2, 0.5, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .tab-lozenge {
+    transition: none;
+  }
+}
 .tab {
+  position: relative;
   flex: 1;
   height: 54px;
   border-radius: 27px;

@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Icon } from '../lib/icons';
 import { useUi } from '../state/ui';
@@ -18,11 +19,25 @@ const TABS = [
   { path: '/settings', icon: 'gear-six', label: 'Settings' },
 ];
 
+/** The tab the capsule last sat on. Each tab screen mounts its own bar, so the new one starts here and slides over. */
+let lastTab = -1;
+
 export function TabBar() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
+  const index = TABS.findIndex((t) => t.path === pathname);
+  const [at, setAt] = useState(lastTab >= 0 ? lastTab : index);
+  useEffect(() => {
+    lastTab = index;
+    if (at === index) return;
+    // Two frames: let the bar paint on the old tab first, so the move animates.
+    let f = requestAnimationFrame(() => (f = requestAnimationFrame(() => setAt(index))));
+    return () => cancelAnimationFrame(f);
+  }, [index]); // eslint-disable-line react-hooks/exhaustive-deps
   return (
     <nav className="tabbar glass-pref" aria-label="Tabs">
+      {/* A soft capsule sits behind the open tab and slides to the next one. */}
+      {at >= 0 && <span className="tab-lozenge" style={{ transform: `translateX(${at * 100}%)` }} />}
       {TABS.map((t) => {
         const on = pathname === t.path;
         return (
@@ -33,7 +48,7 @@ export function TabBar() {
             aria-current={on ? 'page' : undefined}
             onClick={() => navigate(t.path, { replace: true })}
           >
-            {/* Icons only; the open tab is brighter and a touch heavier. Names stay for VoiceOver. */}
+            {/* Icons only; the open tab sits on the capsule, brighter and a touch heavier. Names stay for VoiceOver. */}
             <Icon name={t.icon} size={26} weight={on ? 'regular' : 'light'} />
           </button>
         );

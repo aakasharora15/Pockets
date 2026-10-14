@@ -18,8 +18,8 @@ import { MonthHeader } from './home/MonthHeader';
 import { WeeklySpend } from './home/WeeklySpend';
 import { WhereItWent } from './home/WhereItWent';
 import { NewPocketSheet } from './pockets/NewPocketSheet';
-import { PocketDeck } from './pockets/PocketDeck';
 import { memberInitials, PocketSwitcher } from './pockets/PocketSwitcher';
+import { PocketToggle } from './pockets/PocketToggle';
 
 export function Home() {
   const pocket = useCurrentPocket();
@@ -44,7 +44,6 @@ export function Home() {
   return (
     <div className="screen">
       <div className="scroll home-scroll">
-        <PocketDeck onOpenMenu={() => setSwitcher(true)} onMore={() => setSwitcher(true)} />
         <div className="action-pills">
           <button className="action-pill primary press" onClick={() => openExpenseSheet({ mode: 'new' })}>
             <Icon name="plus" weight="bold" size={16} />
@@ -92,16 +91,17 @@ export function Home() {
       </div>
       <Fades />
       <div className="top-bar" style={{ zIndex: switcher ? 35 : 15 }}>
-        <button className="circle-52 glass press" aria-label="Search expenses" onClick={() => navigate('/transactions', { state: { search: true } })}>
-          <Icon name="magnifying-glass" size={22} />
-        </button>
-        {pocket.type === 'shared' ? (
-          <button className="top-people press" aria-label="People in this Pocket" onClick={() => navigate('/settings/people')}>
-            <AvatarStack initials={memberInitials(pocket)} size={36} ring="var(--page)" />
+        <PocketToggle onOpenMenu={() => setSwitcher(true)} />
+        <div className="top-actions">
+          {pocket.type === 'shared' && (
+            <button className="top-people press" aria-label="People in this Pocket" onClick={() => navigate('/settings/people')}>
+              <AvatarStack initials={memberInitials(pocket)} size={36} ring="var(--page)" />
+            </button>
+          )}
+          <button className="circle-52 glass press" aria-label="Search expenses" onClick={() => navigate('/transactions', { state: { search: true } })}>
+            <Icon name="magnifying-glass" size={22} />
           </button>
-        ) : (
-          <div className="spacer-52" />
-        )}
+        </div>
       </div>
       {switcher && (
         <PocketSwitcher

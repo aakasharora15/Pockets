@@ -9,10 +9,11 @@
 - **Something went wrong screen.** If a screen ever crashes, you get Reload instead of a blank page, and the problem is reported.
 - **One accent colour.** The Accent setting is gone; Spendr uses its blue everywhere again.
 - **Totals always fit their card.** Pence and paise are smaller as well as dimmed, and long amounts step down in size, so £ and ₹ side by side never spill out of the box.
-- **Tab bar without labels.** Home, Transactions, Calendar and Settings are icons only; the open tab is brighter.
+- **Tab bar without labels.** Home, Transactions, Calendar and Settings are icons only; the open tab sits on a soft capsule that slides across when you change tab.
+- **Pocket toggle.** The big Pocket card on Home is now a small toggle at the top left, like a store switch: tap Personal or Home and the highlight slides over. Tap the open Pocket for the full list, a new Pocket or a join code. Search moves to the top right.
 - **Settings icons are filled again:** a solid colour tile with a white icon, as in iPhone Settings.
 - **Fainter dot grid** behind every screen, in both themes.
-- **No rainbow rim.** The total cards, the open Pocket and the tab bar lose the rainbow edge.
+- **No rainbow rim.** The total cards and the tab bar lose the rainbow edge.
 
 ## 1.4.0 (2026-10-14)
 
