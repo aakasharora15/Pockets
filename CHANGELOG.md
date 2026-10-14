@@ -10,6 +10,7 @@
 
 ### Changed
 
+- **Pounds and rupees side by side on Home.** The currency cards sit next to each other instead of swiping, each with its total, change on last month and budget. Tap a card to choose the currency Weekly spend and Where it went show.
 - **Transport is now Travel.** Existing Pockets are renamed once, unless you've already renamed the category yourself.
 
 ### Fixed
