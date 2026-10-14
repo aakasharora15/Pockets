@@ -20,6 +20,11 @@
         try { s = localStorage.getItem('spendr.theme') || 'dark'; } catch (e) {}
         var t = s === 'auto' ? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark') : s === 'light' ? 'light' : 'dark';
         document.documentElement.dataset.theme = t;
+        // Safari (and every iPhone browser, which all use Safari's engine) draws the blur behind glass;
+        // Chrome on Android often leaves it out, so glass gets a solid backing there (tokens.css).
+        var ua = navigator.userAgent;
+        var safari = /iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && !/Chrome\/|Edg\/|Firefox\//.test(ua));
+        if (!safari) document.documentElement.dataset.blur = 'weak';
         // Installed on iPhone, iOS 26 gives the page a window shorter than the screen by the status
         // bar's height (852 screen, 793 window on an iPhone 15) while drawing the full screen, so the
         // page stops short of the bottom. Size it by 100lvh instead (see base.css). It's tried once

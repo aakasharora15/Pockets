@@ -69,7 +69,7 @@
   --sheet: linear-gradient(180deg, rgba(38, 46, 62, 0.94) 0, #141a26 140px);
   --sheet-expense: linear-gradient(180deg, rgba(38, 46, 62, 0.94) 0, #1c2230 140px);
   --popover: rgba(44, 48, 58, 0.94);
-  --popover-glass: rgba(44, 48, 58, 0.82);
+  --popover-glass: rgba(44, 48, 58, 0.96);
   --popover-strong: rgba(44, 48, 58, 0.92);
   --menu: rgba(44, 44, 48, 0.98);
 
@@ -151,7 +151,7 @@
   --sheet: linear-gradient(180deg, rgba(255, 255, 255, 0.97) 0, #f2f2f7 140px);
   --sheet-expense: linear-gradient(180deg, rgba(255, 255, 255, 0.97) 0, #f2f2f7 140px);
   --popover: rgba(255, 255, 255, 0.96);
-  --popover-glass: rgba(255, 255, 255, 0.86);
+  --popover-glass: rgba(255, 255, 255, 0.97);
   --popover-strong: rgba(255, 255, 255, 0.96);
   --menu: rgba(255, 255, 255, 0.98);
 
@@ -172,4 +172,17 @@
 }
 :root[data-glass='clear'] {
   --glass-pref: var(--glass-clear);
+}
+
+/*
+ * Where the background blur isn't drawn reliably (Chrome and Android, see index.html), glass gets a
+ * nearly solid backing so text behind the tab bar and buttons doesn't show through.
+ */
+:root[data-blur='weak'] {
+  --glass-base: rgba(30, 36, 50, 0.94);
+  --edge-top: rgba(10, 42, 85, 0.98);
+}
+:root[data-blur='weak'][data-theme='light'] {
+  --glass-base: rgba(249, 249, 252, 0.95);
+  --edge-top: rgba(236, 241, 251, 0.98);
 }

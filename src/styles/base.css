@@ -120,6 +120,12 @@ textarea::placeholder {
 .glass-pref {
   background: var(--glass-pref);
 }
+:root[data-blur='weak'] .glass {
+  background: var(--glass-classic), linear-gradient(var(--glass-base), var(--glass-base)) padding-box;
+}
+:root[data-blur='weak'] .glass-pref {
+  background: var(--glass-pref), linear-gradient(var(--glass-base), var(--glass-base)) padding-box;
+}
 
 /* Scrollable page body used by most screens */
 .scroll {
@@ -234,4 +240,8 @@ textarea::placeholder {
   .route-pop {
     animation: none;
   }
+}
+:root[data-blur='weak'] .fade-top {
+  -webkit-mask-image: linear-gradient(180deg, #000 85%, transparent);
+  mask-image: linear-gradient(180deg, #000 85%, transparent);
 }
