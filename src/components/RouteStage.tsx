@@ -43,7 +43,8 @@ export function RouteStage({ children }: { children: ReactNode }) {
 
   return (
     <div
-      key={pathname}
+      // Tabs share one stage, so the tab bar stays put (and its lens can glide) while the screen above it changes.
+      key={depth === 0 ? 'tabs' : pathname}
       ref={stage}
       className={`route route-${dir}${dx !== null ? ' dragging' : ''}`}
       style={dx !== null ? { transform: `translateX(${dx}px)` } : undefined}

@@ -328,7 +328,10 @@ function FitCheck() {
 function Tabs() {
   return (
     <>
-      <Outlet />
+      {/* A tab still loading leaves the tab bar in place. */}
+      <Suspense fallback={<div className="screen" />}>
+        <Outlet />
+      </Suspense>
       <FitCheck />
       <OfflineToast />
       <TabBar />
