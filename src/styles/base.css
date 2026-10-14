@@ -18,7 +18,8 @@ body {
   position: fixed;
   inset: 0;
   width: 100%;
-  height: 100%;
+  /* --app-h is the real screen height in the installed iPhone app (see index.html). */
+  height: var(--app-h, 100%);
   overflow: hidden;
   overscroll-behavior: none;
 }
@@ -69,11 +70,12 @@ textarea::placeholder {
   font-variant-numeric: tabular-nums;
 }
 
-/* The phone: full screen on phones, a centred 390px column on larger screens. */
+/* The phone: full screen on phones, a centred column on tablets and desktops. */
 .app {
   position: relative;
   width: 100%;
-  max-width: 390px;
+  /* Fills any phone; only tablets and desktops get a centred column. */
+  max-width: 520px;
   height: 100%;
   margin: 0 auto;
   overflow: hidden;
