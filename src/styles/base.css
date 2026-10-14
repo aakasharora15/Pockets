@@ -99,6 +99,52 @@ textarea::placeholder {
   overflow: hidden;
 }
 
+/*
+ * Switching tabs: the new screen fades up and drifts in a little from the side of the tab you tapped.
+ * Opacity and transform only, so the phone's compositor runs it. No fill, so nothing lingers after.
+ */
+.tab-screen {
+  position: absolute;
+  inset: 0;
+}
+.tab-screen.from-right {
+  animation: tab-in-right 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.tab-screen.from-left {
+  animation: tab-in-left 0.32s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@keyframes tab-in-right {
+  from {
+    opacity: 0;
+    transform: translate3d(18px, 0, 0) scale(0.99);
+  }
+}
+@keyframes tab-in-left {
+  from {
+    opacity: 0;
+    transform: translate3d(-18px, 0, 0) scale(0.99);
+  }
+}
+/* The old screen's still copy, fading out on top while the new one fades in beneath. */
+.tab-ghost {
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  pointer-events: none;
+  animation: tab-out 0.2s ease-in forwards;
+}
+@keyframes tab-out {
+  to {
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tab-screen.from-right,
+  .tab-screen.from-left {
+    animation: fade-in 0.2s ease;
+  }
+}
+
 /* Press feedback everywhere */
 .press {
   transition: var(--spring);

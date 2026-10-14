@@ -12,12 +12,35 @@ export function BackButton({ onClick, to }: { onClick?: () => void; to?: string 
   );
 }
 
-const TABS = [
+export const TABS = [
   { path: '/', icon: 'house', label: 'Home' },
   { path: '/transactions', icon: 'currency-gbp', label: 'Transactions' },
   { path: '/calendar', icon: 'calendar-blank', label: 'Calendar' },
   { path: '/settings', icon: 'gear-six', label: 'Settings' },
 ];
+
+/**
+ * Leave a still copy of the current tab's screen on top, fading out, so the next screen crossfades in
+ * under it instead of the old one vanishing. Removed when its fade ends.
+ */
+function ghostScreen() {
+  const live = document.querySelector<HTMLElement>('.tab-screen');
+  if (!live || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const ghost = live.cloneNode(true) as HTMLElement;
+  ghost.className = 'tab-ghost';
+  ghost.removeAttribute('id');
+  ghost.setAttribute('aria-hidden', 'true');
+  ghost.inert = true;
+  live.after(ghost);
+  // Clones start scrolled to the top; put them where the live screen was.
+  const from = live.querySelectorAll<HTMLElement>('*');
+  const to = ghost.querySelectorAll<HTMLElement>('*');
+  from.forEach((el, i) => {
+    if (el.scrollTop || el.scrollLeft) to[i]?.scrollTo(el.scrollLeft, el.scrollTop);
+  });
+  ghost.addEventListener('animationend', () => ghost.remove(), { once: true });
+  window.setTimeout(() => ghost.remove(), 600);
+}
 
 /** How far the lens lifts when pressed, and how much it may stretch while moving fast. */
 const LIFT = 1.24;
@@ -159,7 +182,13 @@ export function TabBar() {
     apply(GLIDE);
     if (to === index) settle(200);
     // Start the glide first, then open the screen: the compositor keeps animating while it renders.
-    else requestAnimationFrame(() => requestAnimationFrame(() => navigate(TABS[to].path, { replace: true })));
+    else
+      requestAnimationFrame(() =>
+        requestAnimationFrame(() => {
+          ghostScreen();
+          navigate(TABS[to].path, { replace: true });
+        }),
+      );
   };
 
   return (

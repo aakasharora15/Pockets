@@ -1,6 +1,6 @@
 import { Suspense, useEffect, useRef, useState } from 'react';
 import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { OfflineToast, PlusButton, TabBar, Toast } from './components/Chrome';
+import { OfflineToast, PlusButton, TabBar, TABS, Toast } from './components/Chrome';
 import { RouteStage } from './components/RouteStage';
 import { onMovedToPersonal, replayOutbox } from './data/outbox';
 import { upgradeDefaults } from './data/categories';
@@ -326,12 +326,22 @@ function FitCheck() {
 
 /** Main tabs share the tab bar, plus button and offline toast. */
 function Tabs() {
+  const { pathname } = useLocation();
+  const index = TABS.findIndex((t) => t.path === pathname);
+  const prev = useRef(index);
+  // The new tab drifts in from the side of the tab you tapped, fading up as it comes.
+  const from = index > prev.current ? 'right' : index < prev.current ? 'left' : null;
+  useEffect(() => {
+    prev.current = index;
+  }, [index]);
   return (
     <>
-      {/* A tab still loading leaves the tab bar in place. */}
-      <Suspense fallback={<div className="screen" />}>
-        <Outlet />
-      </Suspense>
+      <div key={pathname} className={`tab-screen${from ? ` from-${from}` : ''}`}>
+        {/* A tab still loading leaves the tab bar in place. */}
+        <Suspense fallback={<div className="screen" />}>
+          <Outlet />
+        </Suspense>
+      </div>
       <FitCheck />
       <OfflineToast />
       <TabBar />
