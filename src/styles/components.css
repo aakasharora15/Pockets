@@ -262,7 +262,7 @@
   width: 100%;
 }
 .row-tile.tinted {
-  background: var(--fill-3);
+  color: #ffffff;
 }
 .row-tile {
   width: 29px;
