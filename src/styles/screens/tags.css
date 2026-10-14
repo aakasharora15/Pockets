@@ -1,0 +1,95 @@
+/* ---------- Tag view ---------- */
+.tag-scroll {
+  gap: 14px;
+}
+.tag-title {
+  overflow-wrap: anywhere;
+}
+.top-right {
+  position: absolute;
+  top: calc(var(--top) + 4px);
+  right: var(--gutter);
+  z-index: 15;
+}
+.tag-totals {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.tag-total {
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+.tag-total-label {
+  font-size: 13px;
+  color: var(--text2);
+}
+.tag-total-amount {
+  display: flex;
+  align-items: flex-start;
+  gap: 2px;
+  min-width: 0;
+}
+.tag-total-sym {
+  font-size: 18px;
+  font-weight: 600;
+  margin-top: 3px;
+}
+.tag-total-num {
+  font-size: 32px;
+  font-weight: 600;
+  line-height: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tag-combined {
+  font-size: 13px;
+  color: var(--text2);
+  padding: 0 4px;
+  margin-top: -4px;
+}
+.tag-cats {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.tag-bar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.tag-bar-sym {
+  min-width: 16px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.tag-bar {
+  flex: 1;
+  display: flex;
+  gap: 3px;
+  height: 12px;
+}
+.tag-bar > div {
+  border-radius: 6px;
+}
+.tag-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 14px;
+  font-size: 13px;
+  color: var(--text-soft);
+}
+.tag-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.tag-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex: none;
+}

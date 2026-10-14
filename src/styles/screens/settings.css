@@ -1,0 +1,385 @@
+/* ---------- Settings ---------- */
+.settings-scroll {
+  padding-top: calc(var(--top) + 12px);
+  gap: 20px;
+}
+.settings-title {
+  padding: 0;
+}
+.settings-footer {
+  text-align: center;
+  font-size: 13px;
+  color: var(--text2);
+}
+
+/* ---------- Settings sub-pages ---------- */
+.sub-scroll {
+  padding-bottom: 60px;
+  gap: 20px;
+}
+.settings-symbol {
+  background: rgba(43, 36, 32, 0.08);
+}
+.cur-code {
+  font-size: 15px;
+  color: var(--text2);
+}
+.cur-row:disabled {
+  cursor: default;
+}
+.budgets-scroll {
+  gap: 14px;
+}
+.budget-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.budget-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.budget-sym {
+  min-width: 32px;
+  height: 32px;
+  padding: 0 4px;
+  border-radius: 9px;
+  background: var(--inverse);
+  color: var(--on-inverse);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  font-weight: 600;
+}
+.budget-title {
+  font-size: 17px;
+  font-weight: 600;
+}
+.budget-field {
+  height: 60px;
+  border-radius: var(--r-card);
+  background: var(--fill);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 16px;
+  cursor: text;
+}
+.budget-amount,
+.budget-input {
+  font-size: 34px;
+  font-weight: 600;
+  flex: 1;
+  min-width: 0;
+}
+.budget-amount.unset {
+  color: var(--text2);
+}
+.budget-track.thin {
+  background: var(--fill-3);
+}
+.budget-foot {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  color: var(--text2);
+}
+
+/* ---------- Categories ---------- */
+.add-row {
+  color: var(--accent);
+}
+.add-tile {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: var(--insight);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex: none;
+}
+.add-label {
+  font-size: 17px;
+}
+.cat-row {
+  height: 52px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-left: 14px;
+  background: var(--card);
+  position: relative;
+}
+.cat-row.dragging {
+  z-index: 2;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+  border-radius: 12px;
+}
+.cat-row-lead {
+  width: 24px;
+  display: flex;
+  justify-content: center;
+  flex: none;
+}
+.cat-row-tile {
+  font-size: 18px;
+}
+.cat-row-name {
+  flex: 1;
+  font-size: 17px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.drag-handle {
+  touch-action: none;
+  cursor: grab;
+  padding: 8px 0 8px 4px;
+  display: flex;
+}
+
+/* ---------- New category ---------- */
+.newcat-preview {
+  align-self: center;
+  margin-top: 8px;
+  width: 84px;
+  height: 84px;
+  border-radius: 24px;
+  background: var(--tile);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 40px;
+}
+.newcat-field {
+  height: 48px;
+  border-radius: 24px;
+}
+.icon-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 10px;
+}
+.icon-choice {
+  aspect-ratio: 1 / 1;
+  border-radius: 14px;
+  background: var(--tile);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+.icon-choice.on {
+  background: var(--inverse);
+  color: var(--on-inverse);
+}
+
+/* ---------- People ---------- */
+.invite-row {
+  color: var(--accent);
+}
+.invite-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--insight);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex: none;
+}
+.member-row {
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding-left: 16px;
+  width: 100%;
+  text-align: left;
+}
+.member-body {
+  flex: 1;
+  min-width: 0;
+  align-self: stretch;
+  min-height: 60px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding-right: 16px;
+}
+.member-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.member-name {
+  font-size: 17px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.member-sub {
+  font-size: 13px;
+  color: var(--text2);
+}
+.owner-badge {
+  height: 24px;
+  border-radius: 12px;
+  padding: 0 9px;
+  display: flex;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 600;
+  background: var(--fill-3);
+}
+.pending-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1.5px dashed var(--line);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  color: var(--text2);
+  flex: none;
+}
+.cancel-invite {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--destructive);
+}
+
+/* ---------- Join ---------- */
+.join-head {
+  top: calc(var(--top) + 66px);
+}
+.join-body {
+  position: absolute;
+  top: calc(var(--top) + 166px);
+  left: 24px;
+  right: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.code-boxes {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.code-box-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.code-box {
+  width: 44px;
+  height: 56px;
+  border-radius: 14px;
+  background: var(--fill);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  font-weight: 600;
+}
+.code-dash {
+  width: 10px;
+  height: 2px;
+  background: var(--line);
+}
+.code-input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  font-size: 16px;
+}
+.join-problem {
+  text-align: center;
+  padding: 0;
+}
+.join-card {
+  background: var(--card);
+  border-radius: var(--r-card);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin-top: 8px;
+}
+.join-card-top {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.join-pocket {
+  font-size: 28px;
+  font-weight: 700;
+}
+.join-members {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  color: var(--text-soft);
+}
+.join-hair {
+  height: 0.5px;
+  background: var(--fill-3);
+}
+.join-name {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.join-name-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.join-name-text input {
+  font-size: 17px;
+}
+.join-choice {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+/* ---------- Account ---------- */
+.account-hero {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 0;
+}
+.account-name {
+  font-size: 22px;
+  font-weight: 700;
+  margin-top: 4px;
+}
+.account-email {
+  font-size: 15px;
+  color: var(--text2);
+}
+.delete-account {
+  text-align: center;
+  font-size: 15px;
+  color: var(--text2);
+  width: 100%;
+}

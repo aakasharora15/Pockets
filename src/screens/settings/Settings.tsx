@@ -15,7 +15,7 @@ import { BackupError, parseBackup, type Backup } from '../../lib/backup';
 import { currency } from '../../lib/currencies';
 import { expensesToCsv, shareOrDownload, slug } from '../../lib/csv';
 import { longDate, monthEnd, monthStart, monthYear, todayKey } from '../../lib/dates';
-import { MonthHeader } from '../Home';
+import { MonthHeader } from '../home/MonthHeader';
 import { useLock } from '../../state/lock';
 import { useCurrentPocket, usePockets } from '../../state/pockets';
 import { useMe } from '../../state/session';

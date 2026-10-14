@@ -1,0 +1,483 @@
+/* ---------- Sheets: New shared Pocket, Invite ---------- */
+.sheet-label {
+  margin-top: 4px;
+}
+.chip-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.owner-note {
+  background: var(--fill-1);
+  border-radius: var(--r-card);
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 4px;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--text-soft);
+  text-wrap: pretty;
+}
+.sheet-bottom {
+  margin-top: auto;
+}
+.invite-head {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px;
+}
+.invite-title {
+  font-size: 28px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.invite-sub {
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--text-sub);
+  padding: 0 4px;
+  margin-top: -8px;
+  text-wrap: pretty;
+}
+.qr-box {
+  align-self: center;
+  margin-top: 8px;
+  width: 236px;
+  height: 236px;
+  border-radius: var(--r-card);
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.qr-placeholder {
+  width: 196px;
+  height: 196px;
+  border-radius: 8px;
+  background: #eef0f4;
+}
+.invite-hint {
+  align-self: center;
+  font-size: 13px;
+  color: var(--text2);
+}
+.code-card {
+  background: var(--card);
+  border-radius: var(--r-card);
+  padding: 14px 16px 14px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+}
+.code-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.code-label {
+  font-size: 13px;
+  color: var(--text2);
+}
+.code-value {
+  font-size: 30px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+}
+.code-copy {
+  width: 44px;
+  height: 44px;
+  border-radius: 22px;
+  background: var(--fill-3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+}
+.email-card {
+  background: var(--card);
+  border-radius: var(--r-card);
+  padding: 6px 6px 6px 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text2);
+}
+.email-card input {
+  flex: 1;
+  min-width: 0;
+  height: 44px;
+  background: none;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font: inherit;
+  font-size: 17px;
+}
+.email-card input::placeholder {
+  color: var(--text3);
+}
+.email-send {
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 18px;
+  background: var(--accent);
+  color: var(--on-accent);
+  font-size: 15px;
+  font-weight: 600;
+}
+.email-send:disabled {
+  opacity: 0.4;
+}
+/* Shorter phones: a smaller QR code keeps the email row and Share button on screen. */
+@media (max-height: 760px) {
+  .qr-box {
+    width: 172px;
+    height: 172px;
+    margin-top: 0;
+  }
+  .qr-box svg,
+  .qr-placeholder {
+    width: 140px;
+    height: 140px;
+  }
+}
+@media (max-height: 640px) {
+  .sheet:has(.qr-box) {
+    gap: 12px;
+  }
+  .qr-box {
+    width: 140px;
+    height: 140px;
+  }
+  .qr-box svg,
+  .qr-placeholder {
+    width: 116px;
+    height: 116px;
+  }
+  .invite-hint {
+    display: none;
+  }
+}
+.invite-expiry {
+  align-self: center;
+  font-size: 13px;
+  color: var(--text2);
+  margin-top: -4px;
+}
+
+/* ---------- Expense sheet ---------- */
+.expense-sheet {
+  background: var(--sheet-expense);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 -8px 32px rgba(0, 0, 0, 0.12);
+  gap: 12px;
+  overflow-y: auto;
+  scrollbar-width: none;
+}
+.cur-pills {
+  display: flex;
+  gap: 6px;
+}
+.cur-pill {
+  flex: 1;
+  min-width: 0;
+  height: 48px;
+  border-radius: 24px;
+  background: var(--fill);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.cur-pill.on {
+  background: var(--inverse);
+  color: var(--on-inverse);
+}
+.cur-pill-sym {
+  font-size: 18px;
+}
+.amount {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 3px;
+  height: 64px;
+  color: var(--text);
+  width: 100%;
+}
+.amount.placeholder {
+  color: var(--text3);
+}
+.amount-sym {
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1;
+  margin-top: 8px;
+}
+.amount-num {
+  font-size: 58px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.caret-bar {
+  display: inline-block;
+  width: 3px;
+  height: 50px;
+  border-radius: 2px;
+  background: var(--text);
+  margin-left: 4px;
+  margin-top: 4px;
+  animation: blink 1s steps(1) infinite;
+}
+@keyframes blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  50.01%,
+  100% {
+    opacity: 0;
+  }
+}
+.amount-hint {
+  text-align: center;
+  font-size: 13px;
+  color: var(--text2);
+  margin-top: -8px;
+  min-height: 16px;
+}
+.name-field {
+  height: 44px;
+  border-radius: 22px;
+  background: var(--fill);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 16px;
+  font-size: 17px;
+}
+.name-field input {
+  flex: 1;
+  height: 100%;
+  font-size: 17px;
+}
+.details-wrap {
+  position: relative;
+  z-index: 5;
+}
+.details {
+  border-radius: var(--r-card);
+  background: var(--fill);
+  overflow: hidden;
+}
+.detail-row {
+  position: relative;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-left: 16px;
+  width: 100%;
+  cursor: pointer;
+}
+.detail-icon {
+  width: 24px;
+  display: flex;
+  justify-content: center;
+  flex: none;
+}
+.detail-cat-tile {
+  width: 24px;
+  height: 24px;
+  border-radius: 7px;
+  background: var(--tile);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex: none;
+}
+.detail-body {
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-right: 12px;
+}
+.detail-label {
+  flex: 1;
+  font-size: 17px;
+  white-space: nowrap;
+}
+.detail-value {
+  font-size: 17px;
+  color: var(--text2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.note-input {
+  flex: 1;
+  min-width: 0;
+  text-align: right;
+  font-size: 17px;
+  color: var(--text2);
+}
+.note-input:focus {
+  color: var(--text);
+}
+.date-input {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+}
+.date-input::-webkit-calendar-picker-indicator {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+}
+.mini-seg {
+  height: 32px;
+  border-radius: 16px;
+  background: var(--fill);
+  padding: 2px;
+  display: flex;
+}
+.mini-seg-item {
+  padding: 0 14px;
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text2);
+}
+.mini-seg-item.on {
+  background: var(--segment);
+  color: var(--text);
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.18);
+}
+.menu-catcher {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  /* Dim what's behind an open menu, like an iOS context menu. */
+  background: rgba(0, 0, 0, 0.32);
+  animation: fade-in 0.2s ease;
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+.glass-menu {
+  position: absolute;
+  right: 8px;
+  width: 236px;
+  max-height: 330px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  border-radius: var(--r-card);
+  /* Nearly solid, so rows behind never show through (iOS Safari doesn't always blur inside a sheet). */
+  background: var(--menu);
+  border: 1px solid var(--fill-4);
+  backdrop-filter: blur(40px) saturate(180%);
+  -webkit-backdrop-filter: blur(40px) saturate(180%);
+  box-shadow:
+    0 20px 50px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  padding: 6px 0;
+  z-index: 2;
+  animation: pop-in 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform-origin: top right;
+}
+.cat-menu {
+  top: 92px;
+}
+.pocket-menu {
+  top: 44px;
+}
+.menu-item {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px 0 10px;
+  font-size: 17px;
+  width: 100%;
+}
+.menu-item:active {
+  background: var(--fill-2);
+}
+.menu-check {
+  width: 20px;
+  display: flex;
+  justify-content: center;
+  font-size: 15px;
+}
+.menu-name {
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.menu-tile {
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: var(--tile);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+.delete-link {
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--destructive);
+  width: 100%;
+}
+.save-btn {
+  color: var(--on-inverse);
+}
+.save-btn.off,
+.save-btn:disabled {
+  opacity: 1;
+  background: var(--disabled-fill);
+  color: var(--text3);
+}
+.sheet-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 60;
+}

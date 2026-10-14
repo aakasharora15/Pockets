@@ -12,7 +12,7 @@ import { formatMoney, formatNumber } from '../lib/money';
 import { byCategory } from '../lib/stats';
 import { useCurrentPocket, usePockets } from '../state/pockets';
 import { useUi } from '../state/ui';
-import { MonthHeader } from './Home';
+import { MonthHeader } from './home/MonthHeader';
 
 const WEEKDAYS = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
 
