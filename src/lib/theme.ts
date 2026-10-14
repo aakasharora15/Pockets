@@ -30,4 +30,7 @@ export function applyTheme(theme: Theme) {
   root.dataset.theme = theme;
   root.style.colorScheme = theme;
   document.querySelector('meta[name="theme-color"]')?.setAttribute('content', CHROME[theme]);
+  // Browser tab icon, and the icon iPhone uses if you add Spendr to the Home Screen now.
+  document.querySelector('link[rel="icon"]')?.setAttribute('href', `/icons/spendr-icon-${theme}.svg`);
+  document.querySelector('link[rel="apple-touch-icon"]')?.setAttribute('href', theme === 'light' ? '/icons/icon-light-180.png' : '/icons/icon-180.png');
 }

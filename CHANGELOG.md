@@ -4,6 +4,7 @@
 
 ### Added
 
+- **The Spendr icon follows the theme.** In Light, the logo on Welcome and the PIN screen, the browser tab icon and the icon iPhone uses when you add Spendr to the Home Screen are the light version; in Dark, the dark one.
 - **New categories:** Health and Personal care. Existing Pockets get them once, just above Other.
 - **Reset a forgotten PIN.** Forgot PIN? now asks you to confirm it's you with Google or your password (with Forgot password? if you need a new one), then lets you choose a new PIN. You stay signed in. Log out is still there if you'd rather.
 

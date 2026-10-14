@@ -37,6 +37,8 @@
           if (fit !== 'on' && fit !== 'off' && tall) document.documentElement.dataset.fitTrial = '1';
         }
         if (t === 'light') {
+          document.querySelector('link[rel="icon"]').setAttribute('href', '/icons/spendr-icon-light.svg');
+          document.querySelector('link[rel="apple-touch-icon"]').setAttribute('href', '/icons/icon-light-180.png');
           document.querySelector('meta[name="theme-color"]').setAttribute('content', '#F2F2F7');
           document.querySelector('meta[name="color-scheme"]').setAttribute('content', 'light');
           document.querySelector('meta[name="apple-mobile-web-app-status-bar-style"]').setAttribute('content', 'default');
