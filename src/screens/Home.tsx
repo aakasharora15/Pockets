@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Avatar } from '../components/Avatar';
+import { Avatar, AvatarStack } from '../components/Avatar';
 import { Fades } from '../components/Chrome';
 import { categoryOf, SwipeRow, useSwipeRows } from '../components/ExpenseRow';
 import { ListSkeleton } from '../components/Skeletons';
@@ -9,21 +9,22 @@ import { useCombined } from '../data/useCombined';
 import { useExpenses } from '../data/useExpenses';
 import { OTHER_ID } from '../lib/categories';
 import { currency, type CurrencyCode } from '../lib/currencies';
-import { addMonths, monthName, monthShort } from '../lib/dates';
+import { addMonths, currentMonth, monthName, monthShort } from '../lib/dates';
 import { Icon } from '../lib/icons';
 import { firstName } from '../lib/initials';
 import { formatMoney, formatNumber, formatShort, formatWhole, formatWholeDown } from '../lib/money';
-import { byCategory, inMonth, totalIn, trend, weeklyBars } from '../lib/stats';
+import { byCategory, dailySpend, inMonth, totalIn, trend } from '../lib/stats';
 import { useCurrentPocket, usePockets } from '../state/pockets';
 import { useSession } from '../state/session';
 import { useUi } from '../state/ui';
 import { NewPocketSheet } from './pockets/NewPocketSheet';
-import { PocketPill, PocketSwitcher } from './pockets/PocketSwitcher';
+import { PocketDeck } from './pockets/PocketDeck';
+import { memberInitials, PocketSwitcher } from './pockets/PocketSwitcher';
 
 export function Home() {
   const pocket = useCurrentPocket();
   const { categories } = usePockets();
-  const { month, setMonth } = useUi();
+  const { month, setMonth, openExpenseSheet } = useUi();
   const navigate = useNavigate();
   const prev = addMonths(month, -1);
   const { expenses: both, loading } = useExpenses(pocket.id, prev, month);
@@ -43,6 +44,21 @@ export function Home() {
   return (
     <div className="screen">
       <div className="scroll home-scroll">
+        <PocketDeck onOpenMenu={() => setSwitcher(true)} onMore={() => setSwitcher(true)} />
+        <div className="action-pills">
+          <button className="action-pill primary press" onClick={() => openExpenseSheet({ mode: 'new' })}>
+            <Icon name="plus" weight="bold" size={16} />
+            Add expense
+          </button>
+          <button className="action-pill press" onClick={() => navigate('/settings', { state: { sheet: 'export' } })}>
+            <Icon name="download-simple" size={17} />
+            Export
+          </button>
+          <button className="action-pill press" onClick={() => navigate('/settings/tags')}>
+            <Icon name="tag" size={17} />
+            Tags
+          </button>
+        </div>
         <MonthHeader month={month} onChange={setMonth} />
         <CurrencyCards pocket={pocket} month={month} expenses={expenses} prevExpenses={prevExpenses} empty={empty} selected={cur} onSelect={setCur} />
         {loading ? (
@@ -52,7 +68,7 @@ export function Home() {
           </>
         ) : (
           <>
-            <WeeklySpend expenses={expenses} code={cur} month={month} empty={empty} />
+            <SpendTimeline expenses={expenses} code={cur} month={month} empty={empty} />
             {!empty && <WhereItWent expenses={expenses} code={cur} onSeeAll={() => navigate('/transactions', { state: { currency: cur } })} />}
             {!empty && pocket.type === 'shared' && <ByPerson expenses={expenses} pocket={pocket} />}
             <Insight pocketId={pocket.id} month={month} expenses={expenses} code={cur} empty={empty} />
@@ -79,8 +95,13 @@ export function Home() {
         <button className="circle-52 glass press" aria-label="Search expenses" onClick={() => navigate('/transactions', { state: { search: true } })}>
           <Icon name="magnifying-glass" size={22} />
         </button>
-        <PocketPill pocket={pocket} open={switcher} onClick={() => setSwitcher((s) => !s)} />
-        <div className="spacer-52" />
+        {pocket.type === 'shared' ? (
+          <button className="top-people press" aria-label="People in this Pocket" onClick={() => navigate('/settings/people')}>
+            <AvatarStack initials={memberInitials(pocket)} size={36} ring="var(--page)" />
+          </button>
+        ) : (
+          <div className="spacer-52" />
+        )}
       </div>
       {switcher && (
         <PocketSwitcher
@@ -192,7 +213,7 @@ function CurrencyCards({
           </div>
           <div className="cur-card-amount num">
             <span className="cur-card-sym">{c.symbol}</span>
-            <span className="cur-card-num">{amount}</span>
+            <Amount className="cur-card-num" value={amount} />
           </div>
           {budgetBar}
         </div>
@@ -211,7 +232,7 @@ function CurrencyCards({
         <div className="cur-card-amount num">
           <span className="cur-card-sym">{c.symbol}</span>
           {/* Long amounts get a smaller size so they fit half the width. */}
-          <span className={`cur-card-num${amount.length > 8 ? ' long' : ''}`}>{amount}</span>
+          <Amount className={`cur-card-num${amount.length > 8 ? ' long' : ''}`} value={amount} />
         </div>
         {trendChip}
         {budgetBar}
@@ -224,6 +245,18 @@ function CurrencyCards({
       {pocket.currencies.map(card)}
       {combinedCode && <CombinedCard code={combinedCode} month={month} expenses={expenses} empty={empty} />}
     </div>
+  );
+}
+
+/** A formatted amount with its decimals dimmed: 12<dim>.50</dim>. */
+function Amount({ className, value }: { className: string; value: string }) {
+  const dot = value.lastIndexOf('.');
+  if (dot < 0) return <span className={className}>{value}</span>;
+  return (
+    <span className={className}>
+      {value.slice(0, dot)}
+      <span className="cur-dec">{value.slice(dot)}</span>
+    </span>
   );
 }
 
@@ -245,50 +278,71 @@ function CombinedCard({ code, month, expenses, empty }: { code: CurrencyCode; mo
       </div>
       <div className={`cur-card-amount num${loading && !empty ? ' loading' : ''}`}>
         <span className="cur-card-sym">≈{c.symbol}</span>
-        <span className="cur-card-num">{empty || error ? '0' : formatNumber(total, code)}</span>
+        <Amount className="cur-card-num" value={empty || error ? '0' : formatNumber(total, code)} />
       </div>
       <span className="budget-text">{note}</span>
     </div>
   );
 }
 
-function WeeklySpend({ expenses, code, month, empty }: { expenses: Expense[]; code: string; month: string; empty: boolean }) {
-  const { weeks, avg } = useMemo(() => weeklyBars(expenses, code, month), [expenses, code, month]);
-  const scale = 100 / Math.max(1, ...weeks.map((w) => w.total), empty ? 1 : avg);
-  const cols = { gridTemplateColumns: `repeat(${weeks.length}, minmax(0, 1fr))` };
-  const nothingInCurrency = weeks.every((w) => w.total === 0);
+/**
+ * The month day by day, as a ruler: a tick for every day (taller at the start of each week), a dot
+ * above each day with spending, higher for bigger days, and Today marked in the accent.
+ */
+function SpendTimeline({ expenses, code, month, empty }: { expenses: Expense[]; code: string; month: string; empty: boolean }) {
+  const { days, elapsed, perDay } = useMemo(() => dailySpend(expenses, code, month), [expenses, code, month]);
+  const max = Math.max(...days);
+  const today = month === currentMonth() ? elapsed : 0;
+  const n = days.length;
+  const x = (d: number) => `${((d - 0.5) / n) * 100}%`;
+  const biggest = max > 0 ? days.indexOf(max) + 1 : 0;
   return (
-    <div className="card weekly">
+    <div className="card timeline">
       <div className="card-head">
-        <span className="card-title">Weekly spend</span>
-        <span className="weekly-avg">{empty || nothingInCurrency || !avg ? '' : `Avg ${formatShort(avg, code)} a week`}</span>
+        <span className="card-title">Day by day</span>
+        <span className="weekly-avg">{empty || !max ? '' : `Avg ${formatShort(perDay, code)} a day`}</span>
       </div>
-      <div className="weekly-chart">
-        {!empty && !nothingInCurrency && avg > 0 && <div className="avg-line" style={{ bottom: avg * scale }} />}
-        <div className="weekly-cols" style={cols}>
-          {weeks.map((w) => {
-            const ghost = w.ghost || nothingInCurrency;
-            return (
-              <div key={w.label} className="weekly-col">
-                <span className="weekly-val" style={{ color: w.current ? 'var(--text)' : undefined }}>
-                  {ghost ? '' : formatShort(w.total, code)}
-                </span>
-                <div
-                  className={`weekly-bar${ghost ? ' ghost' : w.current ? ' current' : ''}`}
-                  style={{ height: ghost ? 8 : Math.max(8, w.total * scale) }}
-                />
-              </div>
-            );
+      <div className="tl-plot">
+        {today > 0 && (
+          <>
+            <span className="tl-now" style={{ left: x(today) }} aria-hidden="true" />
+            <span className="tl-today" style={{ left: `clamp(32px, ${x(today)}, calc(100% - 32px))` }}>
+              Today
+            </span>
+          </>
+        )}
+        {biggest > 0 && (
+          <span className="tl-peak num" style={{ left: `clamp(24px, ${x(biggest)}, calc(100% - 24px))`, bottom: 28 + 32 + 12 }}>
+            {formatShort(max, code)}
+          </span>
+        )}
+        {days.map((v, i) =>
+          v > 0 ? (
+            <span
+              key={i}
+              className={`tl-dot${i + 1 === biggest ? ' peak' : ''}`}
+              style={{ left: x(i + 1), bottom: 28 + Math.round((v / max) * 32) }}
+              aria-hidden="true"
+            />
+          ) : null,
+        )}
+        <div className="tl-ticks" aria-hidden="true">
+          {days.map((_, i) => {
+            const d = i + 1;
+            const week = (d - 1) % 7 === 0;
+            return <span key={d} className={`tl-tick${week ? ' week' : ''}${d === today ? ' today' : ''}${d > (today || n) ? ' ahead' : ''}`} />;
           })}
         </div>
-        {(empty || nothingInCurrency) && <div className="weekly-empty">No spending yet this month</div>}
+        {(empty || !max) && <div className="weekly-empty">No spending yet this month</div>}
       </div>
-      <div className="weekly-labels" style={cols}>
-        {weeks.map((w) => (
-          <span key={w.label} className={w.current ? 'on' : undefined}>
-            {w.label}
-          </span>
-        ))}
+      <div className="tl-labels">
+        {days.map((_, i) =>
+          (i % 7 === 0) ? (
+            <span key={i} className={i === 0 ? 'first' : undefined} style={{ left: i === 0 ? 0 : x(i + 1) }}>
+              {i === 0 ? `1 ${monthShort(month)}` : i + 1}
+            </span>
+          ) : null,
+        )}
       </div>
     </div>
   );

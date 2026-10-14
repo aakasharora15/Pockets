@@ -4,9 +4,16 @@
 
 ### Added
 
+- **Pocket deck on Home.** Your Pockets sit at the top as a deck of cards: the open one in front, lit in blue, the others standing behind like folders. Tap one to open it, or the front card for the full list, New and Join.
+- **Quick actions on Home:** Add expense, Export and Tags.
+- **Day by day.** Weekly spend is now a timeline of the month: a tick for every day, a dot for each day you spent (higher for bigger days), the biggest day labelled and Today marked.
 - **The Spendr icon follows the theme.** In Light, the logo on Welcome and the PIN screen, the browser tab icon and the icon iPhone uses when you add Spendr to the Home Screen are the light version; in Dark, the dark one.
 - **New categories:** Health and Personal care. Existing Pockets get them once, just above Other.
 - **Reset a forgotten PIN.** Forgot PIN? now asks you to confirm it's you with Google or your password (with Forgot password? if you need a new one), then lets you choose a new PIN. You stay signed in. Log out is still there if you'd rather.
+
+### Changed
+
+- **Calmer look.** A neutral charcoal background with a faint dot grid replaces the navy glow, with blue kept for what matters. Totals are lighter with pence dimmed, headings are less bold, cards have a fine top edge, and Settings icons sit on neutral tiles.
 
 ### Fixed
 

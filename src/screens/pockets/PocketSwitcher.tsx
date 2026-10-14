@@ -15,17 +15,6 @@ export function memberInitials(p: PocketWithMembers): string[] {
   return p.members.slice(0, 3).map((m) => m.initials);
 }
 
-/** Glass pill on Home showing the current Pocket. */
-export function PocketPill({ pocket, open, onClick }: { pocket: PocketWithMembers; open: boolean; onClick: () => void }) {
-  return (
-    <button className="pocket-pill glass-pref press" onClick={onClick} aria-expanded={open} aria-haspopup="menu">
-      <AvatarStack initials={memberInitials(pocket)} size={28} ring={open ? 'var(--ring-open)' : 'var(--avatar-ring)'} />
-      <span className="pocket-pill-name">{pocket.name}</span>
-      <Icon name={open ? 'caret-up' : 'caret-down'} weight="bold" size={13} />
-    </button>
-  );
-}
-
 export function PocketSwitcher({ onClose, onNew, onJoin }: { onClose: () => void; onNew: () => void; onJoin: () => void }) {
   const { pockets, current, setCurrent } = usePockets();
   return (

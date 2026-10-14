@@ -20,37 +20,17 @@ export function daysElapsed(month: string, now = new Date()): number {
   return now.getDate();
 }
 
-export interface WeekBar {
-  label: string;
-  total: number;
-  /** Week hasn't started yet, or nothing spent this month: drawn as a dashed placeholder. */
-  ghost: boolean;
-  current: boolean;
-}
-
-/** Weekly spend card: 1–7, 8–14, 15–21, 22–28, 29–end. */
-export function weeklyBars(expenses: Expense[], code: string, month: string): { weeks: WeekBar[]; avg: number } {
-  const dim = daysInMonth(month);
-  const elapsed = daysElapsed(month);
-  const ranges: [number, number][] = [];
-  for (let a = 1; a <= dim; a += 7) ranges.push([a, Math.min(a + 6, dim)]);
-  const sums = ranges.map(() => 0);
+/** Spend per day of the month in one currency (index 0 is the 1st), for the day-by-day timeline. */
+export function dailySpend(expenses: Expense[], code: string, month: string, now = new Date()): { days: number[]; elapsed: number; perDay: number } {
+  const days = new Array<number>(daysInMonth(month)).fill(0);
   let total = 0;
   for (const e of expenses) {
     if (e.currency !== code || !e.date.startsWith(month)) continue;
-    const d = Number(e.date.slice(8, 10));
-    sums[Math.floor((d - 1) / 7)] += e.amountMinor;
+    days[Number(e.date.slice(8, 10)) - 1] += e.amountMinor;
     total += e.amountMinor;
   }
-  const empty = total === 0;
-  const weeks = ranges.map(([a, b], i) => ({
-    label: `${a}–${b}`,
-    total: sums[i],
-    ghost: empty || a > elapsed,
-    current: a <= elapsed && elapsed <= b && month === currentMonth(),
-  }));
-  const avg = elapsed > 0 ? total / (elapsed / 7) : 0;
-  return { weeks, avg };
+  const elapsed = daysElapsed(month, now);
+  return { days, elapsed, perDay: elapsed > 0 ? total / elapsed : 0 };
 }
 
 /** Category totals in one currency, biggest first. */

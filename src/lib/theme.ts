@@ -4,7 +4,7 @@ export type Theme = 'dark' | 'light';
 export const THEME_KEY = 'spendr.theme';
 
 /** Browser bar and status bar colours for each theme (matches --page). */
-const CHROME: Record<Theme, string> = { dark: '#05080F', light: '#F2F2F7' };
+const CHROME: Record<Theme, string> = { dark: '#0B0C0E', light: '#F2F2F7' };
 
 export function readThemeSetting(): ThemeSetting {
   try {

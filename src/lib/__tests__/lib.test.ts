@@ -5,7 +5,7 @@ import { addMonths, daysInMonth, groupLabel, longDate, monthShort, sheetDateLabe
 import { initialsFor, uniqueInitials } from '../initials';
 import { CODE_ALPHABET, formatCode, generateCode, normaliseCode } from '../inviteCode';
 import { displayTyped, formatMoney, formatShort, formatWhole, formatWholeDown, pressKey, typedToMinor } from '../money';
-import { byCategory, totalIn, trend, weeklyBars } from '../stats';
+import { byCategory, dailySpend, totalIn, trend } from '../stats';
 
 const ex = (o: Partial<Expense>): Expense => ({
   id: 'x', currency: 'GBP', amountMinor: 100, name: 'n', categoryId: 'other', byUid: 'u', byInitials: 'U',
@@ -111,12 +111,13 @@ describe('stats', () => {
     expect(totalIn(list, 'INR')).toBe(500000);
     expect(byCategory(list, 'GBP').map((r) => r.categoryId)).toEqual(['restaurants', 'groceries']);
   });
-  it('weekly bars cover the whole month', () => {
-    const { weeks } = weeklyBars(list, 'GBP', '2026-09');
-    expect(weeks.map((w) => w.label)).toEqual(['1–7', '8–14', '15–21', '22–28', '29–30']);
-    expect(weeks[0].total).toBe(1000);
-    expect(weeks[1].total).toBe(3000);
-    expect(weeklyBars([], 'GBP', '2027-02').weeks).toHaveLength(4);
+  it('daily spend puts each day in its own slot', () => {
+    const { days, elapsed, perDay } = dailySpend(list, 'GBP', '2026-09', new Date(2026, 8, 10));
+    expect(days).toHaveLength(30);
+    expect(days[1]).toBe(1000);
+    expect(days[8]).toBe(3000);
+    expect(elapsed).toBe(30);
+    expect(perDay).toBeCloseTo(4000 / 30);
   });
   it('trend', () => {
     expect(trend(88, 100)).toBe(-12);

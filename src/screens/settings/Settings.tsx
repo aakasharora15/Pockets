@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Fades } from '../../components/Chrome';
 import { Group, SettingsMenuRow, SettingsRow } from '../../components/Rows';
 import { Switch } from '../../components/Switch';
@@ -75,7 +75,9 @@ export function Settings() {
   const waiting = useOutbox().filter((e) => e.uid === user.uid);
   const { lockNow } = useLock();
   const navigate = useNavigate();
-  const [sheet, setSheet] = useState<'install' | 'about' | 'sync' | 'export' | 'export-tag' | 'export-month' | 'backup' | 'combined' | null>(null);
+  // Home's Export pill opens straight onto the export choices.
+  const opened = (useLocation().state as { sheet?: 'export' } | null)?.sheet ?? null;
+  const [sheet, setSheet] = useState<'install' | 'about' | 'sync' | 'export' | 'export-tag' | 'export-month' | 'backup' | 'combined' | null>(opened);
   const [installPrompt, setInstallPrompt] = useState<InstallPrompt | null>(null);
   const [exporting, setExporting] = useState(false);
   const [exportMonth, setExportMonth] = useState(month);

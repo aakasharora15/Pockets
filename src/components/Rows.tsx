@@ -18,7 +18,7 @@ interface RowProps {
 export function SettingsRow({ icon, tint, label, value, first, chevron = true, onClick, children }: RowProps) {
   const body = (
     <>
-      <div className={`row-tile${tint ? ' tinted' : ''}`} style={tint ? { background: tint } : undefined}>
+      <div className={`row-tile${tint ? ' tinted' : ''}`} style={tint ? { color: tint } : undefined}>
         <Icon name={icon} weight={tint ? 'fill' : 'regular'} />
       </div>
       <div className={`row-body${first ? '' : ' sep'}`}>
@@ -76,7 +76,7 @@ export function SettingsMenuRow<T extends string>({
   return (
     <>
       <button className="row press-row" onClick={open} aria-haspopup="menu" aria-expanded={!!at}>
-        <div className={`row-tile${tint ? ' tinted' : ''}`} style={tint ? { background: tint } : undefined}>
+        <div className={`row-tile${tint ? ' tinted' : ''}`} style={tint ? { color: tint } : undefined}>
           <Icon name={icon} weight={tint ? 'fill' : 'regular'} />
         </div>
         <div className={`row-body${first ? '' : ' sep'}`}>

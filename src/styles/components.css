@@ -142,7 +142,7 @@
 }
 .page-title {
   font-size: 34px;
-  font-weight: 700;
+  font-weight: 600;
 }
 .page-sub {
   font-size: 15px;
@@ -262,7 +262,7 @@
   width: 100%;
 }
 .row-tile.tinted {
-  color: #ffffff;
+  background: var(--fill-3);
 }
 .row-tile {
   width: 29px;
@@ -378,7 +378,7 @@
   background: var(--card);
   border-radius: var(--r-card);
   padding: 16px;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--card-edge), 0 2px 12px rgba(0, 0, 0, 0.05);
 }
 .card-head {
   display: flex;
@@ -387,13 +387,13 @@
 }
 .card-title {
   font-size: 17px;
-  font-weight: 600;
+  font-weight: 500;
 }
 .list-card {
   background: var(--card);
   border-radius: var(--r-card);
   overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+  box-shadow: var(--card-edge), 0 2px 12px rgba(0, 0, 0, 0.05);
 }
 .bar-track {
   height: 6px;
@@ -638,25 +638,6 @@
   bottom: 0;
   left: 11px;
   width: 4px;
-}
-
-/* ---------- Pocket pill ---------- */
-.pocket-pill {
-  height: 40px;
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 0 12px 0 6px;
-  color: var(--text);
-  min-width: 0;
-}
-.pocket-pill-name {
-  font-size: 16px;
-  font-weight: 600;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 /* ---------- Overlays ---------- */

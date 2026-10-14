@@ -1,4 +1,4 @@
-/* Design tokens: colours, type, radii and spacing. Dark ("Midnight") is the default; light overrides below. */
+/* Design tokens: colours, type, radii and spacing. Dark (charcoal) is the default; light overrides below. */
 :root {
   /* Apple's system font (San Francisco) on iPhone, iPad and Mac; the platform font elsewhere. */
   --font: -apple-system, BlinkMacSystemFont, 'SF Pro Text', system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
@@ -12,21 +12,30 @@
   --r-card: 22px;
   --font-num: ui-rounded, 'SF Pro Rounded', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 
-  --bg: radial-gradient(120% 45% at 50% 0%, rgba(14, 74, 160, 0.95) 0%, rgba(14, 74, 160, 0) 70%),
-    linear-gradient(180deg, #0a2a55 0%, #07111f 45%, #05080f 100%);
-  --edge-top: rgba(10, 42, 85, 0.92);
-  --edge-bot: rgba(5, 8, 15, 0.92);
+  /* Neutral charcoal with a faint dot grid and a soft light at the top; colour comes only from the accent. */
+  --dots: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1.4px) 0 0 / 22px 22px;
+  --bg: var(--dots), radial-gradient(110% 40% at 50% 0%, rgba(255, 255, 255, 0.07) 0%, rgba(255, 255, 255, 0) 70%),
+    linear-gradient(180deg, #1b1c20 0%, #111215 45%, #0b0c0e 100%);
+  --edge-top: rgba(27, 28, 32, 0.92);
+  --edge-bot: rgba(11, 12, 14, 0.92);
 
-  --card: #1c2230;
-  --raised: #2a3242;
-  --avatar: #2e3646;
-  --avatar-ring: #0e2747;
-  --ring-open: #2a3242;
-  --ring-menu: #2c303a;
+  --card: #1d1e22;
+  /* A hairline of light along the top edge of cards. */
+  --card-edge: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  /* Pocket deck: the cards behind the open Pocket, and the ring round avatars on the lit card. */
+  --deck-hi: #34353b;
+  --deck-lo: #1f2024;
+  --deck-edge: rgba(255, 255, 255, 0.1);
+  --deck-ring: #4a82ee;
+  --raised: #2b2c31;
+  --avatar: #303137;
+  --avatar-ring: #1d1e22;
+  --ring-open: #2b2c31;
+  --ring-menu: #2c2d32;
 
   --text: #ffffff;
-  --text2: rgba(235, 240, 250, 0.62);
-  --text3: rgba(235, 240, 250, 0.35);
+  --text2: rgba(235, 235, 245, 0.6);
+  --text3: rgba(235, 235, 245, 0.34);
   --hair-colour: rgba(255, 255, 255, 0.12);
   --hair: 0.5px solid var(--hair-colour);
 
@@ -46,14 +55,14 @@
   --track: rgba(255, 255, 255, 0.14);
   --tag-bg: rgba(255, 255, 255, 0.1);
   /* Solid page colour behind everything, and the high-contrast "inverse" surface (primary buttons, selected chips). */
-  --page: #05080f;
+  --page: #0b0c0e;
   --inverse: #ffffff;
-  --on-inverse: #05080f;
+  --on-inverse: #0b0c0e;
 
   --text-soft: rgba(235, 240, 250, 0.8);
   --text-sub: rgba(235, 240, 250, 0.66);
   --chevron: #5a5a5e;
-  --pressed: #232a3a;
+  --pressed: #26272c;
   --line: rgba(255, 255, 255, 0.35);
   /* Neutral fills, faintest to strongest. */
   --fill-1: rgba(255, 255, 255, 0.06);
@@ -66,11 +75,11 @@
   --grabber: rgba(235, 235, 245, 0.3);
   --key-flash: rgba(255, 255, 255, 0.42);
 
-  --sheet: linear-gradient(180deg, rgba(38, 46, 62, 0.94) 0, #141a26 140px);
-  --sheet-expense: linear-gradient(180deg, rgba(38, 46, 62, 0.94) 0, #1c2230 140px);
-  --popover: rgba(44, 48, 58, 0.94);
-  --popover-glass: rgba(44, 48, 58, 0.96);
-  --popover-strong: rgba(44, 48, 58, 0.92);
+  --sheet: linear-gradient(180deg, rgba(40, 41, 46, 0.96) 0, #151619 140px);
+  --sheet-expense: linear-gradient(180deg, rgba(40, 41, 46, 0.96) 0, #1d1e22 140px);
+  --popover: rgba(44, 45, 50, 0.95);
+  --popover-glass: rgba(44, 45, 50, 0.96);
+  --popover-strong: rgba(44, 45, 50, 0.93);
   --menu: rgba(44, 44, 48, 0.98);
 
   --spring: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -95,12 +104,17 @@
   --key-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3), inset 0 0 12px rgba(255, 255, 255, 0.08), 0 6px 18px rgba(0, 0, 0, 0.18);
 }
 
-/* Light: iOS grouped-list colours with the same blue glow at the top. */
+/* Light: iOS grouped-list colours, neutral, with the same dot grid. */
 :root[data-theme='light'] {
   color-scheme: light;
-  --bg: radial-gradient(120% 45% at 50% 0%, rgba(79, 139, 255, 0.28) 0%, rgba(79, 139, 255, 0) 70%),
-    linear-gradient(180deg, #e4ecfb 0%, #f2f2f7 45%, #f2f2f7 100%);
-  --edge-top: rgba(236, 241, 251, 0.92);
+  --dots: radial-gradient(rgba(60, 60, 67, 0.09) 1px, transparent 1.4px) 0 0 / 22px 22px;
+  --bg: var(--dots), radial-gradient(110% 40% at 50% 0%, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0) 70%),
+    linear-gradient(180deg, #ececf1 0%, #f2f2f7 45%, #f2f2f7 100%);
+  --card-edge: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --deck-hi: #ffffff;
+  --deck-lo: #e9e9ee;
+  --deck-edge: rgba(60, 60, 67, 0.12);
+  --edge-top: rgba(236, 236, 241, 0.92);
   --edge-bot: rgba(242, 242, 247, 0.92);
   --page: #f2f2f7;
   --inverse: #1c1c1e;
@@ -179,10 +193,10 @@
  * nearly solid backing so text behind the tab bar and buttons doesn't show through.
  */
 :root[data-blur='weak'] {
-  --glass-base: rgba(30, 36, 50, 0.94);
-  --edge-top: rgba(10, 42, 85, 0.98);
+  --glass-base: rgba(34, 35, 40, 0.94);
+  --edge-top: rgba(27, 28, 32, 0.98);
 }
 :root[data-blur='weak'][data-theme='light'] {
   --glass-base: rgba(249, 249, 252, 0.95);
-  --edge-top: rgba(236, 241, 251, 0.98);
+  --edge-top: rgba(236, 236, 241, 0.98);
 }
