@@ -465,6 +465,9 @@
   display: flex;
   align-items: flex-start;
   gap: 3px;
+  max-width: 100%;
+  min-width: 0;
+  white-space: nowrap;
   color: var(--text);
 }
 .cur-card-sym {
@@ -503,11 +506,30 @@
 .cur-card.compact .cur-card-num {
   font-size: 30px;
 }
-.cur-card.compact .cur-card-num.long {
-  font-size: 25px;
+.cur-card.compact .cur-card-num.fit-2 {
+  font-size: 26px;
 }
-/* Pence and paise sit back, so the whole amount reads first. */
+.cur-card.compact .cur-card-num.fit-3 {
+  font-size: 22px;
+}
+.cur-card.compact .cur-card-num.fit-4 {
+  font-size: 18px;
+}
+.cur-card.compact .cur-card-num.fit-5 {
+  font-size: 15px;
+}
+.cur-card-num.fit-3 {
+  font-size: 44px;
+}
+.cur-card-num.fit-4 {
+  font-size: 36px;
+}
+.cur-card-num.fit-5 {
+  font-size: 30px;
+}
+/* Pence and paise sit back, smaller and dimmed, so the whole amount reads first. */
 .cur-dec {
+  font-size: 0.62em;
   color: var(--text3);
 }
 .cur-card.compact .trend {

@@ -5,6 +5,7 @@
 ### Changed
 
 - **One accent colour.** The Accent setting is gone; Spendr uses its blue everywhere again.
+- **Totals always fit their card.** Pence and paise are smaller as well as dimmed, and long amounts step down in size, so £ and ₹ side by side never spill out of the box.
 - **No rainbow rim.** The total cards, the open Pocket and the tab bar lose the rainbow edge.
 
 ## 1.4.0 (2026-10-14)

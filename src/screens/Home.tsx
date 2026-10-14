@@ -172,8 +172,9 @@ function CurrencyCards({
   // Optional extra card: everything converted into one currency (Settings › Combined total).
   const combinedCode = pocket.currencies.length > 1 ? combinedFor(pocket.id) : null;
   const many = pocket.currencies.length > 1;
-  // Side-by-side cards share one size: smaller for all of them if any amount is long.
-  const long = pocket.currencies.some((code) => formatNumber(empty ? 0 : totalIn(expenses, code), code, currency(code).dp).length > 8);
+  // Amounts shrink with their length so they always fit the card; side-by-side cards share one size.
+  const digits = Math.max(...pocket.currencies.map((code) => formatNumber(empty ? 0 : totalIn(expenses, code), code, 0).length));
+  const fit = digits >= 12 ? ' fit-5' : digits >= 10 ? ' fit-4' : digits >= 8 ? ' fit-3' : digits >= 6 ? ' fit-2' : '';
 
   const card = (code: CurrencyCode) => {
     const c = currency(code);
@@ -216,7 +217,7 @@ function CurrencyCards({
           </div>
           <div className="cur-card-amount num">
             <span className="cur-card-sym">{c.symbol}</span>
-            <Amount className="cur-card-num" value={amount} />
+            <Amount className={`cur-card-num${fit}`} value={amount} />
           </div>
           {budgetBar}
         </div>
@@ -235,7 +236,7 @@ function CurrencyCards({
         <div className="cur-card-amount num">
           <span className="cur-card-sym">{c.symbol}</span>
           {/* Long amounts get a smaller size so they fit half the width. */}
-          <Amount className={`cur-card-num${long ? ' long' : ''}`} value={amount} />
+          <Amount className={`cur-card-num${fit}`} value={amount} />
         </div>
         {trendChip}
         {budgetBar}
