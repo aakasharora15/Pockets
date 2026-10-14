@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Icon } from '../lib/icons';
 import { useUi } from '../state/ui';
@@ -19,36 +19,101 @@ const TABS = [
   { path: '/settings', icon: 'gear-six', label: 'Settings' },
 ];
 
-/** The tab the capsule last sat on. Each tab screen mounts its own bar, so the new one starts here and slides over. */
-let lastTab = -1;
+/**
+ * Where the capsule last sat, in tabs (fractional while dragging), and whether it was lifted. Each tab
+ * screen mounts its own bar, so the new one starts there and glides over.
+ */
+let last = { pos: -1, lifted: false };
 
+/**
+ * Tab bar with a Liquid Glass capsule, as on iOS 26. The capsule sits behind the open tab. Press and it
+ * lifts into a clear lens that magnifies the icons under it; drag and it follows your finger; let go and
+ * it settles on the nearest tab and opens it.
+ */
 export function TabBar() {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const index = TABS.findIndex((t) => t.path === pathname);
-  const [at, setAt] = useState(lastTab >= 0 ? lastTab : index);
+  const [pos, setPos] = useState(last.pos >= 0 ? last.pos : index);
+  const [lifted, setLifted] = useState(last.lifted);
+  const [dragging, setDragging] = useState(false);
+  const drag = useRef<{ id: number; moved: boolean; x: number } | null>(null);
+
   useEffect(() => {
-    lastTab = index;
-    if (at === index) return;
-    // Two frames: let the bar paint on the old tab first, so the move animates.
-    let f = requestAnimationFrame(() => (f = requestAnimationFrame(() => setAt(index))));
-    return () => cancelAnimationFrame(f);
-  }, [index]); // eslint-disable-line react-hooks/exhaustive-deps
+    last = { pos: index, lifted: false };
+    // Two frames: let the bar paint where the old one left off, so the move animates. Then set it down.
+    let f = requestAnimationFrame(() => (f = requestAnimationFrame(() => setPos(index))));
+    const t = window.setTimeout(() => setLifted(false), 320);
+    return () => {
+      cancelAnimationFrame(f);
+      window.clearTimeout(t);
+    };
+  }, [index]);
+
+  const tabAt = (e: React.PointerEvent<HTMLElement>) => {
+    const r = e.currentTarget.getBoundingClientRect();
+    const w = (r.width - 8) / TABS.length;
+    return Math.min(TABS.length - 1, Math.max(0, (e.clientX - r.left - 4) / w - 0.5));
+  };
+
+  const release = (to: number) => {
+    drag.current = null;
+    setDragging(false);
+    if (to === index) {
+      setPos(index);
+      window.setTimeout(() => setLifted(false), 180);
+      return;
+    }
+    last = { pos, lifted: true };
+    navigate(TABS[to].path, { replace: true });
+  };
+
   return (
-    <nav className="tabbar glass-pref" aria-label="Tabs">
-      {/* A soft capsule sits behind the open tab and slides to the next one. */}
-      {at >= 0 && <span className="tab-lozenge" style={{ transform: `translateX(${at * 100}%)` }} />}
+    <nav
+      className={`tabbar glass-pref${lifted ? ' lifted' : ''}${dragging ? ' dragging' : ''}`}
+      aria-label="Tabs"
+      onPointerDown={(e) => {
+        if (e.button !== 0) return;
+        e.currentTarget.setPointerCapture(e.pointerId);
+        drag.current = { id: e.pointerId, moved: false, x: e.clientX };
+        setLifted(true);
+        setPos(tabAt(e));
+      }}
+      onPointerMove={(e) => {
+        const d = drag.current;
+        if (d?.id !== e.pointerId) return;
+        if (!d.moved && Math.abs(e.clientX - d.x) < 4) return;
+        d.moved = true;
+        setDragging(true);
+        setPos(tabAt(e));
+      }}
+      onPointerUp={(e) => drag.current?.id === e.pointerId && release(Math.round(tabAt(e)))}
+      onPointerCancel={() => drag.current && release(index)}
+    >
+      {pos >= 0 && (
+        <span className="tab-lens" style={{ '--pos': pos } as CSSProperties} aria-hidden>
+          {/* A copy of the icons, lined up with the bar, so the lens can magnify what's under it. */}
+          <span className="tab-lens-view">
+            {TABS.map((t, i) => (
+              <span key={t.path} className={`tab${i === index ? ' on' : ''}`}>
+                <Icon name={t.icon} size={26} weight={i === index ? 'regular' : 'light'} />
+              </span>
+            ))}
+          </span>
+        </span>
+      )}
       {TABS.map((t) => {
         const on = pathname === t.path;
         return (
           <button
             key={t.path}
-            className={`tab press${on ? ' on' : ''}`}
+            className={`tab${on ? ' on' : ''}`}
             aria-label={t.label}
             aria-current={on ? 'page' : undefined}
-            onClick={() => navigate(t.path, { replace: true })}
+            // Taps and drags go through the bar's pointer handlers; this is for the keyboard.
+            onClick={(e) => e.detail === 0 && navigate(t.path, { replace: true })}
           >
-            {/* Icons only; the open tab sits on the capsule, brighter and a touch heavier. Names stay for VoiceOver. */}
+            {/* Icons only; the open tab is brighter and a touch heavier. Names stay for VoiceOver. */}
             <Icon name={t.icon} size={26} weight={on ? 'regular' : 'light'} />
           </button>
         );

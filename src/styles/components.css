@@ -585,19 +585,67 @@
   padding: 0 4px;
   z-index: 20;
 }
-.tab-lozenge {
+/*
+ * Liquid Glass capsule. At rest a soft fill behind the open tab; lifted (pressed or moving) it grows into
+ * a clear lens above the icons, magnifying its copy of them. --pos is the tab it's over, fractional mid-drag.
+ */
+.tabbar {
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.tab-lens {
   position: absolute;
   top: 5px;
   bottom: 5px;
   left: 4px;
   width: calc((100% - 8px) / 4);
   border-radius: 27px;
+  overflow: hidden;
+  pointer-events: none;
   background: var(--fill-4);
-  transition: transform 0.38s cubic-bezier(0.3, 1.2, 0.5, 1);
+  transform: translateX(calc(var(--pos) * 100%));
+  transition:
+    transform 0.42s cubic-bezier(0.3, 1.2, 0.5, 1),
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.tab-lens-view {
+  position: absolute;
+  top: -5px;
+  bottom: -5px;
+  left: 0;
+  width: 400%;
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  transform: translateX(calc(var(--pos) * -25%));
+  transition:
+    transform 0.42s cubic-bezier(0.3, 1.2, 0.5, 1),
+    opacity 0.15s ease;
+}
+.tabbar.lifted .tab-lens {
+  z-index: 2;
+  background: var(--lens);
+  box-shadow: var(--lens-edge);
+  transform: translateX(calc(var(--pos) * 100%)) scale(1.24);
+}
+.tabbar.lifted .tab-lens-view {
+  opacity: 1;
+}
+/* Mid-drag the lens keeps up with the finger instead of springing after it. */
+.tabbar.dragging .tab-lens,
+.tabbar.dragging .tab-lens-view {
+  transition-duration: 0.06s;
+  transition-timing-function: linear;
 }
 @media (prefers-reduced-motion: reduce) {
-  .tab-lozenge {
+  .tab-lens,
+  .tab-lens-view {
     transition: none;
+  }
+  .tabbar.lifted .tab-lens {
+    transform: translateX(calc(var(--pos) * 100%));
   }
 }
 .tab {
