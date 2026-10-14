@@ -261,8 +261,34 @@ function DefaultsRunner() {
   return null;
 }
 
+/**
+ * One-time check of the iPhone full-screen fix (see index.html), asked once the tab bar is showing:
+ * keep it, or put the layout back.
+ */
+function useFitCheck() {
+  useEffect(() => {
+    const root = document.documentElement;
+    if (!root.dataset.fitTrial) return;
+    const t = window.setTimeout(() => {
+      if (!root.dataset.fitTrial) return;
+      delete root.dataset.fitTrial;
+      const keep = window.confirm(
+        'Spendr now fills your whole screen.\n\nIs the bar with Home, Transactions, Calendar and Settings at the very bottom, with no gap below it?\n\nOK keeps it. Cancel puts it back as it was.',
+      );
+      try {
+        localStorage.setItem('spendr.fit', keep ? 'on' : 'off');
+      } catch {
+        /* storage unavailable: asked again next launch */
+      }
+      if (!keep) window.location.reload();
+    }, 1200);
+    return () => window.clearTimeout(t);
+  }, []);
+}
+
 /** Main tabs share the tab bar, plus button and offline toast. */
 function Tabs() {
+  useFitCheck();
   return (
     <>
       <Outlet />

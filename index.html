@@ -20,6 +20,17 @@
         try { s = localStorage.getItem('spendr.theme') || 'dark'; } catch (e) {}
         var t = s === 'auto' ? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark') : s === 'light' ? 'light' : 'dark';
         document.documentElement.dataset.theme = t;
+        // Installed on iPhone, iOS 26 gives the page a window shorter than the screen by the status
+        // bar's height (852 screen, 793 window on an iPhone 15) while drawing the full screen, so the
+        // page stops short of the bottom. Size it by 100lvh instead (see base.css). It's tried once
+        // and kept only if you confirm it looks right (see main.tsx); 'off' turns it off.
+        if (navigator.standalone === true) {
+          var fit = null;
+          try { fit = localStorage.getItem('spendr.fit'); } catch (e) {}
+          var tall = Math.max(screen.width, screen.height) - Math.max(innerWidth, innerHeight) >= 20;
+          if (fit === 'on' || (fit !== 'off' && tall)) document.documentElement.classList.add('fit-screen');
+          if (fit !== 'on' && fit !== 'off' && tall) document.documentElement.dataset.fitTrial = '1';
+        }
         if (t === 'light') {
           document.querySelector('meta[name="theme-color"]').setAttribute('content', '#F2F2F7');
           document.querySelector('meta[name="color-scheme"]').setAttribute('content', 'light');

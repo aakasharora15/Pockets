@@ -25,6 +25,18 @@ body {
 #root {
   height: 100%;
 }
+/*
+ * Installed iPhone app on iOS 26 (see index.html): the window is shorter than the screen, and a
+ * position: fixed page is cut off at the window's height. The large viewport unit is the full
+ * screen, so the page is sized by it instead and isn't fixed. overflow stays hidden and
+ * overscroll-behavior none, so the page still never scrolls or bounces.
+ */
+html.fit-screen,
+html.fit-screen body {
+  position: static;
+  height: 100lvh;
+  overflow: hidden;
+}
 html {
   background: var(--page);
   /* No double-tap zoom (tapping 0 0 on the keypad), which shifts the whole screen. */
