@@ -50,7 +50,7 @@ const TINT = {
   backup: '#7C8CF8',
   theme: '#7C8CF8',
   glass: '#5AA0F0',
-  accent: '#5FDD8B',
+  accent: '#FF9A3D',
   neutral: '#8FA0B8',
 };
 
@@ -67,7 +67,8 @@ const GLASSES: [GlassStyle, string][] = [
 ];
 const ACCENTS: [AccentStyle, string][] = [
   ['blue', 'Blue'],
-  ['mint', 'Mint'],
+  ['orange', 'Orange'],
+  ['yellow', 'Yellow'],
 ];
 
 export function Settings() {

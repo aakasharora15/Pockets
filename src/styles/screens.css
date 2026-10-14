@@ -438,22 +438,6 @@
 :root[data-blur='weak'] .cur-card {
   background: var(--frost), var(--frost-base);
 }
-/* Iridescent rim, drawn as a 1px ring masked out of a rainbow. */
-.cur-card::after,
-.tabbar::after,
-.deck-front::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 1.5px;
-  background: var(--rainbow);
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
-  opacity: 0.85;
-  pointer-events: none;
-}
 .cur-card-head {
   display: flex;
   justify-content: space-between;

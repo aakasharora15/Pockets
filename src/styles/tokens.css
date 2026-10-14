@@ -30,9 +30,6 @@
   /* Frosted glass for the month totals, with the accent glowing through. */
   --frost: linear-gradient(150deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.05) 55%, rgba(255, 255, 255, 0.1) 100%);
   --frost-base: rgba(29, 30, 34, 0.72);
-  /* Iridescent edge: a thin rainbow along the top-left of glass surfaces. */
-  --rainbow: conic-gradient(from 200deg at 40% 10%, rgba(255, 110, 140, 0) 0deg, rgba(255, 140, 90, 0.95) 30deg, rgba(255, 225, 100, 0.9) 70deg,
-      rgba(100, 240, 165, 0.9) 110deg, rgba(90, 175, 255, 0.95) 155deg, rgba(175, 115, 255, 0.9) 200deg, rgba(255, 105, 195, 0.6) 245deg, rgba(255, 110, 140, 0) 290deg);
   --raised: #2b2c31;
   --avatar: #303137;
   --avatar-ring: #1d1e22;
@@ -45,7 +42,7 @@
   --hair-colour: rgba(255, 255, 255, 0.12);
   --hair: 0.5px solid var(--hair-colour);
 
-  /* Accent (Settings › Appearance › Accent). Blue is the default; Mint overrides below. */
+  /* Accent (Settings › Appearance › Accent). Blue is the default; Orange and Yellow override below. */
   --accent: #4f8bff;
   --accent-rgb: 79, 139, 255;
   --on-accent: #ffffff;
@@ -218,20 +215,36 @@
   --edge-top: rgba(236, 236, 241, 0.98);
 }
 
-/* Mint accent: a vivid green with dark text on it, as in the reference. */
-:root[data-accent='mint'] {
-  --accent: #5fdd8b;
-  --accent-rgb: 95, 221, 139;
-  --on-accent: #08200f;
-  --soft-link: #7fe7a3;
+/* Orange and Yellow accents: vivid, with dark text on them. */
+:root[data-accent='orange'] {
+  --accent: #ff9a3d;
+  --accent-rgb: 255, 154, 61;
+  --on-accent: #2a1302;
+  --soft-link: #ffb36e;
   --deck-front: radial-gradient(120% 120% at 90% 100%, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 60%),
-    linear-gradient(150deg, #86f0ab 0%, #34bf68 100%);
-  --deck-glow: rgba(52, 191, 104, 0.32);
-  --deck-ring: #54d082;
-  --deck-sub: rgba(8, 32, 15, 0.68);
+    linear-gradient(150deg, #ffbd6e 0%, #f2741c 100%);
+  --deck-glow: rgba(242, 116, 28, 0.32);
+  --deck-ring: #f8913a;
+  --deck-sub: rgba(42, 19, 2, 0.68);
 }
-:root[data-accent='mint'][data-theme='light'] {
-  --accent: #2fb863;
-  --accent-rgb: 47, 184, 99;
-  --soft-link: #1c8f48;
+:root[data-accent='orange'][data-theme='light'] {
+  --accent: #f0761e;
+  --accent-rgb: 240, 118, 30;
+  --soft-link: #c25a0c;
+}
+:root[data-accent='yellow'] {
+  --accent: #ffd23f;
+  --accent-rgb: 255, 210, 63;
+  --on-accent: #2a2100;
+  --soft-link: #ffdd70;
+  --deck-front: radial-gradient(120% 120% at 90% 100%, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0) 60%),
+    linear-gradient(150deg, #ffe680 0%, #f5b90f 100%);
+  --deck-glow: rgba(245, 185, 15, 0.3);
+  --deck-ring: #f9c92c;
+  --deck-sub: rgba(42, 33, 0, 0.66);
+}
+:root[data-accent='yellow'][data-theme='light'] {
+  --accent: #f2b705;
+  --accent-rgb: 242, 183, 5;
+  --soft-link: #9a6f00;
 }

@@ -20,7 +20,7 @@
         try { s = localStorage.getItem('spendr.theme') || 'dark'; } catch (e) {}
         var t = s === 'auto' ? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark') : s === 'light' ? 'light' : 'dark';
         document.documentElement.dataset.theme = t;
-        try { if (localStorage.getItem('spendr.accent') === 'mint') document.documentElement.dataset.accent = 'mint'; } catch (e) {}
+        try { var a = localStorage.getItem('spendr.accent'); if (a === 'orange' || a === 'yellow') document.documentElement.dataset.accent = a; } catch (e) {}
         // Safari (and every iPhone browser, which all use Safari's engine) draws the blur behind glass;
         // Chrome on Android often leaves it out, so glass gets a solid backing there (tokens.css).
         var ua = navigator.userAgent;

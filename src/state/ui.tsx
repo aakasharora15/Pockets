@@ -7,7 +7,7 @@ import { currentMonth } from '../lib/dates';
 import { applyTheme, readThemeSetting, resolveTheme, THEME_KEY, type ThemeSetting } from '../lib/theme';
 
 export type GlassStyle = 'tinted' | 'classic' | 'clear';
-export type AccentStyle = 'blue' | 'mint';
+export type AccentStyle = 'blue' | 'orange' | 'yellow';
 
 export type ExpenseSheetRequest =
   | { mode: 'new'; date?: string }
@@ -55,7 +55,8 @@ function readCombined(pid: string): CurrencyCode | null {
 
 function readAccent(): AccentStyle {
   try {
-    return localStorage.getItem(ACCENT_KEY) === 'mint' ? 'mint' : 'blue';
+    const v = localStorage.getItem(ACCENT_KEY);
+    return v === 'orange' || v === 'yellow' ? v : 'blue';
   } catch {
     return 'blue';
   }
