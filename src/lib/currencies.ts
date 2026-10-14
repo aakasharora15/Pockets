@@ -10,14 +10,16 @@ export interface Currency {
   short: string;
   /** Plural used on Home cards ("Pounds · September"). */
   plural: string;
-  /** Decimal places shown and accepted when typing (0 for ₹). */
+  /** Decimal places accepted when typing and shown on amounts. */
   dp: number;
+  /** Show whole amounts without decimals ("₹8,830", but "₹1.03" when there are paise). */
+  wholeDisplay?: boolean;
   locale: string;
 }
 
 export const CURRENCIES: Currency[] = [
   { code: 'GBP', symbol: '£', name: 'British pound', short: 'Pound', plural: 'Pounds', dp: 2, locale: 'en-GB' },
-  { code: 'INR', symbol: '₹', name: 'Indian rupee', short: 'Rupee', plural: 'Rupees', dp: 0, locale: 'en-IN' },
+  { code: 'INR', symbol: '₹', name: 'Indian rupee', short: 'Rupee', plural: 'Rupees', dp: 2, wholeDisplay: true, locale: 'en-IN' },
   { code: 'USD', symbol: '$', name: 'US dollar', short: 'Dollar', plural: 'Dollars', dp: 2, locale: 'en-US' },
   { code: 'EUR', symbol: '€', name: 'Euro', short: 'Euro', plural: 'Euros', dp: 2, locale: 'en-IE' },
   { code: 'AUD', symbol: 'A$', name: 'Australian dollar', short: 'Aus dollar', plural: 'Australian dollars', dp: 2, locale: 'en-AU' },

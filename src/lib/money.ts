@@ -1,8 +1,8 @@
 import { currency, minorFactor } from './currencies';
 
 /**
- * Money is always stored as integer minor units for the currency's displayed precision
- * (pence for GBP, whole rupees for INR). Totals are per currency and never mixed.
+ * Money is always stored as integer minor units, a hundredth of the main unit (pence, paise,
+ * cents). Totals are per currency and never mixed.
  */
 
 const formatters = new Map<string, Intl.NumberFormat>();
@@ -17,8 +17,14 @@ function numberFormat(code: string, dp: number): Intl.NumberFormat {
   return f;
 }
 
+/** Decimals to show for an amount: rupees drop ".00" on whole amounts. */
+function shownDp(minor: number, code: string): number {
+  const c = currency(code);
+  return c.wholeDisplay && minor % minorFactor(code) === 0 ? 0 : c.dp;
+}
+
 /** "2,486.50" (no symbol). */
-export function formatNumber(minor: number, code: string, dp = currency(code).dp): string {
+export function formatNumber(minor: number, code: string, dp = shownDp(minor, code)): string {
   return numberFormat(code, dp).format(minor / minorFactor(code));
 }
 
@@ -49,7 +55,7 @@ export function formatShort(minor: number, code: string): string {
 
 /** Major units string for CSV ("86.40", "4500"). Plain, no grouping. */
 export function formatPlain(minor: number, code: string): string {
-  const dp = currency(code).dp;
+  const dp = shownDp(minor, code);
   return (minor / minorFactor(code)).toFixed(dp);
 }
 
@@ -88,7 +94,7 @@ export function typedToMinor(typed: string, code: string): number {
 /** Minor units to an editable typed string ("86.4" → "86.40"). */
 export function minorToTyped(minor: number, code: string): string {
   if (!minor) return '';
-  const dp = currency(code).dp;
+  const dp = shownDp(minor, code);
   return (minor / minorFactor(code)).toFixed(dp);
 }
 

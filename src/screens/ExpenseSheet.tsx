@@ -208,8 +208,9 @@ export function ExpenseSheet({ request }: { request: ExpenseSheetRequest }) {
       code = code ?? pocket.currencies[0];
       if (guess.amount !== undefined) {
         setCur(code);
-        const dp = currency(code).dp;
-        setTyped(String(dp ? guess.amount.toFixed(dp) : Math.round(guess.amount)).replace(/^0+(?=\d)/, ''));
+        const c = currency(code);
+        const whole = c.wholeDisplay && Number.isInteger(guess.amount);
+        setTyped(String(whole || !c.dp ? Math.round(guess.amount) : guess.amount.toFixed(c.dp)).replace(/^0+(?=\d)/, ''));
       }
       if (guess.merchant) setName(guess.merchant);
       showToast(guess.amount !== undefined || guess.merchant ? 'Filled in from the receipt' : "Couldn't read the receipt");

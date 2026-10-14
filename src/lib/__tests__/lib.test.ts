@@ -33,7 +33,10 @@ describe('money', () => {
     expect(pressKey('64', '.', 'GBP')).toBe('64.');
     expect(pressKey('64.99', '1', 'GBP')).toBe('64.99');
     expect(pressKey('', '.', 'GBP')).toBe('0.');
-    expect(pressKey('2999', '.', 'INR')).toBe('2999');
+    expect(pressKey('2999', '.', 'INR')).toBe('2999.');
+    expect(pressKey('1.0', '3', 'INR')).toBe('1.03');
+    expect(typedToMinor('1.03', 'INR')).toBe(103);
+    expect(formatMoney(103, 'INR')).toBe('₹1.03');
     expect(pressKey('0', '5', 'GBP')).toBe('5');
     expect(pressKey('64.0', 'del', 'GBP')).toBe('64.');
   });
