@@ -156,3 +156,7 @@ firestore-debug.log
 ui-debug.log
 dev-dist/
 public/ocr/
+
+# Playwright
+test-results/
+playwright-report/
