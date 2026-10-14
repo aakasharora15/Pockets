@@ -7,7 +7,7 @@ import { memberInitials, pocketSummary } from './PocketSwitcher';
 
 /**
  * Home's hero: your Pockets as a deck of cards. The open one sits in front, lit in the accent; the
- * others stand behind it like folders, tap one to open it. The last card adds or joins a Pocket.
+ * others wait behind it, each labelled Switch, tap one to open it. The last card adds or joins a Pocket.
  * Switching plays the swap: the chosen card comes forward and the old one tucks in behind.
  */
 export function PocketDeck({ onOpenMenu, onMore }: { onOpenMenu: () => void; onMore: () => void }) {
@@ -58,8 +58,12 @@ function DeckCard({ pocket, index, returning, onClick }: { pocket: PocketWithMem
       className={`deck-card press${returning ? ' deck-return' : ''}`}
       style={{ zIndex: 20 - index }}
       onClick={onClick}
-      aria-label={`Open ${pocket.name}`}
+      aria-label={`Switch to ${pocket.name}`}
     >
+      <span className="deck-card-hint">
+        <Icon name="arrows-left-right" weight="bold" size={11} />
+        Switch
+      </span>
       <span className="deck-card-name">{pocket.name}</span>
     </button>
   );

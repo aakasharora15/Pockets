@@ -2105,7 +2105,7 @@
 .deck-front {
   position: relative;
   z-index: 30;
-  flex: 0 0 64%;
+  flex: 0 0 58%;
   min-width: 0;
   border-radius: 22px;
   padding: 0 14px 0 12px;
@@ -2147,37 +2147,49 @@
   margin-left: -20px;
   perspective: 420px;
 }
-/* The other Pockets stand behind like folders, tilted away. */
+/* The other Pockets wait behind, slightly tilted, each saying Switch and its name. */
 .deck-card {
-  flex: 1 1 60px;
-  min-width: 38px;
-  max-width: 92px;
-  margin-left: -16px;
+  flex: 1 1 96px;
+  min-width: 64px;
+  max-width: 128px;
+  margin-left: -14px;
   border-radius: 16px;
-  padding: 8px 6px 8px 26px;
+  padding: 8px 8px 8px 30px;
   display: flex;
-  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 3px;
   overflow: hidden;
+  text-align: left;
   color: var(--mirror-text);
   background: linear-gradient(105deg, rgba(255, 255, 255, 0) 30%, rgba(255, 255, 255, 0.65) 46%, rgba(255, 255, 255, 0) 60%), var(--mirror);
   border: 1px solid rgba(255, 255, 255, 0.5);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8), -6px 0 16px rgba(0, 0, 0, 0.22);
-  transform: rotateY(-26deg);
+  transform: rotateY(-12deg);
   transform-origin: left center;
 }
 .deck-card:first-child {
   margin-left: 0;
 }
+.deck-card-hint {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: rgba(20, 20, 24, 0.5);
+}
 .deck-card-name {
-  writing-mode: vertical-rl;
-  transform: rotate(180deg);
-  font-size: 12px;
+  max-width: 100%;
+  font-size: 15px;
   font-weight: 600;
   color: var(--mirror-text);
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-height: 56px;
 }
 .deck-add {
   flex: 0 0 46px;
@@ -2219,7 +2231,7 @@
   }
   to {
     opacity: 1;
-    transform: rotateY(-26deg);
+    transform: rotateY(-12deg);
   }
 }
 @media (prefers-reduced-motion: reduce) {

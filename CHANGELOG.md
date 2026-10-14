@@ -1,10 +1,10 @@
 # Changelog
 
-## Unreleased
+## 1.4.0 (2026-10-14)
 
 ### Added
 
-- **Pocket deck on Home.** Your Pockets sit at the top as a deck of cards: the open one in front, lit in blue, the others standing behind like folders. Tap one to open it and the cards swap places; tap the front card for the full list, New and Join.
+- **Pocket deck on Home.** Your Pockets sit at the top as a deck of cards: the open one in front, lit in the accent colour, the others waiting behind as silver cards marked Switch. Tap one to open it and the cards swap places; tap the front card for the full list, New and Join.
 - **Quick actions on Home:** Add expense, Export and Tags.
 - **Accent colour.** Settings › Appearance › Accent: Blue (as before) or Mint, a vivid green with dark text on it. The open Pocket, Add expense, charts and links follow it.
 - **The Spendr icon follows the theme.** In Light, the logo on Welcome and the PIN screen, the browser tab icon and the icon iPhone uses when you add Spendr to the Home Screen are the light version; in Dark, the dark one.

@@ -8,7 +8,6 @@ import { createBackup, restoreBackup } from '../../data/backup';
 import { allExpenses, expensesBetween } from '../../data/expenses';
 import { replayOutbox, useOutbox } from '../../data/outbox';
 import { lastServerSync } from '../../data/syncStatus';
-import { displayReport } from '../../lib/display';
 import { useRecurring } from '../../data/recurring';
 import { taggedExpenses } from '../../data/tags';
 import type { Expense } from '../../data/types';
@@ -391,7 +390,7 @@ export function Settings() {
       {sheet === 'about' && (
         <ActionSheet
           title={`Spendr · Version ${__APP_VERSION__} (${__APP_BUILD__})`}
-          message={`Open-source expense tracker for you and the people you share costs with. MIT licence.\n\nDisplay: ${displayReport()}`}
+          message={`Open-source expense tracker for you and the people you share costs with. MIT licence.`}
           actions={[{ label: 'View source on GitHub', onClick: () => window.open(REPO_URL, '_blank', 'noopener') }]}
           onCancel={() => setSheet(null)}
         />
