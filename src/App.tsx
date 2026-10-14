@@ -91,7 +91,7 @@ function Gate() {
   if (profile === null) return <Setup />;
 
   if (lock.state === 'none') return <SetPinScreen onDone={lock.createPin} />;
-  if (lock.state === 'locked') return <UnlockScreen onUnlock={lock.unlock} onForgot={lock.forgot} />;
+  if (lock.state === 'locked') return <UnlockScreen onUnlock={lock.unlock} onReset={lock.resetPin} onSignOut={() => void lock.forgot()} />;
 
   if (loading) return <HomeSkeleton />;
 

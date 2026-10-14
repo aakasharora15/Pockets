@@ -1,5 +1,10 @@
+import { getRedirectResult } from 'firebase/auth';
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
+import { auth } from '../firebase';
 import { checkPin, clearPin, hasPin, LOCK_AFTER_MS, setPin } from '../lib/pin';
+
+/** Set while a Google re-check goes through a full-page redirect, so the reset finishes on return. */
+export const PIN_RESET_KEY = 'spendr.pinReset';
 import { useSession } from './session';
 
 type PinState = 'checking' | 'none' | 'locked' | 'unlocked';
@@ -9,7 +14,9 @@ interface Lock {
   unlock: (pin: string) => Promise<boolean>;
   createPin: (pin: string) => Promise<void>;
   lockNow: () => void;
-  /** "Forgot PIN? Log in again": clears this device's PIN and signs out. */
+  /** After you've confirmed it's you (Google or password): clears the PIN so a new one can be set. */
+  resetPin: () => Promise<void>;
+  /** Gives up on the PIN: clears it and signs out. */
   forgot: () => Promise<void>;
 }
 
@@ -28,7 +35,23 @@ export function LockProvider({ children }: { children: ReactNode }) {
       return;
     }
     let live = true;
-    hasPin(uid).then((has) => live && setState(has ? 'locked' : 'none'));
+    (async () => {
+      // Back from a Google redirect started on the reset screen: finish the reset.
+      let reset = false;
+      try {
+        reset = sessionStorage.getItem(PIN_RESET_KEY) === uid;
+        sessionStorage.removeItem(PIN_RESET_KEY);
+      } catch {
+        /* storage unavailable */
+      }
+      if (reset && (await getRedirectResult(auth).catch(() => null))) {
+        await clearPin(uid);
+        if (live) setState('none');
+        return;
+      }
+      const has = await hasPin(uid);
+      if (live) setState(has ? 'locked' : 'none');
+    })();
     return () => {
       live = false;
     };
@@ -62,6 +85,11 @@ export function LockProvider({ children }: { children: ReactNode }) {
       setState('unlocked');
     },
     lockNow: () => setState((s) => (s === 'unlocked' ? 'locked' : s)),
+    resetPin: async () => {
+      if (!uid) return;
+      await clearPin(uid);
+      setState('none');
+    },
     forgot: async () => {
       if (uid) await clearPin(uid);
       await logOut();

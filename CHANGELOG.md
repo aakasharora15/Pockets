@@ -5,6 +5,7 @@
 ### Added
 
 - **New categories:** Health and Personal care. Existing Pockets get them once, just above Other.
+- **Reset a forgotten PIN.** Forgot PIN? now asks you to confirm it's you with Google or your password (with Forgot password? if you need a new one), then lets you choose a new PIN. You stay signed in. Log out is still there if you'd rather.
 
 ### Fixed
 
