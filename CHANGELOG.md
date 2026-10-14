@@ -4,7 +4,7 @@
 
 ### Added
 
-- **Pocket deck on Home.** Your Pockets sit at the top as a deck of cards: the open one in front, lit in blue, the others standing behind like folders. Tap one to open it, or the front card for the full list, New and Join.
+- **Pocket deck on Home.** Your Pockets sit at the top as a deck of cards: the open one in front, lit in blue, the others standing behind like folders. Tap one to open it and the cards swap places; tap the front card for the full list, New and Join.
 - **Quick actions on Home:** Add expense, Export and Tags.
 - **Day by day.** Weekly spend is now a timeline of the month: a tick for every day, a dot for each day you spent (higher for bigger days), the biggest day labelled and Today marked.
 - **The Spendr icon follows the theme.** In Light, the logo on Welcome and the PIN screen, the browser tab icon and the icon iPhone uses when you add Spendr to the Home Screen are the light version; in Dark, the dark one.
