@@ -382,7 +382,7 @@ export function Settings() {
       )}
       {sheet === 'about' && (
         <ActionSheet
-          title={`Spendr · Version ${__APP_VERSION__}`}
+          title={`Spendr · Version ${__APP_VERSION__} (${__APP_BUILD__})`}
           message={`Open-source expense tracker for you and the people you share costs with. MIT licence.\n\nDisplay: ${displayReport()}`}
           actions={[{ label: 'View source on GitHub', onClick: () => window.open(REPO_URL, '_blank', 'noopener') }]}
           onCancel={() => setSheet(null)}

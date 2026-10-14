@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { BrowserRouter, Navigate, Outlet, Route, Routes, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { OfflineToast, PlusButton, TabBar, Toast } from './components/Chrome';
 import { RouteStage } from './components/RouteStage';
@@ -263,35 +263,50 @@ function DefaultsRunner() {
 
 /**
  * One-time check of the iPhone full-screen fix (see index.html), asked once the tab bar is showing:
- * keep it, or put the layout back.
+ * keep it, or put the layout back. A card in the middle of the screen, so it's visible either way.
  */
-function useFitCheck() {
+function FitCheck() {
+  const [ask, setAsk] = useState(false);
   useEffect(() => {
-    const root = document.documentElement;
-    if (!root.dataset.fitTrial) return;
-    const t = window.setTimeout(() => {
-      if (!root.dataset.fitTrial) return;
-      delete root.dataset.fitTrial;
-      const keep = window.confirm(
-        'Spendr now fills your whole screen.\n\nIs the bar with Home, Transactions, Calendar and Settings at the very bottom, with no gap below it?\n\nOK keeps it. Cancel puts it back as it was.',
-      );
-      try {
-        localStorage.setItem('spendr.fit', keep ? 'on' : 'off');
-      } catch {
-        /* storage unavailable: asked again next launch */
-      }
-      if (!keep) window.location.reload();
-    }, 1200);
+    if (!document.documentElement.dataset.fitTrial) return;
+    const t = window.setTimeout(() => setAsk(true), 1000);
     return () => window.clearTimeout(t);
   }, []);
+  if (!ask) return null;
+  const answer = (keep: boolean) => {
+    delete document.documentElement.dataset.fitTrial;
+    try {
+      localStorage.setItem('spendr.fit', keep ? 'on' : 'off');
+    } catch {
+      /* storage unavailable: asked again next launch */
+    }
+    if (keep) setAsk(false);
+    else window.location.reload();
+  };
+  return (
+    <>
+      {/* Light dim, so the tab bar it asks about stays easy to see. */}
+      <div className="backdrop" style={{ background: 'rgba(0, 0, 0, 0.15)' }} />
+      <div className="fit-check" role="alertdialog" aria-label="Does Spendr fill your screen?">
+        <span className="fit-check-title">Does Spendr fill your screen?</span>
+        <span className="fit-check-text">Is the bar with Home, Transactions, Calendar and Settings at the very bottom, with no gap below it?</span>
+        <button className="primary-btn press" onClick={() => answer(true)}>
+          Yes, keep it
+        </button>
+        <button className="fit-check-undo press" onClick={() => answer(false)}>
+          No, put it back
+        </button>
+      </div>
+    </>
+  );
 }
 
 /** Main tabs share the tab bar, plus button and offline toast. */
 function Tabs() {
-  useFitCheck();
   return (
     <>
       <Outlet />
+      <FitCheck />
       <OfflineToast />
       <TabBar />
       <PlusButton />

@@ -23,6 +23,13 @@ export function displayReport(): string {
     `safe top ${probe('padding-top:env(safe-area-inset-top)', 'paddingTop')}`,
     `bottom ${probe('padding-bottom:env(safe-area-inset-bottom)', 'paddingBottom')}`,
     standalone ? 'installed' : 'browser',
+    `full-screen fix ${document.documentElement.classList.contains('fit-screen') ? 'on' : 'off'}${(() => {
+      try {
+        return ` (${localStorage.getItem('spendr.fit') ?? 'not set'})`;
+      } catch {
+        return '';
+      }
+    })()}`,
   ];
   return parts.join(' · ');
 }
