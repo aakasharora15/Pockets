@@ -446,14 +446,14 @@
 }
 .cur-card-sym {
   font-size: 26px;
-  font-weight: 500;
+  font-weight: 600;
   color: var(--text2);
   line-height: 1;
   margin-top: 7px;
 }
 .cur-card-num {
   font-size: 54px;
-  font-weight: 500;
+  font-weight: 700;
   line-height: 1;
   letter-spacing: -0.02em;
 }
