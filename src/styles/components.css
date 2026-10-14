@@ -793,6 +793,7 @@
   font-size: 13px;
   color: var(--text2);
   text-wrap: pretty;
+  white-space: pre-line;
 }
 .action-btn {
   height: 56px;
