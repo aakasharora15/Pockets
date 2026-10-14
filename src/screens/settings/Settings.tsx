@@ -20,7 +20,7 @@ import { useLock } from '../../state/lock';
 import { useCurrentPocket, usePockets } from '../../state/pockets';
 import { useMe } from '../../state/session';
 import type { ThemeSetting } from '../../lib/theme';
-import { useUi, type AccentStyle, type GlassStyle } from '../../state/ui';
+import { useUi, type GlassStyle } from '../../state/ui';
 
 export const REPO_URL = 'https://github.com/aakasharora15/Spendr';
 
@@ -50,7 +50,6 @@ const TINT = {
   backup: '#7C8CF8',
   theme: '#7C8CF8',
   glass: '#5AA0F0',
-  accent: '#FF9A3D',
   neutral: '#8FA0B8',
 };
 
@@ -65,18 +64,13 @@ const GLASSES: [GlassStyle, string][] = [
   ['classic', 'Classic'],
   ['clear', 'Clear'],
 ];
-const ACCENTS: [AccentStyle, string][] = [
-  ['blue', 'Blue'],
-  ['orange', 'Orange'],
-  ['yellow', 'Yellow'],
-];
 
 export function Settings() {
   const pocket = useCurrentPocket();
   const { categories, allPockets: pockets, personalHidden, setHidePersonal } = usePockets();
   const inShared = pockets.some((p) => p.type === 'shared');
   const { user, profile } = useMe();
-  const { glass, setGlass, accent, setAccent, theme, setTheme, showToast, month, combinedFor, setCombined, online } = useUi();
+  const { glass, setGlass, theme, setTheme, showToast, month, combinedFor, setCombined, online } = useUi();
   const waiting = useOutbox().filter((e) => e.uid === user.uid);
   const { lockNow } = useLock();
   const navigate = useNavigate();
@@ -248,7 +242,6 @@ export function Settings() {
         <Group title="Appearance">
           <SettingsMenuRow first icon="moon" tint={TINT.theme} label="Theme" value={theme} options={THEMES} onChange={setTheme} />
           <SettingsMenuRow icon="drop-half" tint={TINT.glass} label="Glass" value={glass} options={GLASSES} onChange={setGlass} />
-          <SettingsMenuRow icon="palette" tint={TINT.accent} label="Accent" value={accent} options={ACCENTS} onChange={setAccent} />
         </Group>
         <Group>
           {!standalone && <SettingsRow first icon="device-mobile" tint={TINT.neutral} label="Add to Home Screen" onClick={install} />}

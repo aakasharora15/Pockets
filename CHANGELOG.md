@@ -4,7 +4,7 @@
 
 ### Changed
 
-- **Orange and Yellow accents replace Mint.** Settings › Appearance › Accent now offers Blue, Orange and Yellow, the last two with dark text on them. Anyone on Mint goes back to Blue.
+- **One accent colour.** The Accent setting is gone; Spendr uses its blue everywhere again.
 - **No rainbow rim.** The total cards, the open Pocket and the tab bar lose the rainbow edge.
 
 ## 1.4.0 (2026-10-14)

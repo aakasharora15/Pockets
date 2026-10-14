@@ -42,7 +42,6 @@
   --hair-colour: rgba(255, 255, 255, 0.12);
   --hair: 0.5px solid var(--hair-colour);
 
-  /* Accent (Settings › Appearance › Accent). Blue is the default; Orange and Yellow override below. */
   --accent: #4f8bff;
   --accent-rgb: 79, 139, 255;
   --on-accent: #ffffff;
@@ -213,38 +212,4 @@
 :root[data-blur='weak'][data-theme='light'] {
   --glass-base: rgba(249, 249, 252, 0.95);
   --edge-top: rgba(236, 236, 241, 0.98);
-}
-
-/* Orange and Yellow accents: vivid, with dark text on them. */
-:root[data-accent='orange'] {
-  --accent: #ff9a3d;
-  --accent-rgb: 255, 154, 61;
-  --on-accent: #2a1302;
-  --soft-link: #ffb36e;
-  --deck-front: radial-gradient(120% 120% at 90% 100%, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 60%),
-    linear-gradient(150deg, #ffbd6e 0%, #f2741c 100%);
-  --deck-glow: rgba(242, 116, 28, 0.32);
-  --deck-ring: #f8913a;
-  --deck-sub: rgba(42, 19, 2, 0.68);
-}
-:root[data-accent='orange'][data-theme='light'] {
-  --accent: #f0761e;
-  --accent-rgb: 240, 118, 30;
-  --soft-link: #c25a0c;
-}
-:root[data-accent='yellow'] {
-  --accent: #ffd23f;
-  --accent-rgb: 255, 210, 63;
-  --on-accent: #2a2100;
-  --soft-link: #ffdd70;
-  --deck-front: radial-gradient(120% 120% at 90% 100%, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0) 60%),
-    linear-gradient(150deg, #ffe680 0%, #f5b90f 100%);
-  --deck-glow: rgba(245, 185, 15, 0.3);
-  --deck-ring: #f9c92c;
-  --deck-sub: rgba(42, 33, 0, 0.66);
-}
-:root[data-accent='yellow'][data-theme='light'] {
-  --accent: #f2b705;
-  --accent-rgb: 242, 183, 5;
-  --soft-link: #9a6f00;
 }
