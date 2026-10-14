@@ -37,8 +37,8 @@ export function TabBar() {
             aria-current={on ? 'page' : undefined}
             onClick={() => navigate(t.path, { replace: true })}
           >
-            <Icon name={t.icon} size={24} />
-            <span className="tab-label">{t.label}</span>
+            {/* Icons only; the open tab is brighter and a touch heavier. Names stay for VoiceOver. */}
+            <Icon name={t.icon} size={26} weight={on ? 'regular' : 'light'} />
           </button>
         );
       })}

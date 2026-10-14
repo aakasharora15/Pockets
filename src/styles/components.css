@@ -597,12 +597,6 @@
 .tab.on {
   color: var(--text);
 }
-.tab-label {
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  line-height: 1;
-}
 .plus-btn {
   position: absolute;
   right: var(--gutter);
