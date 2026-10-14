@@ -13,7 +13,7 @@
 
 ### Changed
 
-- **Calmer look.** A neutral charcoal background with a faint dot grid replaces the navy glow, with blue kept for what matters. Totals are lighter with pence dimmed, headings are less bold, cards have a fine top edge, and Settings icons sit on neutral tiles.
+- **Calmer look.** A neutral charcoal background with a faint dot grid replaces the navy glow, with blue kept for what matters. Totals have their pence dimmed, headings sit at a medium weight, cards have a fine top edge, and Settings icons sit on neutral tiles.
 
 ### Fixed
 

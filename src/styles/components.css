@@ -142,7 +142,7 @@
 }
 .page-title {
   font-size: 34px;
-  font-weight: 600;
+  font-weight: 700;
 }
 .page-sub {
   font-size: 15px;
@@ -387,7 +387,7 @@
 }
 .card-title {
   font-size: 17px;
-  font-weight: 500;
+  font-weight: 600;
 }
 .list-card {
   background: var(--card);

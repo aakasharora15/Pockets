@@ -379,13 +379,13 @@
 }
 .month-title {
   font-size: 34px;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.01em;
 }
 .month-peek {
   position: absolute;
   font-size: 28px;
-  font-weight: 500;
+  font-weight: 600;
   opacity: 0.3;
 }
 .month-peek.left {
@@ -446,14 +446,14 @@
 }
 .cur-card-sym {
   font-size: 26px;
-  font-weight: 300;
+  font-weight: 500;
   color: var(--text2);
   line-height: 1;
   margin-top: 7px;
 }
 .cur-card-num {
   font-size: 54px;
-  font-weight: 300;
+  font-weight: 500;
   line-height: 1;
   letter-spacing: -0.02em;
 }
@@ -560,7 +560,7 @@
 }
 .where-amt {
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 600;
 }
 .where-bar-row {
   display: flex;
@@ -675,7 +675,7 @@
 }
 .recent-title {
   font-size: 20px;
-  font-weight: 500;
+  font-weight: 600;
 }
 
 /* ---------- Pocket switcher ---------- */
@@ -2019,7 +2019,7 @@
 }
 .deck-name {
   font-size: 22px;
-  font-weight: 500;
+  font-weight: 600;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
