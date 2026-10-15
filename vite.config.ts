@@ -32,7 +32,8 @@ export default defineConfig({
       },
     },
     VitePWA({
-      registerType: 'autoUpdate',
+      // We choose when a downloaded update takes over (see src/main.tsx), so it never reloads mid-use.
+      registerType: 'prompt',
       injectRegister: false,
       includeAssets: ['icons/icon-180.png', 'icons/spendr-icon-dark.svg'],
       manifest: {

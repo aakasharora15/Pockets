@@ -4,6 +4,7 @@
 
 ### Changed
 
+- **Updates no longer reload the app while you use it.** A new version downloads quietly and takes over the next time Spendr goes to the background (never while a sheet is open), instead of reloading the screen a few seconds after you open the app.
 - **PIN only when it should be.** The 5-minute rule now holds even when iPhone closes Spendr in the background: reopen within 5 minutes and you go straight in. When the PIN is needed it shows straight away, instead of Home appearing first and the PIN taking over a few seconds later.
 - **Easier to read in Light.** Secondary text now meets the WCAG AA contrast level, and faint text (pence, placeholders) meets the large-text level in both themes.
 - **Faster updates.** Screens past Home load when first opened, and Firebase, React and the icons sit in their own files, so an update downloads about 37 KB of Spendr's code instead of the whole app.
