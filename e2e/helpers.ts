@@ -18,3 +18,16 @@ export async function signIn(page: Page, email: string, pin = '1234') {
   await typePin(page, pin);
   await expect(page.locator('.deck-front')).toBeVisible();
 }
+
+/**
+ * Reopens the app as if it was last used more than 5 minutes ago: back-dates the "last seen" mark and
+ * stops this page from refreshing it on the way out, then reloads.
+ */
+export async function reopenLater(page: Page) {
+  await page.evaluate(() => {
+    const seen = JSON.parse(localStorage.getItem('spendr.lastSeen') ?? 'null') as { uid: string } | null;
+    if (seen) localStorage.setItem('spendr.lastSeen', JSON.stringify({ uid: seen.uid, at: Date.now() - 6 * 60 * 1000 }));
+    Storage.prototype.setItem = () => {};
+  });
+  await page.reload();
+}

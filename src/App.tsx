@@ -90,8 +90,13 @@ function Gate() {
     );
   }
 
-  if (profile === undefined || lock.state === 'checking') {
-    return profileError ? <SetupNeeded offline /> : <Loading waitingFor={profile === undefined ? 'your account' : "this phone's PIN"} />;
+  // The PIN lives on this phone, so ask for it straight away, before the account has loaded from the
+  // server (that can take a few seconds), rather than showing Home and then swapping to the PIN.
+  if (lock.state === 'checking') return <div className="screen" />;
+  if (lock.state === 'locked') return <UnlockScreen onUnlock={lock.unlock} onReset={lock.resetPin} onSignOut={() => void lock.forgot()} />;
+
+  if (profile === undefined) {
+    return profileError ? <SetupNeeded offline /> : <Loading waitingFor="your account" />;
   }
 
   if (profile === null)
@@ -102,7 +107,6 @@ function Gate() {
     );
 
   if (lock.state === 'none') return <SetPinScreen onDone={lock.createPin} />;
-  if (lock.state === 'locked') return <UnlockScreen onUnlock={lock.unlock} onReset={lock.resetPin} onSignOut={() => void lock.forgot()} />;
 
   if (loading) return <Loading waitingFor="your Pockets" />;
 

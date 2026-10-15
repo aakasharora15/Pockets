@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { PASSWORD, signIn, typePin } from './helpers';
+import { PASSWORD, reopenLater, signIn, typePin } from './helpers';
 
 test('signs in, sets a PIN and shows Home with totals inside their cards', async ({ page }) => {
   await signIn(page, 'prernaa@example.com');
@@ -42,10 +42,19 @@ test('adds an expense and shows it in Recent', async ({ page }) => {
   await expect(page.locator('.recent')).toContainText('£42.00');
 });
 
-test('locks on reload and unlocks with the PIN', async ({ page }) => {
-  await signIn(page, 'aakash@example.com', '2468');
+test('reopening within 5 minutes skips the PIN', async ({ page }) => {
+  await signIn(page, 'aakash@example.com', '8642');
   await page.reload();
+  await expect(page.locator('.deck-front')).toBeVisible();
+  await expect(page.locator('.pin-title')).toHaveCount(0);
+});
+
+test('locks when reopened after 5 minutes and unlocks with the PIN', async ({ page }) => {
+  await signIn(page, 'aakash@example.com', '2468');
+  await reopenLater(page);
+  // The PIN comes first, not Home while the account loads.
   await expect(page.locator('.pin-title')).toHaveText(/Enter your PIN/);
+  await expect(page.locator('.deck-front')).toHaveCount(0);
   await typePin(page, '1111');
   // A wrong PIN shakes and clears; wait for the empty dots before trying again.
   await expect(page.getByLabel('0 of 4 digits entered')).toBeVisible();
@@ -56,7 +65,7 @@ test('locks on reload and unlocks with the PIN', async ({ page }) => {
 
 test('resets a forgotten PIN with the account password', async ({ page }) => {
   await signIn(page, 'aakash@example.com', '1357');
-  await page.reload();
+  await reopenLater(page);
   await page.locator('.pin-forgot').click();
   await expect(page.locator('.flow-title')).toHaveText('Reset your PIN');
   await page.getByLabel('Password').fill('not-the-password');
@@ -74,7 +83,8 @@ test('opens every tab and a Settings page (screens that load on demand)', async 
   await page.getByRole('button', { name: 'Calendar' }).click();
   await expect(page.getByRole('button', { name: 'Calendar' })).toHaveAttribute('aria-current', 'page');
   await page.getByRole('button', { name: 'Settings' }).click();
-  await expect(page.locator('.page-title')).toHaveText('Settings');
+  // The live screen, not the outgoing one's fading copy.
+  await expect(page.locator('.tab-screen .page-title')).toHaveText('Settings');
   await page.getByText('Monthly budgets').click();
   await expect(page).toHaveURL(/\/settings\/budgets$/);
 });
