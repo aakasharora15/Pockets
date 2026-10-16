@@ -14,7 +14,6 @@ import { useUi } from '../state/ui';
 import { ByPerson } from './home/ByPerson';
 import { CurrencyCards } from './home/CurrencyCards';
 import { Insight } from './home/Insight';
-import { MonthGlance } from './home/MonthGlance';
 import { MonthHeader } from './home/MonthHeader';
 import { WeeklySpend } from './home/WeeklySpend';
 import { WhereItWent } from './home/WhereItWent';
@@ -69,7 +68,6 @@ export function Home() {
           </>
         ) : (
           <>
-            <MonthGlance pocket={pocket} month={month} expenses={expenses} code={cur} />
             <WeeklySpend expenses={expenses} code={cur} month={month} empty={empty} />
             {!empty && <WhereItWent expenses={expenses} code={cur} onSeeAll={() => navigate('/transactions', { state: { currency: cur } })} />}
             {!empty && pocket.type === 'shared' && <ByPerson expenses={expenses} pocket={pocket} />}

@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Fades } from '../components/Chrome';
 import { categoryOf, SwipeRow, useSwipeRows } from '../components/ExpenseRow';
 import { ListSkeleton } from '../components/Skeletons';
 import { useExpenses } from '../data/useExpenses';
 import { pastelFor } from '../lib/categories';
-import { currency } from '../lib/currencies';
+import { currency, type CurrencyCode } from '../lib/currencies';
 import { addMonths, currentMonth, dayMonth, daysInMonth, monthName, todayKey } from '../lib/dates';
 import { Icon } from '../lib/icons';
 import { formatMoney, formatNumber } from '../lib/money';
@@ -72,10 +72,12 @@ export function Calendar() {
   };
 
   // The month at a glance, in the Pocket's main currency, with any others underneath.
-  const main = pocket.currencies[0];
+  // Opened from a currency's card on Home: that currency first.
+  const asked = (useLocation().state as { currency?: CurrencyCode } | null)?.currency;
+  const main = asked && pocket.currencies.includes(asked) ? asked : pocket.currencies[0];
   const summary = useMemo(() => monthSummary(expenses, pocket, main, monthName(month)), [expenses, pocket, main, month]);
   const others = pocket.currencies
-    .slice(1)
+    .filter((code) => code !== main)
     .map((code) => ({ code, total: expenses.filter((e) => e.currency === code).reduce((s, e) => s + e.amountMinor, 0) }))
     .filter((o) => o.total > 0);
 

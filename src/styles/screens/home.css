@@ -30,16 +30,14 @@
 .month-peek.right {
   right: -18px;
 }
-.cards-single,
-.cards-grid {
+.cards-single {
   position: relative;
   isolation: isolate;
   display: grid;
   gap: 10px;
 }
 /* A soft pool of the accent behind the frosted totals. */
-.cards-single::before,
-.cards-grid::before {
+.cards-single::before {
   content: '';
   position: absolute;
   z-index: -1;
@@ -51,13 +49,6 @@
   background: radial-gradient(closest-side, rgba(var(--accent-rgb), 0.5), rgba(var(--accent-rgb), 0));
   filter: blur(18px);
   pointer-events: none;
-}
-.cards-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-/* The combined card spans both columns. */
-.cards-grid .combined-card {
-  grid-column: 1 / -1;
 }
 .cur-card {
   position: relative;
@@ -121,43 +112,6 @@
   line-height: 1;
   letter-spacing: -0.02em;
 }
-.cur-card.compact {
-  text-align: left;
-  align-items: flex-start;
-  gap: 8px;
-  padding: 14px;
-  min-width: 0;
-}
-.cur-card.compact.on {
-  box-shadow:
-    inset 0 0 0 2px var(--accent),
-    0 2px 12px rgba(0, 0, 0, 0.05);
-}
-.cur-card.compact .budget {
-  align-self: stretch;
-}
-.cur-card.compact .cur-card-label {
-  font-size: 13px;
-}
-.cur-card.compact .cur-card-sym {
-  font-size: 17px;
-  margin-top: 4px;
-}
-.cur-card.compact .cur-card-num {
-  font-size: 30px;
-}
-.cur-card.compact .cur-card-num.fit-2 {
-  font-size: 26px;
-}
-.cur-card.compact .cur-card-num.fit-3 {
-  font-size: 22px;
-}
-.cur-card.compact .cur-card-num.fit-4 {
-  font-size: 18px;
-}
-.cur-card.compact .cur-card-num.fit-5 {
-  font-size: 15px;
-}
 .cur-card-num.fit-3 {
   font-size: 44px;
 }
@@ -171,11 +125,6 @@
 .cur-dec {
   font-size: 0.62em;
   color: var(--text3);
-}
-.cur-card.compact .trend {
-  height: 24px;
-  padding: 0 8px;
-  font-size: 12px;
 }
 .budget {
   display: flex;
@@ -484,98 +433,100 @@
   flex: none;
 }
 
-/* ---------- Month at a glance ---------- */
-.glance {
+/* ---------- Currency month cards: total and budget, with the month as dots ---------- */
+.month-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 12px;
+  row-gap: 12px;
+  align-items: center;
+}
+.month-card.on {
+  box-shadow:
+    inset 0 0 0 2px var(--accent),
+    0 2px 12px rgba(0, 0, 0, 0.05);
+}
+.month-card-tap {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+}
+.month-card-main {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  pointer-events: none;
+}
+.month-card .cur-card-sym {
+  font-size: 20px;
+  margin-top: 5px;
+}
+.month-card .cur-card-num {
+  font-size: 40px;
+}
+.month-card .cur-card-num.fit-2 {
+  font-size: 36px;
+}
+.month-card .cur-card-num.fit-3 {
+  font-size: 30px;
+}
+.month-card .cur-card-num.fit-4 {
+  font-size: 25px;
+}
+.month-card .cur-card-num.fit-5 {
+  font-size: 21px;
+}
+.month-card .trend {
+  height: 24px;
+  padding: 0 8px;
+  font-size: 12px;
+}
+.month-card-dots {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 12px;
-  text-align: left;
-  color: var(--text);
+  gap: 6px;
+  color: var(--text3);
+  padding: 4px;
+  margin: -4px;
+  border-radius: 12px;
 }
-.glance-text {
-  flex: 1;
-  min-width: 0;
+.month-card-budget {
+  grid-column: 1 / -1;
+  pointer-events: none;
+}
+.month-dots {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
-.glance-label {
+.month-week {
   display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--text2);
-  white-space: nowrap;
-}
-.glance-icon {
-  width: 22px;
-  height: 22px;
-  border-radius: 6px;
-  display: grid;
-  place-items: center;
-  color: #fff;
-  background: var(--accent);
-}
-.glance-amount {
-  display: flex;
-  align-items: flex-start;
-  gap: 3px;
-  margin-top: 4px;
-  white-space: nowrap;
-}
-.glance-amount .cur-card-sym {
-  font-size: 19px;
-  margin-top: 5px;
-}
-.glance-num {
-  font-size: 34px;
-  font-weight: 700;
-  line-height: 1;
-  letter-spacing: -0.01em;
-}
-.glance-sub {
-  font-size: 14px;
-  color: var(--text2);
-}
-/* Each day a dot: spent dark, today in the accent, the rest faint; this week on a soft band. */
-.glance-dots {
-  flex: none;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-}
-.glance-week {
-  display: flex;
-  gap: 7px;
+  gap: 6px;
   padding: 3px 5px;
   border-radius: 8px;
 }
-.glance-week.now {
+.month-week.now {
   background: var(--fill-3);
 }
-.glance-dot {
-  width: 8px;
-  height: 8px;
+.month-dot {
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   background: var(--fill-4);
 }
-.glance-dot.future {
+.month-dot.future {
   background: var(--fill-3);
 }
-.glance-dot.spent {
+.month-dot.spent {
   background: var(--text);
 }
-.glance-dot.today {
+.month-dot.today {
   background: var(--accent);
   box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.25);
 }
-.glance-dot.blank {
+.month-dot.blank {
   visibility: hidden;
-}
-.glance-caret {
-  flex: none;
-  display: flex;
-  color: var(--text3);
-  margin-left: -4px;
 }

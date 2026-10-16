@@ -5,11 +5,14 @@ import { addMonths, monthName, monthShort } from '../../lib/dates';
 import { Icon } from '../../lib/icons';
 import { formatNumber, formatWhole, formatWholeDown } from '../../lib/money';
 import { totalIn, trend } from '../../lib/stats';
+import { useNavigate } from 'react-router-dom';
 import { useUi } from '../../state/ui';
+import { MonthDots } from './MonthDots';
 
 /**
- * Month totals per currency. One currency: a single large card. Several: side by side, two to a
- * row, and tapping one picks the currency the charts below show.
+ * Month totals, one full-width card per currency: the total, how it compares with last month and the
+ * budget on the left, and that currency's month as dots on the right. With several currencies,
+ * tapping a card picks the one the charts below show; the dots open the calendar in that currency.
  */
 export function CurrencyCards({
   pocket,
@@ -29,10 +32,11 @@ export function CurrencyCards({
   onSelect: (c: CurrencyCode) => void;
 }) {
   const { combinedFor } = useUi();
+  const navigate = useNavigate();
   // Optional extra card: everything converted into one currency (Settings › Combined total).
   const combinedCode = pocket.currencies.length > 1 ? combinedFor(pocket.id) : null;
   const many = pocket.currencies.length > 1;
-  // Amounts shrink with their length so they always fit the card; side-by-side cards share one size.
+  // Amounts shrink with their length so they always fit beside the dots; the cards share one size.
   const digits = Math.max(...pocket.currencies.map((code) => formatNumber(empty ? 0 : totalIn(expenses, code), code, 0).length));
   const fit = digits >= 12 ? ' fit-5' : digits >= 10 ? ' fit-4' : digits >= 8 ? ' fit-3' : digits >= 6 ? ' fit-2' : '';
 
@@ -42,70 +46,57 @@ export function CurrencyCards({
     const t = trend(total, totalIn(prevExpenses, code));
     const budget = pocket.budgets[code];
     const left = budget ? budget - total : 0;
+    const spentDays = new Set(expenses.filter((e) => e.currency === code).map((e) => e.date));
     // Totals always show the currency's decimals (dimmed), so £ and ₹ cards read the same way.
     const amount = formatNumber(empty ? 0 : total, code, c.dp);
-    const trendChip =
-      !empty && t !== null && t !== 0 ? (
-        <div className="trend" style={{ color: t < 0 ? 'var(--good)' : 'var(--bad)' }}>
-          <Icon name={t < 0 ? 'arrow-down' : 'arrow-up'} weight="bold" size={12} />
-          {Math.abs(t)}% vs {monthShort(addMonths(month, -1))}
-        </div>
-      ) : null;
-    const budgetBar = budget ? (
-      <div className="budget">
-        <div className="budget-track">
-          <div className="budget-fill" style={{ width: `${Math.min(100, (total / budget) * 100)}%` }} />
-        </div>
-        <span className="budget-text">
-          {many
-            ? `${formatWhole(Math.abs(left), code)} ${left >= 0 ? 'left' : 'over'}`
-            : empty
-              ? `${formatWhole(0, code)} of ${formatWhole(budget, code)} budget`
-              : `${formatWholeDown(total, code)} of ${formatWhole(budget, code)} · ${formatWhole(Math.abs(left), code)} ${left >= 0 ? 'left' : 'over'}`}
-        </span>
-      </div>
-    ) : null;
-
-    if (!many) {
-      return (
-        <div key={code} className="cur-card">
-          <div className="cur-card-head">
-            <span className="cur-card-label">
-              {c.plural} · {monthName(month)}
-            </span>
-            {trendChip}
-          </div>
+    const on = many && code === selected;
+    const openCalendar = () => navigate('/calendar', { state: { currency: code } });
+    return (
+      <div key={code} className={`cur-card month-card${on ? ' on' : ''}`}>
+        {/* The whole card is one tap target underneath; the dots sit above it with their own. */}
+        <button
+          className="month-card-tap press"
+          aria-pressed={many ? on : undefined}
+          aria-label={many ? `${c.plural}: ${c.symbol}${amount}. Show ${c.plural.toLowerCase()} below` : `${c.plural}: ${c.symbol}${amount}. Open calendar`}
+          onClick={many ? () => onSelect(code) : openCalendar}
+        />
+        <div className="month-card-main">
+          <span className="cur-card-label">
+            {c.plural} · {monthName(month)}
+          </span>
           <div className="cur-card-amount num">
             <span className="cur-card-sym">{c.symbol}</span>
             <Amount className={`cur-card-num${fit}`} value={amount} />
           </div>
-          {budgetBar}
+          {!empty && t !== null && t !== 0 && (
+            <div className="trend" style={{ color: t < 0 ? 'var(--good)' : 'var(--bad)' }}>
+              <Icon name={t < 0 ? 'arrow-down' : 'arrow-up'} weight="bold" size={12} />
+              {Math.abs(t)}% vs {monthShort(addMonths(month, -1))}
+            </div>
+          )}
         </div>
-      );
-    }
-    const on = code === selected;
-    return (
-      <button
-        key={code}
-        className={`cur-card compact press${on ? ' on' : ''}`}
-        aria-pressed={on}
-        aria-label={`${c.plural}: ${c.symbol}${amount}. Show ${c.plural.toLowerCase()} below`}
-        onClick={() => onSelect(code)}
-      >
-        <span className="cur-card-label">{c.plural}</span>
-        <div className="cur-card-amount num">
-          <span className="cur-card-sym">{c.symbol}</span>
-          {/* Long amounts get a smaller size so they fit half the width. */}
-          <Amount className={`cur-card-num${fit}`} value={amount} />
-        </div>
-        {trendChip}
-        {budgetBar}
-      </button>
+        <button className="month-card-dots press" aria-label={`${c.plural} calendar`} onClick={openCalendar}>
+          <MonthDots month={month} spentDays={spentDays} />
+          <Icon name="caret-right" weight="bold" size={13} />
+        </button>
+        {budget ? (
+          <div className="budget month-card-budget">
+            <div className="budget-track">
+              <div className="budget-fill" style={{ width: `${Math.min(100, (total / budget) * 100)}%` }} />
+            </div>
+            <span className="budget-text">
+              {empty
+                ? `${formatWhole(0, code)} of ${formatWhole(budget, code)} budget`
+                : `${formatWholeDown(total, code)} of ${formatWhole(budget, code)} · ${formatWhole(Math.abs(left), code)} ${left >= 0 ? 'left' : 'over'}`}
+            </span>
+          </div>
+        ) : null}
+      </div>
     );
   };
 
   return (
-    <div className={many ? 'cards-grid' : 'cards-single'}>
+    <div className="cards-single">
       {pocket.currencies.map(card)}
       {combinedCode && <CombinedCard code={combinedCode} month={month} expenses={expenses} empty={empty} />}
     </div>
