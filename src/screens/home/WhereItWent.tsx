@@ -40,13 +40,13 @@ export function WhereItWent({ expenses, code, onSeeAll }: { expenses: Expense[];
               <div className="where-body">
                 <div className="where-top">
                   <span className="where-name">{cat?.name ?? 'Other'}</span>
-                  <span className="where-amt num">{code === 'INR' ? formatMoney(v, code) : formatWhole(v, code)}</span>
+                  <span className="where-amt num">
+                    {code === 'INR' ? formatMoney(v, code) : formatWhole(v, code)}
+                    <span className="where-pct">{Math.round((v / total) * 100)}%</span>
+                  </span>
                 </div>
-                <div className="where-bar-row">
-                  <div className="bar-track where-track">
-                    <div className="bar-fill" style={{ width: `${(v / max) * 100}%`, background: cat?.colour ?? '#9AA0AA' }} />
-                  </div>
-                  <span className="where-pct">{Math.round((v / total) * 100)}%</span>
+                <div className="bar-track where-track">
+                  <div className="bar-fill" style={{ width: `${(v / max) * 100}%`, background: cat?.colour ?? '#9AA0AA' }} />
                 </div>
               </div>
             </div>

@@ -1,10 +1,10 @@
 import type { Expense, PocketWithMembers } from '../../data/types';
 import { useCombined } from '../../data/useCombined';
 import { currency, type CurrencyCode } from '../../lib/currencies';
-import { addMonths, monthName, monthShort } from '../../lib/dates';
+import { addMonths, monthShort } from '../../lib/dates';
 import { Icon } from '../../lib/icons';
 import { formatNumber, formatWhole, formatWholeDown } from '../../lib/money';
-import { totalIn, trend } from '../../lib/stats';
+import { budgetLevel, totalIn, trend } from '../../lib/stats';
 import { useNavigate } from 'react-router-dom';
 import { CardPager } from '../../components/CardPager';
 import { useUi } from '../../state/ui';
@@ -61,9 +61,7 @@ export function CurrencyCards({
           }}
         />
         <div className="month-card-main">
-          <span className="cur-card-label">
-            {c.plural} · {monthName(month)}
-          </span>
+          <span className="cur-card-label">{c.plural}</span>
           <div className="cur-card-amount num">
             <span className="cur-card-sym">{c.symbol}</span>
             <Amount className={`cur-card-num${fit}`} value={amount} />
@@ -82,12 +80,19 @@ export function CurrencyCards({
         {budget ? (
           <div className="budget month-card-budget">
             <div className="budget-track">
-              <div className="budget-fill" style={{ width: `${Math.min(100, (total / budget) * 100)}%` }} />
+              <div className={`budget-fill ${budgetLevel(total, budget)}`} style={{ width: `${Math.min(100, (total / budget) * 100)}%` }} />
             </div>
             <span className="budget-text">
-              {empty
-                ? `${formatWhole(0, code)} of ${formatWhole(budget, code)} budget`
-                : `${formatWholeDown(total, code)} of ${formatWhole(budget, code)} · ${formatWhole(Math.abs(left), code)} ${left >= 0 ? 'left' : 'over'}`}
+              {empty ? (
+                `${formatWhole(0, code)} of ${formatWhole(budget, code)} budget`
+              ) : (
+                <>
+                  {formatWholeDown(total, code)} of {formatWhole(budget, code)} ·{' '}
+                  <span className={left < 0 ? 'budget-over' : undefined}>
+                    {formatWhole(Math.abs(left), code)} {left >= 0 ? 'left' : 'over'}
+                  </span>
+                </>
+              )}
             </span>
           </div>
         ) : null}
@@ -97,7 +102,7 @@ export function CurrencyCards({
 
   const pages = [
     ...pocket.currencies.map(card),
-    ...(combinedCode ? [<CombinedCard key="combined" code={combinedCode} month={month} expenses={expenses} empty={empty} />] : []),
+    ...(combinedCode ? [<CombinedCard key="combined" code={combinedCode} expenses={expenses} empty={empty} />] : []),
   ];
   const labels = [...pocket.currencies.map((code) => currency(code).plural), ...(combinedCode ? ['All currencies combined'] : [])];
   return (
@@ -125,7 +130,7 @@ export function Amount({ className, value }: { className: string; value: string 
 }
 
 /** "All in pounds": every currency converted at each expense's own day's rate. */
-function CombinedCard({ code, month, expenses, empty }: { code: CurrencyCode; month: string; expenses: Expense[]; empty: boolean }) {
+function CombinedCard({ code, expenses, empty }: { code: CurrencyCode; expenses: Expense[]; empty: boolean }) {
   const c = currency(code);
   const { total, missing, loading, error } = useCombined(expenses, code);
   const others = expenses.some((e) => e.currency !== code);
@@ -136,9 +141,7 @@ function CombinedCard({ code, month, expenses, empty }: { code: CurrencyCode; mo
   return (
     <div className="cur-card combined-card">
       <div className="cur-card-head">
-        <span className="cur-card-label">
-          All in {c.plural.toLowerCase()} · {monthName(month)}
-        </span>
+        <span className="cur-card-label">All in {c.plural.toLowerCase()}</span>
       </div>
       <div className={`cur-card-amount num${loading && !empty ? ' loading' : ''}`}>
         <span className="cur-card-sym">≈{c.symbol}</span>

@@ -160,36 +160,6 @@
   }
 }
 
-/* ---------- Quiet action pills ---------- */
-.action-pills {
-  display: flex;
-  gap: 8px;
-  flex: none;
-  overflow-x: auto;
-  scrollbar-width: none;
-  margin: 0 calc(-1 * var(--gutter));
-  padding: 0 var(--gutter);
-}
-.action-pills::-webkit-scrollbar {
-  display: none;
-}
-.action-pill {
-  flex: none;
-  height: 40px;
-  padding: 0 16px;
-  border-radius: 20px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 15px;
-  font-weight: 500;
-  color: var(--text);
-  background: var(--fill-2);
-}
-.action-pill.primary {
-  color: var(--on-accent);
-  background: var(--accent);
-}
 .top-people {
   display: flex;
   align-items: center;

@@ -4,6 +4,13 @@
 
 ### Changed
 
+- **Over budget shows.** Budget bars turn amber from 85% of the budget and red once you're over, and the "over" amount is in red, on Home, in Monthly budgets and in Calendar.
+- **Tidier Home.** The Add expense, Export and Tags buttons under the Pocket card are gone (the + button adds an expense; Export and Tags live in Settings), so your totals sit higher. Currency cards just say "Pounds" or "Rupees", since the month is right above.
+- **Month arrows.** The cut-off neighbouring month names beside the month are now small arrows; swiping still works.
+- **Transactions tab icon** is a list instead of a £ sign.
+- **Empty months and days.** A month with nothing in it shows one prompt (with Add expense for the current month) instead of empty charts; an empty day in Calendar is one quiet line with Add expense for that day.
+- **Where it went** shows each category's share next to its amount.
+- **Bigger tap areas** for the page dots under the currency cards.
 - **Swipe between currencies.** Each currency has one card: the total, how it compares with last month and the budget, with that currency's month as dots (dark where you spent, blue for today). With two or more currencies, swipe sideways between them; dots underneath show how many there are and which one you're on, and the charts below follow. Tap a card for the calendar in that currency.
 - **Calendar, one currency at a time.** The same swipeable currency cards sit at the top of Calendar, and the dates, icons and day's spending below follow the card showing. Home and Calendar remember the same currency, so swiping to Rupees in one shows Rupees in the other. Dates are larger and bolder with a clear circle for the day you pick and a blue ring for today; the category icons under them are smaller.
 - **Updates no longer reload the app while you use it.** A new version downloads quietly and takes over the next time Spendr goes to the background (never while a sheet is open), instead of reloading the screen a few seconds after you open the app.

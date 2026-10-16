@@ -5,7 +5,7 @@ import { Fades } from '../components/Chrome';
 import { SwipeRow, useSwipeRows } from '../components/ExpenseRow';
 import { ListSkeleton } from '../components/Skeletons';
 import { useExpenses } from '../data/useExpenses';
-import { addMonths } from '../lib/dates';
+import { addMonths, currentMonth, monthName } from '../lib/dates';
 import { Icon } from '../lib/icons';
 import { inMonth } from '../lib/stats';
 import { useCurrentPocket, usePockets } from '../state/pockets';
@@ -40,20 +40,6 @@ export function Home() {
     <div className="screen">
       <div className="scroll home-scroll">
         <PocketDeck onOpenMenu={() => setSwitcher(true)} onMore={() => setSwitcher(true)} />
-        <div className="action-pills">
-          <button className="action-pill primary press" onClick={() => openExpenseSheet({ mode: 'new' })}>
-            <Icon name="plus" weight="bold" size={16} />
-            Add expense
-          </button>
-          <button className="action-pill press" onClick={() => navigate('/settings', { state: { sheet: 'export' } })}>
-            <Icon name="download-simple" size={17} />
-            Export
-          </button>
-          <button className="action-pill press" onClick={() => navigate('/settings/tags')}>
-            <Icon name="tag" size={17} />
-            Tags
-          </button>
-        </div>
         <MonthHeader month={month} onChange={setMonth} />
         <CurrencyCards pocket={pocket} month={month} expenses={expenses} prevExpenses={prevExpenses} empty={empty} selected={cur} onSelect={setCur} />
         {loading ? (
@@ -63,10 +49,31 @@ export function Home() {
           </>
         ) : (
           <>
-            <WeeklySpend expenses={expenses} code={cur} month={month} empty={empty} />
+            {empty ? (
+              // Nothing this month: one prompt instead of a row of empty charts.
+              <div className="card empty-month">
+                <div className="empty-month-icon">
+                  <Icon name="receipt" size={26} />
+                </div>
+                <span className="empty-month-title">
+                  Nothing spent in {monthName(month)}
+                  {month === currentMonth() ? ' yet' : ''}
+                </span>
+                <span className="empty-month-text">
+                  {month === currentMonth() ? 'Add an expense and your weekly spend and categories show up here.' : 'Swipe the month to see another one.'}
+                </span>
+                {month === currentMonth() && (
+                  <button className="primary-btn press" onClick={() => openExpenseSheet({ mode: 'new' })}>
+                    Add expense
+                  </button>
+                )}
+              </div>
+            ) : (
+              <WeeklySpend expenses={expenses} code={cur} month={month} empty={empty} />
+            )}
             {!empty && <WhereItWent expenses={expenses} code={cur} onSeeAll={() => navigate('/transactions', { state: { currency: cur } })} />}
             {!empty && pocket.type === 'shared' && <ByPerson expenses={expenses} pocket={pocket} />}
-            <Insight pocketId={pocket.id} month={month} expenses={expenses} code={cur} empty={empty} />
+            {!empty && <Insight pocketId={pocket.id} month={month} expenses={expenses} code={cur} empty={empty} />}
             {!empty && (
               <div className="recent">
                 <div className="recent-head">

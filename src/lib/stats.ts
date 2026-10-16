@@ -65,3 +65,9 @@ export function trend(now: number, before: number): number | null {
   if (!before || !now) return null;
   return Math.round(((now - before) / before) * 100);
 }
+
+/** How a budget is going: fine, near the limit (85% or more) or over it. Colours the budget bars. */
+export function budgetLevel(spent: number, budget: number): 'ok' | 'near' | 'over' {
+  if (spent > budget) return 'over';
+  return spent >= budget * 0.85 ? 'near' : 'ok';
+}

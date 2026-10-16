@@ -18,17 +18,21 @@
   font-weight: 600;
   letter-spacing: 0.01em;
 }
+/* Quiet arrows either side of the month: the whole row also swipes. */
 .month-peek {
   position: absolute;
-  font-size: 28px;
-  font-weight: 600;
-  opacity: 0.3;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  border-radius: 22px;
+  color: var(--text3);
 }
 .month-peek.left {
-  left: -18px;
+  left: var(--gutter);
 }
 .month-peek.right {
-  right: -18px;
+  right: var(--gutter);
 }
 .cards-single,
 .cards-pager {
@@ -264,19 +268,14 @@
   font-size: 16px;
   font-weight: 600;
 }
-.where-bar-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
 .where-track {
   flex: 1;
 }
 .where-pct {
-  font-size: 12px;
+  margin-left: 6px;
+  font-size: 13px;
+  font-weight: 500;
   color: var(--text2);
-  width: 30px;
-  text-align: right;
 }
 .by-person {
   display: flex;
@@ -547,14 +546,15 @@
   scroll-snap-align: start;
   scroll-snap-stop: always;
 }
+/* Small dots, finger-sized tap areas. */
 .page-dots {
   display: flex;
   justify-content: center;
-  gap: 4px;
+  margin: -8px 0;
 }
 .page-dot {
-  width: 22px;
-  height: 22px;
+  width: 30px;
+  height: 38px;
   display: grid;
   place-items: center;
 }
@@ -571,4 +571,49 @@
 .page-dot.on::after {
   width: 18px;
   background: var(--text);
+}
+
+/* Over budget: the bar and the "over" figure turn red; near the limit, amber. */
+.budget-fill.near {
+  background: var(--warn);
+}
+.budget-fill.over {
+  background: var(--bad);
+}
+.budget-over {
+  color: var(--bad);
+  font-weight: 600;
+}
+
+/* A month with nothing in it yet: one prompt rather than empty charts. */
+.empty-month {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 8px;
+  padding: 26px 20px 20px;
+}
+.empty-month-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 26px;
+  display: grid;
+  place-items: center;
+  color: var(--accent);
+  background: rgba(var(--accent-rgb), 0.14);
+  margin-bottom: 4px;
+}
+.empty-month-title {
+  font-size: 19px;
+  font-weight: 600;
+}
+.empty-month-text {
+  font-size: 15px;
+  color: var(--text2);
+  max-width: 280px;
+}
+.empty-month .primary-btn {
+  margin-top: 10px;
+  align-self: stretch;
 }

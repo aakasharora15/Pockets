@@ -11,6 +11,8 @@ export interface MonthSummary {
   sub: string;
   /** Days with any spending, as day keys. */
   days: Set<string>;
+  /** Past the budget. */
+  over: boolean;
 }
 
 /** The month at a glance in one currency: what's left of the budget if there is one, else what's been spent. */
@@ -20,7 +22,13 @@ export function monthSummary(expenses: Expense[], pocket: Pocket, code: Currency
   const budget = pocket.budgets[code];
   if (budget) {
     const left = budget - spent;
-    return { label: `${left >= 0 ? 'Left' : 'Over'} in ${monthLabel}`, amount: Math.abs(left), sub: `of ${formatMoney(budget, code)} budget`, days };
+    return {
+      label: `${left >= 0 ? 'Left' : 'Over'} in ${monthLabel}`,
+      amount: Math.abs(left),
+      sub: `of ${formatMoney(budget, code)} budget`,
+      days,
+      over: left < 0,
+    };
   }
-  return { label: `Spent in ${monthLabel}`, amount: spent, sub: `on ${days.size} ${days.size === 1 ? 'day' : 'days'}`, days };
+  return { label: `Spent in ${monthLabel}`, amount: spent, sub: `on ${days.size} ${days.size === 1 ? 'day' : 'days'}`, days, over: false };
 }

@@ -14,7 +14,7 @@ export function BackButton({ onClick, to }: { onClick?: () => void; to?: string 
 
 export const TABS = [
   { path: '/', icon: 'house', label: 'Home' },
-  { path: '/transactions', icon: 'currency-gbp', label: 'Transactions' },
+  { path: '/transactions', icon: 'list-bullets', label: 'Transactions' },
   { path: '/calendar', icon: 'calendar-blank', label: 'Calendar' },
   { path: '/settings', icon: 'gear-six', label: 'Settings' },
 ];

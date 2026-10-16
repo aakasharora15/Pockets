@@ -9,6 +9,7 @@ import { formatMoney, formatWhole } from '../../lib/money';
 import { totalIn } from '../../lib/stats';
 import { useCurrentPocket } from '../../state/pockets';
 import { useUi } from '../../state/ui';
+import { budgetLevel } from '../../lib/stats';
 
 /** Monthly budgets: one per currency, never combined. */
 export function Budgets() {
@@ -81,11 +82,11 @@ function BudgetCard({ pocketId, code, budget, spent }: { pocketId: string; code:
       {budget > 0 && (
         <div className="budget">
           <div className="budget-track thin">
-            <div className="budget-fill" style={{ width: `${Math.min(100, (spent / budget) * 100)}%` }} />
+            <div className={`budget-fill ${budgetLevel(spent, budget)}`} style={{ width: `${Math.min(100, (spent / budget) * 100)}%` }} />
           </div>
           <div className="budget-foot">
             <span>{formatMoney(spent, code)} spent</span>
-            <span>
+            <span className={left < 0 ? 'budget-over' : undefined}>
               {formatMoney(Math.abs(left), code)} {left >= 0 ? 'left' : 'over'}
             </span>
           </div>

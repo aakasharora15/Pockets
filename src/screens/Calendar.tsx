@@ -43,7 +43,7 @@ function cellsFor(month: string): Cell[] {
 export function Calendar() {
   const pocket = useCurrentPocket();
   const { categories } = usePockets();
-  const { month, setMonth } = useUi();
+  const { month, setMonth, openExpenseSheet } = useUi();
   const swipe = useSwipeRows(pocket.id);
   const navigate = useNavigate();
   const { expenses, loading } = useExpenses(pocket.id, month);
@@ -86,7 +86,7 @@ export function Calendar() {
     const cur = currency(c);
     return (
       <div key={c} className="card cal-summary">
-        <span className="cal-summary-label">
+        <span className={`cal-summary-label${s.over ? ' budget-over' : ''}`}>
           {cur.plural} · {s.label}
         </span>
         <span className="cal-summary-amount num">
@@ -155,9 +155,13 @@ export function Calendar() {
         {loading ? (
           <ListSkeleton rows={2} />
         ) : dayList.length === 0 ? (
-          <div className="card">
-            <div className="day-label">Spent on {dayMonth(selected)}</div>
-            <div className="day-none">Nothing spent on this day.</div>
+          <div className="day-empty">
+            <span>Nothing spent on {dayMonth(selected)}</span>
+            {selected <= today && (
+              <button className="link press" onClick={() => openExpenseSheet({ mode: 'new', date: selected })}>
+                Add expense
+              </button>
+            )}
           </div>
         ) : (
           <>

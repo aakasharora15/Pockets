@@ -27,7 +27,7 @@ test('switches Pocket from the deck', async ({ page }) => {
 
 test('adds an expense and shows it in Recent', async ({ page }) => {
   await signIn(page, 'aakash@example.com');
-  await page.locator('.action-pill.primary').click();
+  await page.locator('.plus-btn').click();
   const sheet = page.locator('.expense-sheet');
   await expect(sheet).toBeVisible();
   const pound = sheet.getByRole('button', { name: /Pound/ });
