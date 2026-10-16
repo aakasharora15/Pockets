@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import type { Expense, PocketWithMembers } from '../../data/types';
 import { useCombined } from '../../data/useCombined';
 import { currency, type CurrencyCode } from '../../lib/currencies';
@@ -10,9 +11,10 @@ import { useUi } from '../../state/ui';
 import { MonthDots } from './MonthDots';
 
 /**
- * Month totals, one full-width card per currency: the total, how it compares with last month and the
- * budget on the left, and that currency's month as dots on the right. With several currencies,
- * tapping a card picks the one the charts below show; the dots open the calendar in that currency.
+ * Month totals, one card per currency: the total, how it compares with last month and the budget on
+ * the left, and that currency's month as dots on the right. Tap a card for the calendar in that
+ * currency. With several currencies the cards are pages you swipe through, with a dot for each
+ * underneath; the page showing picks the currency the charts below use.
  */
 export function CurrencyCards({
   pocket,
@@ -35,7 +37,6 @@ export function CurrencyCards({
   const navigate = useNavigate();
   // Optional extra card: everything converted into one currency (Settings › Combined total).
   const combinedCode = pocket.currencies.length > 1 ? combinedFor(pocket.id) : null;
-  const many = pocket.currencies.length > 1;
   // Amounts shrink with their length so they always fit beside the dots; the cards share one size.
   const digits = Math.max(...pocket.currencies.map((code) => formatNumber(empty ? 0 : totalIn(expenses, code), code, 0).length));
   const fit = digits >= 12 ? ' fit-5' : digits >= 10 ? ' fit-4' : digits >= 8 ? ' fit-3' : digits >= 6 ? ' fit-2' : '';
@@ -49,16 +50,12 @@ export function CurrencyCards({
     const spentDays = new Set(expenses.filter((e) => e.currency === code).map((e) => e.date));
     // Totals always show the currency's decimals (dimmed), so £ and ₹ cards read the same way.
     const amount = formatNumber(empty ? 0 : total, code, c.dp);
-    const on = many && code === selected;
-    const openCalendar = () => navigate('/calendar', { state: { currency: code } });
     return (
-      <div key={code} className={`cur-card month-card${on ? ' on' : ''}`}>
-        {/* The whole card is one tap target underneath; the dots sit above it with their own. */}
+      <div key={code} className="cur-card month-card">
         <button
-          className="month-card-tap press"
-          aria-pressed={many ? on : undefined}
-          aria-label={many ? `${c.plural}: ${c.symbol}${amount}. Show ${c.plural.toLowerCase()} below` : `${c.plural}: ${c.symbol}${amount}. Open calendar`}
-          onClick={many ? () => onSelect(code) : openCalendar}
+          className="month-card-tap"
+          aria-label={`${c.plural}: ${c.symbol}${amount}. Open the calendar`}
+          onClick={() => navigate('/calendar', { state: { currency: code } })}
         />
         <div className="month-card-main">
           <span className="cur-card-label">
@@ -75,10 +72,10 @@ export function CurrencyCards({
             </div>
           )}
         </div>
-        <button className="month-card-dots press" aria-label={`${c.plural} calendar`} onClick={openCalendar}>
+        <span className="month-card-dots">
           <MonthDots month={month} spentDays={spentDays} />
           <Icon name="caret-right" weight="bold" size={13} />
-        </button>
+        </span>
         {budget ? (
           <div className="budget month-card-budget">
             <div className="budget-track">
@@ -95,10 +92,80 @@ export function CurrencyCards({
     );
   };
 
+  const pages = [
+    ...pocket.currencies.map(card),
+    ...(combinedCode ? [<CombinedCard key="combined" code={combinedCode} month={month} expenses={expenses} empty={empty} />] : []),
+  ];
+  return <CardPager pages={pages} codes={pocket.currencies} selected={selected} onSelect={onSelect} resetKey={pocket.id} />;
+}
+
+/**
+ * Swipeable pages with a page indicator: a dot per page, the one showing highlighted. Swiping to a
+ * currency's page selects it; tapping a dot goes to that page.
+ */
+function CardPager({
+  pages,
+  codes,
+  selected,
+  onSelect,
+  resetKey,
+}: {
+  pages: React.ReactNode[];
+  codes: CurrencyCode[];
+  selected: CurrencyCode;
+  onSelect: (c: CurrencyCode) => void;
+  resetKey: string;
+}) {
+  const track = useRef<HTMLDivElement>(null);
+  const [page, setPage] = useState(() => Math.max(0, codes.indexOf(selected)));
+  const frame = useRef(0);
+
+  // A different Pocket starts on its first page.
+  useEffect(() => {
+    track.current?.scrollTo({ left: 0 });
+    setPage(0);
+  }, [resetKey]);
+
+  const onScroll = () => {
+    cancelAnimationFrame(frame.current);
+    frame.current = requestAnimationFrame(() => {
+      const el = track.current;
+      if (!el) return;
+      const kids = [...el.children] as HTMLElement[];
+      const mid = el.scrollLeft + el.clientWidth / 2;
+      let i = 0;
+      kids.forEach((k, j) => {
+        if (Math.abs(k.offsetLeft + k.offsetWidth / 2 - mid) < Math.abs(kids[i].offsetLeft + kids[i].offsetWidth / 2 - mid)) i = j;
+      });
+      if (i === page) return;
+      setPage(i);
+      if (codes[i]) onSelect(codes[i]);
+    });
+  };
+
+  const go = (i: number) => {
+    const kid = track.current?.children[i] as HTMLElement | undefined;
+    if (kid && track.current) track.current.scrollTo({ left: kid.offsetLeft - parseFloat(getComputedStyle(track.current).paddingLeft), behavior: 'smooth' });
+  };
+
+  if (pages.length === 1) return <div className="cards-single">{pages}</div>;
   return (
-    <div className="cards-single">
-      {pocket.currencies.map(card)}
-      {combinedCode && <CombinedCard code={combinedCode} month={month} expenses={expenses} empty={empty} />}
+    <div className="cards-pager">
+      <div className="cards-track" ref={track} onScroll={onScroll}>
+        {pages}
+      </div>
+      <div className="page-dots" role="tablist" aria-label="Currencies">
+        {pages.map((_, i) => (
+          <button
+            key={i}
+            role="tab"
+            aria-selected={i === page}
+            aria-label={codes[i] ? currency(codes[i]).plural : 'All currencies combined'}
+            className={`page-dot${i === page ? ' on' : ''}`}
+            onClick={() => go(i)}
+          />
+        ))}
+      </div>
     </div>
   );
 }

@@ -4,7 +4,7 @@
 
 ### Changed
 
-- **One card per currency, with the month as dots.** Pounds and Rupees each get a full-width card: the total, how it compares with last month and the budget on the left, and that currency's month as dots on the right (dark where you spent, blue for today, this week on a soft band). Tap a card to show that currency below; tap its dots to open the calendar in that currency.
+- **Swipe between currencies.** Each currency has one card: the total, how it compares with last month and the budget, with that currency's month as dots (dark where you spent, blue for today). With two or more currencies, swipe sideways between them; dots underneath show how many there are and which one you're on, and the charts below follow. Tap a card for the calendar in that currency.
 - **Cleaner Calendar.** The month's total sits at the top; days are plain numbers, past days greyed and today in a blue circle, with up to two category icons under each day instead of coloured dots.
 - **Updates no longer reload the app while you use it.** A new version downloads quietly and takes over the next time Spendr goes to the background (never while a sheet is open), instead of reloading the screen a few seconds after you open the app.
 - **PIN only when it should be.** The 5-minute rule now holds even when iPhone closes Spendr in the background: reopen within 5 minutes and you go straight in. When the PIN is needed it shows straight away, instead of Home appearing first and the PIN taking over a few seconds later.
