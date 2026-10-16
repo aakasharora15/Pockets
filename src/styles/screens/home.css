@@ -483,3 +483,99 @@
   font-size: 18px;
   flex: none;
 }
+
+/* ---------- Month at a glance ---------- */
+.glance {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-align: left;
+  color: var(--text);
+}
+.glance-text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.glance-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text2);
+  white-space: nowrap;
+}
+.glance-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: var(--accent);
+}
+.glance-amount {
+  display: flex;
+  align-items: flex-start;
+  gap: 3px;
+  margin-top: 4px;
+  white-space: nowrap;
+}
+.glance-amount .cur-card-sym {
+  font-size: 19px;
+  margin-top: 5px;
+}
+.glance-num {
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+.glance-sub {
+  font-size: 14px;
+  color: var(--text2);
+}
+/* Each day a dot: spent dark, today in the accent, the rest faint; this week on a soft band. */
+.glance-dots {
+  flex: none;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.glance-week {
+  display: flex;
+  gap: 7px;
+  padding: 3px 5px;
+  border-radius: 8px;
+}
+.glance-week.now {
+  background: var(--fill-3);
+}
+.glance-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--fill-4);
+}
+.glance-dot.future {
+  background: var(--fill-3);
+}
+.glance-dot.spent {
+  background: var(--text);
+}
+.glance-dot.today {
+  background: var(--accent);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.25);
+}
+.glance-dot.blank {
+  visibility: hidden;
+}
+.glance-caret {
+  flex: none;
+  display: flex;
+  color: var(--text3);
+  margin-left: -4px;
+}

@@ -76,7 +76,41 @@
   gap: 14px;
 }
 .cal-card {
-  padding: 16px 10px;
+  padding: 18px 8px 10px;
+}
+/* The month at a glance, above the grid. */
+.cal-summary {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 0 10px 16px;
+  margin-bottom: 14px;
+  border-bottom: var(--hair);
+}
+.cal-summary-label {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text2);
+}
+.cal-summary-amount {
+  display: flex;
+  align-items: flex-start;
+  gap: 3px;
+  white-space: nowrap;
+}
+.cal-summary-amount .cur-card-sym {
+  font-size: 22px;
+  margin-top: 6px;
+}
+.cal-summary-num {
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+.cal-summary-sub {
+  font-size: 15px;
+  color: var(--text2);
 }
 .cal-weekdays {
   display: grid;
@@ -84,76 +118,72 @@
   justify-items: center;
   font-size: 12px;
   font-weight: 600;
-  color: var(--text2);
-  padding-bottom: 10px;
+  letter-spacing: 0.02em;
+  color: var(--text3);
+  padding-bottom: 8px;
 }
 .cal-grid {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  row-gap: 6px;
-  justify-items: center;
+  row-gap: 4px;
 }
+/* A plain number, with up to two category bubbles under it. Past days greyed, today in the accent. */
 .cal-cell {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: var(--fill-1);
-  color: var(--text);
+  height: 62px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   gap: 4px;
-  font-size: 15px;
-  font-weight: 400;
-}
-.cal-cell.out {
-  background: transparent;
-  color: var(--text3);
-  cursor: default;
-}
-.cal-cell.sel {
-  background: var(--inverse);
-  color: var(--on-inverse);
-  font-weight: 600;
-}
-.cal-cell.today {
-  background: transparent;
-  border: 1.5px solid var(--text);
-  font-weight: 600;
+  padding-top: 2px;
+  color: var(--text);
 }
 .cal-num {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 17px;
+  font-weight: 500;
   line-height: 1;
+  transition: background 0.2s ease;
 }
-.cal-dots {
+.cal-cell.past .cal-num {
+  color: var(--text2);
+}
+.cal-cell.out .cal-num {
+  color: var(--text3);
+  opacity: 0.6;
+}
+.cal-cell.out {
+  cursor: default;
+}
+.cal-cell.sel .cal-num {
+  background: var(--fill-4);
+  color: var(--text);
+  font-weight: 600;
+}
+.cal-cell.today .cal-num {
+  background: var(--accent);
+  color: var(--on-accent);
+  font-weight: 600;
+}
+.cal-bubbles {
   display: flex;
-  gap: 2px;
+  height: 22px;
 }
-.cal-dot {
-  width: 5px;
-  height: 5px;
+.cal-bubble {
+  position: relative;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: #1c1c1e;
+  box-shadow: 0 0 0 2px var(--card);
 }
-.cal-legend {
-  margin-top: 14px;
-  padding: 12px 8px 0;
-  border-top: var(--hair);
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px 12px;
-  justify-content: center;
-}
-.cal-legend-item {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 12px;
-  color: var(--text-soft);
-}
-.cal-legend-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
+.cal-bubble + .cal-bubble {
+  margin-left: -7px;
 }
 .day-label {
   font-size: 15px;

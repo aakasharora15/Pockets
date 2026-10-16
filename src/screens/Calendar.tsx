@@ -6,12 +6,14 @@ import { ListSkeleton } from '../components/Skeletons';
 import { useExpenses } from '../data/useExpenses';
 import { pastelFor } from '../lib/categories';
 import { currency } from '../lib/currencies';
-import { addMonths, currentMonth, dayMonth, daysInMonth, todayKey } from '../lib/dates';
+import { addMonths, currentMonth, dayMonth, daysInMonth, monthName, todayKey } from '../lib/dates';
 import { Icon } from '../lib/icons';
 import { formatMoney, formatNumber } from '../lib/money';
 import { byCategory } from '../lib/stats';
 import { useCurrentPocket, usePockets } from '../state/pockets';
 import { useUi } from '../state/ui';
+import { monthSummary } from './calendar/summary';
+import { Amount } from './home/CurrencyCards';
 import { MonthHeader } from './home/MonthHeader';
 
 const WEEKDAYS = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
@@ -59,21 +61,23 @@ export function Calendar() {
 
   const cells = useMemo(() => cellsFor(month), [month]);
 
-  const dotsFor = (key: string) => {
-    const list = byDay.get(key) ?? [];
-    const seen: string[] = [];
-    for (const e of list) {
-      const c = categoryOf(categories, e.categoryId);
-      if (c && !seen.includes(c.colour)) seen.push(c.colour);
-      if (seen.length === 3) break;
-    }
-    return seen;
+  /** Up to two categories spent on that day, biggest first, shown as small icon bubbles. */
+  const bubblesFor = (key: string) => {
+    const totals = new Map<string, number>();
+    for (const e of byDay.get(key) ?? []) totals.set(e.categoryId, (totals.get(e.categoryId) ?? 0) + e.amountMinor);
+    return [...totals.entries()]
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 2)
+      .map(([id]) => categoryOf(categories, id));
   };
 
-  const legend = useMemo(() => {
-    const used = new Set(expenses.map((e) => categoryOf(categories, e.categoryId)?.id));
-    return categories.filter((c) => used.has(c.id));
-  }, [expenses, categories]);
+  // The month at a glance, in the Pocket's main currency, with any others underneath.
+  const main = pocket.currencies[0];
+  const summary = useMemo(() => monthSummary(expenses, pocket, main, monthName(month)), [expenses, pocket, main, month]);
+  const others = pocket.currencies
+    .slice(1)
+    .map((code) => ({ code, total: expenses.filter((e) => e.currency === code).reduce((s, e) => s + e.amountMinor, 0) }))
+    .filter((o) => o.total > 0);
 
   const dayList = byDay.get(selected) ?? [];
   const dayCurrencies = pocket.currencies.filter((c) => dayList.some((e) => e.currency === c));
@@ -85,6 +89,17 @@ export function Calendar() {
       <div className="scroll cal-scroll">
         <MonthHeader month={month} onChange={setMonth} />
         <div className="card cal-card">
+          <div className="cal-summary">
+            <span className="cal-summary-label">{summary.label}</span>
+            <span className="cal-summary-amount num">
+              <span className="cur-card-sym">{currency(main).symbol}</span>
+              <Amount className="cal-summary-num" value={formatNumber(summary.amount, main, currency(main).dp)} />
+            </span>
+            <span className="cal-summary-sub">
+              {summary.sub}
+              {others.map((o) => ` · ${formatMoney(o.total, o.code)} spent`).join('')}
+            </span>
+          </div>
           <div className="cal-weekdays">
             {WEEKDAYS.map((d) => (
               <span key={d}>{d}</span>
@@ -92,40 +107,35 @@ export function Calendar() {
           </div>
           <div className="cal-grid">
             {cells.map((c) => {
-              const dots = c.inMonth ? dotsFor(c.key) : [];
+              const bubbles = c.inMonth ? bubblesFor(c.key) : [];
               const isSel = c.inMonth && c.key === selected;
               const isToday = c.inMonth && c.key === today;
+              const past = c.inMonth && c.key < today;
               return (
                 <button
                   key={c.key}
                   disabled={!c.inMonth}
-                  className={`cal-cell${c.inMonth ? '' : ' out'}${isSel ? ' sel' : ''}${isToday && !isSel ? ' today' : ''}`}
+                  className={`cal-cell${c.inMonth ? '' : ' out'}${past ? ' past' : ''}${isSel ? ' sel' : ''}${isToday ? ' today' : ''}`}
                   onClick={() => setSelected(c.key)}
                   aria-label={c.inMonth ? dayMonth(c.key) : undefined}
                   aria-pressed={isSel}
                 >
-                  <span className="cal-num" style={{ marginTop: dots.length ? 0 : 9 }}>
-                    {c.day}
-                  </span>
-                  <div className="cal-dots">
-                    {dots.map((col) => (
-                      <span key={col} className="cal-dot" style={{ background: col }} />
+                  <span className="cal-num">{c.day}</span>
+                  <span className="cal-bubbles">
+                    {bubbles.map((cat, i) => (
+                      <span
+                        key={cat?.id ?? i}
+                        className="cal-bubble"
+                        style={{ background: pastelFor(cat?.id ?? 'other', cat?.colour ?? '#9AA0AA'), zIndex: 2 - i }}
+                      >
+                        <Icon name={cat?.icon ?? 'dots-three'} weight="regular" size={12} />
+                      </span>
                     ))}
-                  </div>
+                  </span>
                 </button>
               );
             })}
           </div>
-          {legend.length > 0 && (
-            <div className="cal-legend">
-              {legend.map((c) => (
-                <div key={c.id} className="cal-legend-item">
-                  <span className="cal-legend-dot" style={{ background: c.colour }} />
-                  {c.name}
-                </div>
-              ))}
-            </div>
-          )}
         </div>
 
         {loading ? (

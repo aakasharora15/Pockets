@@ -113,7 +113,7 @@ export function CurrencyCards({
 }
 
 /** A formatted amount with its decimals dimmed: 12<dim>.50</dim>. */
-function Amount({ className, value }: { className: string; value: string }) {
+export function Amount({ className, value }: { className: string; value: string }) {
   const dot = value.lastIndexOf('.');
   if (dot < 0) return <span className={className}>{value}</span>;
   return (
