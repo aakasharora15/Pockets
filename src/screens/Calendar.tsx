@@ -1,17 +1,18 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { CardPager } from '../components/CardPager';
 import { Fades } from '../components/Chrome';
 import { categoryOf, SwipeRow, useSwipeRows } from '../components/ExpenseRow';
 import { ListSkeleton } from '../components/Skeletons';
 import { useExpenses } from '../data/useExpenses';
 import { pastelFor } from '../lib/categories';
-import { currency, type CurrencyCode } from '../lib/currencies';
+import { currency } from '../lib/currencies';
 import { addMonths, currentMonth, dayMonth, daysInMonth, monthName, todayKey } from '../lib/dates';
 import { Icon } from '../lib/icons';
 import { formatMoney, formatNumber } from '../lib/money';
 import { byCategory } from '../lib/stats';
 import { useCurrentPocket, usePockets } from '../state/pockets';
-import { useUi } from '../state/ui';
+import { useUi, useViewCurrency } from '../state/ui';
 import { monthSummary } from './calendar/summary';
 import { Amount } from './home/CurrencyCards';
 import { MonthHeader } from './home/MonthHeader';
@@ -46,6 +47,9 @@ export function Calendar() {
   const swipe = useSwipeRows(pocket.id);
   const navigate = useNavigate();
   const { expenses, loading } = useExpenses(pocket.id, month);
+  // One currency at a time, the same one Home is showing; swipe the cards at the top to change it.
+  const [code, setCode] = useViewCurrency(pocket.currencies);
+  const shown = useMemo(() => expenses.filter((e) => e.currency === code), [expenses, code]);
   const today = todayKey();
   const [selected, setSelected] = useState(month === currentMonth() ? today : `${month}-01`);
 
@@ -55,9 +59,9 @@ export function Calendar() {
 
   const byDay = useMemo(() => {
     const m = new Map<string, typeof expenses>();
-    for (const e of expenses) m.set(e.date, [...(m.get(e.date) ?? []), e]);
+    for (const e of shown) m.set(e.date, [...(m.get(e.date) ?? []), e]);
     return m;
-  }, [expenses]);
+  }, [shown]);
 
   const cells = useMemo(() => cellsFor(month), [month]);
 
@@ -71,37 +75,45 @@ export function Calendar() {
       .map(([id]) => categoryOf(categories, id));
   };
 
-  // The month at a glance, in the Pocket's main currency, with any others underneath.
-  // Opened from a currency's card on Home: that currency first.
-  const asked = (useLocation().state as { currency?: CurrencyCode } | null)?.currency;
-  const main = asked && pocket.currencies.includes(asked) ? asked : pocket.currencies[0];
-  const summary = useMemo(() => monthSummary(expenses, pocket, main, monthName(month)), [expenses, pocket, main, month]);
-  const others = pocket.currencies
-    .filter((code) => code !== main)
-    .map((code) => ({ code, total: expenses.filter((e) => e.currency === code).reduce((s, e) => s + e.amountMinor, 0) }))
-    .filter((o) => o.total > 0);
+  // The month at a glance, a card per currency to swipe between, like Home's.
+  const summaries = pocket.currencies.map((c) => {
+    const s = monthSummary(
+      expenses.filter((e) => e.currency === c),
+      pocket,
+      c,
+      monthName(month),
+    );
+    const cur = currency(c);
+    return (
+      <div key={c} className="card cal-summary">
+        <span className="cal-summary-label">
+          {cur.plural} · {s.label}
+        </span>
+        <span className="cal-summary-amount num">
+          <span className="cur-card-sym">{cur.symbol}</span>
+          <Amount className="cal-summary-num" value={formatNumber(s.amount, c, cur.dp)} />
+        </span>
+        <span className="cal-summary-sub">{s.sub}</span>
+      </div>
+    );
+  });
 
   const dayList = byDay.get(selected) ?? [];
-  const dayCurrencies = pocket.currencies.filter((c) => dayList.some((e) => e.currency === c));
-  // Expenses in a currency the Pocket no longer shows still appear in the list.
-  for (const e of dayList) if (!dayCurrencies.includes(e.currency)) dayCurrencies.push(e.currency);
+  const dayCurrencies = dayList.length ? [code] : [];
 
   return (
     <div className="screen">
       <div className="scroll cal-scroll">
         <MonthHeader month={month} onChange={setMonth} />
+        <CardPager
+          pages={summaries}
+          labels={pocket.currencies.map((c) => currency(c).plural)}
+          label="Currencies"
+          index={Math.max(0, pocket.currencies.indexOf(code))}
+          onChange={(i) => setCode(pocket.currencies[i])}
+          resetKey={pocket.id}
+        />
         <div className="card cal-card">
-          <div className="cal-summary">
-            <span className="cal-summary-label">{summary.label}</span>
-            <span className="cal-summary-amount num">
-              <span className="cur-card-sym">{currency(main).symbol}</span>
-              <Amount className="cal-summary-num" value={formatNumber(summary.amount, main, currency(main).dp)} />
-            </span>
-            <span className="cal-summary-sub">
-              {summary.sub}
-              {others.map((o) => ` · ${formatMoney(o.total, o.code)} spent`).join('')}
-            </span>
-          </div>
           <div className="cal-weekdays">
             {WEEKDAYS.map((d) => (
               <span key={d}>{d}</span>
@@ -130,7 +142,7 @@ export function Calendar() {
                         className="cal-bubble"
                         style={{ background: pastelFor(cat?.id ?? 'other', cat?.colour ?? '#9AA0AA'), zIndex: 2 - i }}
                       >
-                        <Icon name={cat?.icon ?? 'dots-three'} weight="regular" size={12} />
+                        <Icon name={cat?.icon ?? 'dots-three'} weight="bold" size={9} />
                       </span>
                     ))}
                   </span>

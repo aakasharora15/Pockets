@@ -76,16 +76,13 @@
   gap: 14px;
 }
 .cal-card {
-  padding: 18px 8px 10px;
+  padding: 16px 8px 10px;
 }
 /* The month at a glance, above the grid. */
 .cal-summary {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  padding: 0 10px 16px;
-  margin-bottom: 14px;
-  border-bottom: var(--hair);
 }
 .cal-summary-label {
   font-size: 15px;
@@ -129,7 +126,7 @@
 }
 /* A plain number, with up to two category bubbles under it. Past days greyed, today in the accent. */
 .cal-cell {
-  height: 62px;
+  height: 58px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -137,14 +134,15 @@
   padding-top: 2px;
   color: var(--text);
 }
+/* Dates lead: large and bold, easy to tap. The spending under them stays small. */
 .cal-num {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   display: grid;
   place-items: center;
-  font-size: 17px;
-  font-weight: 500;
+  font-size: 19px;
+  font-weight: 600;
   line-height: 1;
   transition: background 0.2s ease;
 }
@@ -158,32 +156,35 @@
 .cal-cell.out {
   cursor: default;
 }
-.cal-cell.sel .cal-num {
-  background: var(--fill-4);
-  color: var(--text);
-  font-weight: 600;
-}
 .cal-cell.today .cal-num {
+  color: var(--accent);
+  box-shadow: inset 0 0 0 1.5px var(--accent);
+}
+.cal-cell.sel .cal-num {
+  background: var(--inverse);
+  color: var(--on-inverse);
+  box-shadow: none;
+}
+.cal-cell.sel.today .cal-num {
   background: var(--accent);
   color: var(--on-accent);
-  font-weight: 600;
 }
 .cal-bubbles {
   display: flex;
-  height: 22px;
+  height: 15px;
 }
 .cal-bubble {
   position: relative;
-  width: 22px;
-  height: 22px;
+  width: 15px;
+  height: 15px;
   border-radius: 50%;
   display: grid;
   place-items: center;
   color: #1c1c1e;
-  box-shadow: 0 0 0 2px var(--card);
+  box-shadow: 0 0 0 1.5px var(--card);
 }
 .cal-bubble + .cal-bubble {
-  margin-left: -7px;
+  margin-left: -4px;
 }
 .day-label {
   font-size: 15px;

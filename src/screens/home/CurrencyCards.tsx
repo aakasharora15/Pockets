@@ -1,4 +1,3 @@
-import { useEffect, useRef, useState } from 'react';
 import type { Expense, PocketWithMembers } from '../../data/types';
 import { useCombined } from '../../data/useCombined';
 import { currency, type CurrencyCode } from '../../lib/currencies';
@@ -7,6 +6,7 @@ import { Icon } from '../../lib/icons';
 import { formatNumber, formatWhole, formatWholeDown } from '../../lib/money';
 import { totalIn, trend } from '../../lib/stats';
 import { useNavigate } from 'react-router-dom';
+import { CardPager } from '../../components/CardPager';
 import { useUi } from '../../state/ui';
 import { MonthDots } from './MonthDots';
 
@@ -55,7 +55,10 @@ export function CurrencyCards({
         <button
           className="month-card-tap"
           aria-label={`${c.plural}: ${c.symbol}${amount}. Open the calendar`}
-          onClick={() => navigate('/calendar', { state: { currency: code } })}
+          onClick={() => {
+            onSelect(code);
+            navigate('/calendar');
+          }}
         />
         <div className="month-card-main">
           <span className="cur-card-label">
@@ -96,77 +99,16 @@ export function CurrencyCards({
     ...pocket.currencies.map(card),
     ...(combinedCode ? [<CombinedCard key="combined" code={combinedCode} month={month} expenses={expenses} empty={empty} />] : []),
   ];
-  return <CardPager pages={pages} codes={pocket.currencies} selected={selected} onSelect={onSelect} resetKey={pocket.id} />;
-}
-
-/**
- * Swipeable pages with a page indicator: a dot per page, the one showing highlighted. Swiping to a
- * currency's page selects it; tapping a dot goes to that page.
- */
-function CardPager({
-  pages,
-  codes,
-  selected,
-  onSelect,
-  resetKey,
-}: {
-  pages: React.ReactNode[];
-  codes: CurrencyCode[];
-  selected: CurrencyCode;
-  onSelect: (c: CurrencyCode) => void;
-  resetKey: string;
-}) {
-  const track = useRef<HTMLDivElement>(null);
-  const [page, setPage] = useState(() => Math.max(0, codes.indexOf(selected)));
-  const frame = useRef(0);
-
-  // A different Pocket starts on its first page.
-  useEffect(() => {
-    track.current?.scrollTo({ left: 0 });
-    setPage(0);
-  }, [resetKey]);
-
-  const onScroll = () => {
-    cancelAnimationFrame(frame.current);
-    frame.current = requestAnimationFrame(() => {
-      const el = track.current;
-      if (!el) return;
-      const kids = [...el.children] as HTMLElement[];
-      const mid = el.scrollLeft + el.clientWidth / 2;
-      let i = 0;
-      kids.forEach((k, j) => {
-        if (Math.abs(k.offsetLeft + k.offsetWidth / 2 - mid) < Math.abs(kids[i].offsetLeft + kids[i].offsetWidth / 2 - mid)) i = j;
-      });
-      if (i === page) return;
-      setPage(i);
-      if (codes[i]) onSelect(codes[i]);
-    });
-  };
-
-  const go = (i: number) => {
-    const kid = track.current?.children[i] as HTMLElement | undefined;
-    if (kid && track.current) track.current.scrollTo({ left: kid.offsetLeft - parseFloat(getComputedStyle(track.current).paddingLeft), behavior: 'smooth' });
-  };
-
-  if (pages.length === 1) return <div className="cards-single">{pages}</div>;
+  const labels = [...pocket.currencies.map((code) => currency(code).plural), ...(combinedCode ? ['All currencies combined'] : [])];
   return (
-    <div className="cards-pager">
-      <div className="cards-track" ref={track} onScroll={onScroll}>
-        {pages}
-      </div>
-      <div className="page-dots" role="tablist" aria-label="Currencies">
-        {pages.map((_, i) => (
-          <button
-            key={i}
-            role="tab"
-            aria-selected={i === page}
-            aria-label={codes[i] ? currency(codes[i]).plural : 'All currencies combined'}
-            className={`page-dot${i === page ? ' on' : ''}`}
-            onClick={() => go(i)}
-          />
-        ))}
-      </div>
-    </div>
+    <CardPager
+      pages={pages}
+      labels={labels}
+      label="Currencies"
+      index={Math.max(0, pocket.currencies.indexOf(selected))}
+      onChange={(i) => pocket.currencies[i] && onSelect(pocket.currencies[i])}
+      resetKey={pocket.id}
+    />
   );
 }
 

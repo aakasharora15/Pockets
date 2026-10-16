@@ -25,6 +25,9 @@ interface Ui {
   sheet: ExpenseSheetRequest | null;
   openExpenseSheet: (r: ExpenseSheetRequest) => void;
   closeExpenseSheet: () => void;
+  /** The currency being looked at on Home and Calendar (swiping either changes both). */
+  viewCurrency: CurrencyCode | null;
+  setViewCurrency: (c: CurrencyCode) => void;
   /** Combined total currency per Pocket on this phone (null = off). */
   combinedFor: (pid: string) => CurrencyCode | null;
   setCombined: (pid: string, code: CurrencyCode | null) => void;
@@ -61,6 +64,7 @@ export function UiProvider({ children }: { children: ReactNode }) {
   const [toast, setToast] = useState<string | null>(null);
   const timer = useRef<number>(undefined);
   const [month, setMonth] = useState(currentMonth());
+  const [viewCurrency, setViewCurrency] = useState<CurrencyCode | null>(null);
   const [glass, setGlassState] = useState<GlassStyle>(readGlass);
   const [theme, setThemeState] = useState<ThemeSetting>(readThemeSetting);
   const [online, setOnline] = useState(navigator.onLine);
@@ -152,6 +156,8 @@ export function UiProvider({ children }: { children: ReactNode }) {
         sheet,
         openExpenseSheet: setSheet,
         closeExpenseSheet: () => setSheet(null),
+        viewCurrency,
+        setViewCurrency,
         combinedFor,
         setCombined,
         invitePocketId,
@@ -167,4 +173,10 @@ export function useUi(): Ui {
   const s = useContext(Ctx);
   if (!s) throw new Error('useUi outside UiProvider');
   return s;
+}
+
+/** The Pocket's currency being looked at: the one last swiped to, if this Pocket has it, else its main one. */
+export function useViewCurrency(currencies: CurrencyCode[]): [CurrencyCode, (c: CurrencyCode) => void] {
+  const { viewCurrency, setViewCurrency } = useUi();
+  return [viewCurrency && currencies.includes(viewCurrency) ? viewCurrency : currencies[0], setViewCurrency];
 }

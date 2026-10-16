@@ -1,16 +1,15 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AvatarStack } from '../components/Avatar';
 import { Fades } from '../components/Chrome';
 import { SwipeRow, useSwipeRows } from '../components/ExpenseRow';
 import { ListSkeleton } from '../components/Skeletons';
 import { useExpenses } from '../data/useExpenses';
-import type { CurrencyCode } from '../lib/currencies';
 import { addMonths } from '../lib/dates';
 import { Icon } from '../lib/icons';
 import { inMonth } from '../lib/stats';
 import { useCurrentPocket, usePockets } from '../state/pockets';
-import { useUi } from '../state/ui';
+import { useUi, useViewCurrency } from '../state/ui';
 import { ByPerson } from './home/ByPerson';
 import { CurrencyCards } from './home/CurrencyCards';
 import { Insight } from './home/Insight';
@@ -30,14 +29,10 @@ export function Home() {
   const { expenses: both, loading } = useExpenses(pocket.id, prev, month);
   const expenses = useMemo(() => inMonth(both, month), [both, month]);
   const prevExpenses = useMemo(() => inMonth(both, prev), [both, prev]);
-  const [cur, setCur] = useState<CurrencyCode>(pocket.currencies[0]);
+  const [cur, setCur] = useViewCurrency(pocket.currencies);
   const [switcher, setSwitcher] = useState(false);
   const [newPocket, setNewPocket] = useState(false);
   const swipe = useSwipeRows(pocket.id);
-
-  useEffect(() => {
-    if (!pocket.currencies.includes(cur)) setCur(pocket.currencies[0]);
-  }, [pocket.id, pocket.currencies.join()]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const empty = !loading && expenses.length === 0;
 
