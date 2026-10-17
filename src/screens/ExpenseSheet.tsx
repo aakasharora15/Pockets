@@ -40,7 +40,7 @@ function fitTyped(typed: string, code: CurrencyCode): string {
 export function ExpenseSheet({ request }: { request: ExpenseSheetRequest }) {
   const { user } = useMe();
   const { pockets, current, categoriesFor } = usePockets();
-  const { closeExpenseSheet, showToast } = useUi();
+  const { closeExpenseSheet, showToast, viewCurrency } = useUi();
   const editing = request.mode === 'edit' ? request : null;
   const original = editing?.expense;
 
@@ -48,7 +48,11 @@ export function ExpenseSheet({ request }: { request: ExpenseSheetRequest }) {
   const pocket = pockets.find((p) => p.id === pocketId) ?? current!;
   const categories = categoriesFor(pocket.id);
 
-  const [cur, setCur] = useState<CurrencyCode | null>(original?.currency ?? lastCurrency(pocket));
+  // A new expense starts in the currency you're looking at on Home or Calendar (else the one used last),
+  // so the keypad works straight away; the currency pills still switch it.
+  const [cur, setCur] = useState<CurrencyCode | null>(
+    original?.currency ?? (viewCurrency && pocket.currencies.includes(viewCurrency) ? viewCurrency : (lastCurrency(pocket) ?? pocket.currencies[0])),
+  );
   const [typed, setTyped] = useState(original ? minorToTyped(original.amountMinor, original.currency) : '');
   const [name, setName] = useState(original?.name ?? '');
   const [categoryId, setCategoryId] = useState<string | null>(original?.categoryId ?? null);
@@ -233,11 +237,7 @@ export function ExpenseSheet({ request }: { request: ExpenseSheetRequest }) {
         label={editing ? 'Edit expense' : 'New expense'}
         onDrag={(dir) => (dir === 'up' ? setDetent('large') : detent === 'large' && !editing ? setDetent('medium') : closeExpenseSheet())}
       >
-        <SheetHeader
-          title={editing ? 'Edit expense' : 'New expense'}
-          onCancel={closeExpenseSheet}
-          action={{ label: 'Save', onClick: save, disabled: !canSave }}
-        />
+        <SheetHeader title={editing ? 'Edit expense' : 'New expense'} onCancel={closeExpenseSheet} />
 
         <div className="cur-pills">
           {pocket.currencies.map((code) => {

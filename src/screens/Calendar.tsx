@@ -16,6 +16,7 @@ import { useUi, useViewCurrency } from '../state/ui';
 import { monthSummary } from './calendar/summary';
 import { Amount } from './home/CurrencyCards';
 import { MonthHeader } from './home/MonthHeader';
+import { firstName } from '../lib/initials';
 
 const WEEKDAYS = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
 
@@ -99,6 +100,11 @@ export function Calendar() {
   });
 
   const dayList = byDay.get(selected) ?? [];
+  const rowSub = (e: (typeof expenses)[number]) => {
+    const cat = categoryOf(categories, e.categoryId)?.name ?? 'Other';
+    const payer = pocket.type === 'shared' ? pocket.members.find((m) => m.uid === e.byUid) : undefined;
+    return payer ? `${cat} · ${firstName(payer.name)}` : cat;
+  };
   const dayCurrencies = dayList.length ? [code] : [];
 
   return (
@@ -197,7 +203,7 @@ export function Calendar() {
             })}
             <div className="list-card">
               {dayList.map((e, i) => (
-                <SwipeRow key={e.id} expense={e} categories={categories} first={i === 0} {...swipe(e)} />
+                <SwipeRow key={e.id} expense={e} categories={categories} first={i === 0} sub={rowSub(e)} {...swipe(e)} />
               ))}
             </div>
           </>

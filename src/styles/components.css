@@ -1224,6 +1224,15 @@
 .skel-card.short {
   height: 140px;
 }
+/* Category tiles take a soft tint of the category's colour, so lists scan by colour as well as icon. */
+.cat-tile.tinted {
+  background: color-mix(in srgb, var(--cat) 32%, var(--card));
+  color: color-mix(in srgb, var(--cat) 70%, #fff);
+}
+:root[data-theme='light'] .cat-tile.tinted {
+  background: color-mix(in srgb, var(--cat) 16%, #fff);
+  color: color-mix(in srgb, var(--cat) 78%, #000);
+}
 .skel-list .cat-tile {
   background: var(--fill-2);
 }

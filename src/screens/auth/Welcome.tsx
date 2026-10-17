@@ -4,9 +4,9 @@ import { Icon } from '../../lib/icons';
 import { Logo } from './Logo';
 
 const CARDS = [
-  { icon: 'lightning', title: 'Log in seconds', sub: 'Amount, category, done.', rot: 'rotate(-4deg)', mt: 0, z: 3 },
-  { icon: 'coins', title: 'Any currency', sub: 'Each expense keeps its own currency.', rot: 'none', mt: -4, z: 2 },
-  { icon: 'users-three', title: 'Share a Pocket', sub: 'Invite someone by QR code, link or code.', rot: 'rotate(4deg)', mt: -2, z: 1 },
+  { icon: 'lightning', title: 'Add an expense in seconds', sub: 'Amount, category, done.' },
+  { icon: 'coins', title: 'Any currency', sub: 'Each expense keeps its own currency.' },
+  { icon: 'users-three', title: 'Share a Pocket', sub: 'Invite someone by QR code, link or code.' },
 ];
 
 export function Welcome() {
@@ -37,7 +37,7 @@ export function Welcome() {
         <div className="welcome-sub">Track your own spending, and share a Pocket with the people you live with. In any currency.</div>
         <div className="welcome-cards">
           {CARDS.slice(0, cards).map((c) => (
-            <div key={c.title} className="welcome-card" style={{ transform: c.rot, marginTop: c.mt, zIndex: c.z }}>
+            <div key={c.title} className="welcome-card">
               <div className="welcome-tile">
                 <Icon name={c.icon} />
               </div>

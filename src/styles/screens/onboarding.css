@@ -1,7 +1,6 @@
 /* ---------- Welcome ---------- */
 .flow-body.welcome {
   padding-top: calc(var(--top) + 12px);
-  /* Room for the tilted cards' corners. */
   padding-bottom: 8px;
 }
 /* Shorter screens: tighten the welcome text (Welcome also drops cards that don't fit). */
@@ -61,6 +60,7 @@
   margin-top: 36px;
   display: flex;
   flex-direction: column;
+  gap: 10px;
 }
 .welcome-card {
   height: 76px;

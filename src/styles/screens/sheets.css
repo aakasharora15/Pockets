@@ -481,3 +481,14 @@
   inset: 0;
   z-index: 60;
 }
+
+/* Add expense is a form: solid even at half height, and its one Save stays in reach while it scrolls. */
+.sheet.half.expense-sheet {
+  background: var(--sheet-expense);
+}
+.expense-sheet .save-btn {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  box-shadow: 0 -12px 18px -6px var(--page);
+}

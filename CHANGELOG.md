@@ -4,6 +4,10 @@
 
 ### Changed
 
+- **Add expense starts ready to type.** It opens in the currency you're looking at on Home or Calendar, so the keypad works straight away; tap Pound or Rupee to switch. One Save button at the bottom, which stays in reach as the sheet scrolls, and the sheet is solid rather than see-through.
+- **Transactions reads faster.** Rows under a day show their category (and who paid, in a shared Pocket) instead of repeating the date; each day shows its total; the person filters use first names.
+- **Category colours in lists.** Expense and Where it went icons sit on a soft tint of their category's colour.
+- **Welcome screen.** "Add an expense in seconds" (not "Log in seconds", which sat above the Log in button), and the feature cards are straight.
 - **Over budget shows.** Budget bars turn amber from 85% of the budget and red once you're over, and the "over" amount is in red, on Home, in Monthly budgets and in Calendar.
 - **Tidier Home.** The Add expense, Export and Tags buttons under the Pocket card are gone (the + button adds an expense; Export and Tags live in Settings), so your totals sit higher. Currency cards just say "Pounds" or "Rupees", since the month is right above.
 - **Month arrows.** The cut-off neighbouring month names beside the month are now small arrows; swiping still works.

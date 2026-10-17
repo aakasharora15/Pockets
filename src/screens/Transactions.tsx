@@ -7,6 +7,8 @@ import type { Expense } from '../data/types';
 import { useExpenses } from '../data/useExpenses';
 import { currency, type CurrencyCode } from '../lib/currencies';
 import { groupLabel, monthYear } from '../lib/dates';
+import { firstName } from '../lib/initials';
+import { formatMoney } from '../lib/money';
 import { Icon } from '../lib/icons';
 import { useCurrentPocket, usePockets } from '../state/pockets';
 import { useUi } from '../state/ui';
@@ -25,6 +27,18 @@ export function Transactions() {
   const swipe = useSwipeRows(pocket.id);
   const searchRef = useRef<HTMLInputElement>(null);
   const shared = pocket.type === 'shared';
+  // Rows sit under their day, so they show the category (and who paid, in a shared Pocket) instead.
+  const rowSub = (e: Expense) => {
+    const cat = categoryOf(categories, e.categoryId)?.name ?? 'Other';
+    const payer = shared ? pocket.members.find((m) => m.uid === e.byUid) : undefined;
+    return payer ? `${cat} · ${firstName(payer.name)}` : cat;
+  };
+  /** "£22.65 · ₹4,500": the day's spending in each currency. */
+  const dayTotal = (items: Expense[]) => {
+    const sums = new Map<CurrencyCode, number>();
+    for (const e of items) sums.set(e.currency, (sums.get(e.currency) ?? 0) + e.amountMinor);
+    return [...sums.entries()].map(([c, v]) => formatMoney(v, c)).join(' · ');
+  };
 
   useEffect(() => {
     if (nav.search) searchRef.current?.focus();
@@ -83,7 +97,7 @@ export function Transactions() {
                 </button>
                 {pocket.members.map((m) => (
                   <button key={m.uid} className={`chip press${person === m.uid ? ' on' : ''}`} onClick={() => setPerson(m.uid)} aria-label={m.name}>
-                    {m.initials}
+                    {firstName(m.name)}
                   </button>
                 ))}
                 <div className="chip-divider" />
@@ -108,10 +122,13 @@ export function Transactions() {
         ) : (
           groups.map((g) => (
             <div key={g.day} className="tx-group">
-              <span className="tx-day">{groupLabel(g.day)}</span>
+              <div className="tx-day">
+                <span>{groupLabel(g.day)}</span>
+                <span className="tx-day-total num">{dayTotal(g.items)}</span>
+              </div>
               <div className="list-card">
                 {g.items.map((e, i) => (
-                  <SwipeRow key={e.id} expense={e} categories={categories} first={i === 0} {...swipe(e)} />
+                  <SwipeRow key={e.id} expense={e} categories={categories} first={i === 0} sub={rowSub(e)} {...swipe(e)} />
                 ))}
               </div>
             </div>

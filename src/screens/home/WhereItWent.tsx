@@ -34,7 +34,7 @@ export function WhereItWent({ expenses, code, onSeeAll }: { expenses: Expense[];
           const cat = categoryOf(categories, cid);
           return (
             <div key={cid} className="where-row">
-              <div className="cat-tile">
+              <div className="cat-tile tinted" style={{ '--cat': cat?.colour ?? '#9AA0AA' } as React.CSSProperties}>
                 <Icon name={cat?.icon ?? 'dots-three'} />
               </div>
               <div className="where-body">

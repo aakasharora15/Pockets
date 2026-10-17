@@ -59,9 +59,18 @@
   margin-top: 6px;
 }
 .tx-day {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
   font-size: 15px;
   font-weight: 600;
   padding: 0 16px;
+}
+.tx-day-total {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text2);
 }
 .empty-note {
   margin-top: 40px;

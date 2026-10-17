@@ -18,22 +18,24 @@ interface RowProps {
   onOpen: () => void;
   /** Hide the tag chip (on the tag's own page). */
   hideTag?: boolean;
+  /** Shown under the name instead of the date, where the list is already grouped by day. */
+  sub?: string;
 }
 
-/** One expense row: neutral icon tile, name, date, amount (design rows in Recent / Transactions / Calendar). */
-export function ExpenseRow({ expense, categories, first, onOpen, hideTag }: RowProps) {
+/** One expense row: icon tile in its category's colour, name, date (or `sub`), amount. */
+export function ExpenseRow({ expense, categories, first, onOpen, hideTag, sub }: RowProps) {
   const cat = categoryOf(categories, expense.categoryId);
   const waiting = useLasting(!!expense.pending, 1500);
   return (
     <button className="ex-row press-row" onClick={onOpen}>
-      <div className="cat-tile">
+      <div className="cat-tile tinted" style={{ '--cat': cat?.colour ?? '#9AA0AA' } as React.CSSProperties}>
         <Icon name={cat?.icon ?? 'dots-three'} />
       </div>
       <div className={`ex-body${first ? '' : ' sep'}`}>
         <div className="ex-text">
           <span className="ex-name">{expense.name || cat?.name || 'Expense'}</span>
           <div className="ex-meta">
-            <span>{longDate(expense.date)}</span>
+            <span>{sub ?? longDate(expense.date)}</span>
             {waiting ? (
               <span className="ex-sync">
                 <Icon name="cloud-arrow-up" weight="bold" size={13} />
