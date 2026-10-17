@@ -537,3 +537,43 @@ describe('error reports', () => {
     await assertFails(setDoc(doc(as(MEMBER), 'errors', 'r5'), report(MEMBER, { message: 'x'.repeat(501) })));
   });
 });
+
+describe('shopping list', () => {
+  const item = (by: string, extra: Record<string, unknown> = {}) => ({
+    name: 'Milk',
+    when: 'week',
+    done: false,
+    addedByUid: by,
+    createdAt: Timestamp.now(),
+    updatedAt: Timestamp.now(),
+    ...extra,
+  });
+  const ref = (uid: string | null, id: string) => doc(as(uid), 'pockets', HOME, 'shopping', id);
+
+  it('everyone in the Pocket can add, tick off, move and remove items', async () => {
+    await assertSucceeds(setDoc(ref(MEMBER, 's1'), item(MEMBER)));
+    await assertSucceeds(getDocs(collection(as(OWNER), 'pockets', HOME, 'shopping')));
+    await assertSucceeds(updateDoc(ref(OWNER, 's1'), { done: true, doneByUid: OWNER }));
+    await assertSucceeds(updateDoc(ref(MEMBER, 's1'), { when: 'month' }));
+    await assertSucceeds(deleteDoc(ref(OWNER, 's1')));
+  });
+
+  it('items are checked, and only record yourself', async () => {
+    await assertFails(setDoc(ref(MEMBER, 's2'), item(OWNER)));
+    await assertFails(setDoc(ref(MEMBER, 's3'), item(MEMBER, { name: '' })));
+    await assertFails(setDoc(ref(MEMBER, 's4'), item(MEMBER, { name: 'x'.repeat(61) })));
+    await assertFails(setDoc(ref(MEMBER, 's5'), item(MEMBER, { when: 'year' })));
+    await assertFails(setDoc(ref(MEMBER, 's6'), item(MEMBER, { done: true })));
+    await assertFails(setDoc(ref(MEMBER, 's7'), item(MEMBER, { price: 3 })));
+    await assertSucceeds(setDoc(ref(MEMBER, 's8'), item(MEMBER)));
+    await assertFails(updateDoc(ref(MEMBER, 's8'), { done: true, doneByUid: OWNER }));
+    await assertFails(updateDoc(ref(OWNER, 's8'), { addedByUid: OWNER }));
+  });
+
+  it('people outside the Pocket cannot see or change the list', async () => {
+    await assertSucceeds(setDoc(ref(MEMBER, 's9'), item(MEMBER)));
+    await assertFails(getDocs(collection(as(STRANGER), 'pockets', HOME, 'shopping')));
+    await assertFails(setDoc(ref(STRANGER, 's10'), item(STRANGER)));
+    await assertFails(deleteDoc(ref(STRANGER, 's9')));
+  });
+});

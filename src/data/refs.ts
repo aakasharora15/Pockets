@@ -13,6 +13,8 @@ export const recurringCol = (pid: string) => collection(db, 'pockets', pid, 'rec
 export const recurringRef = (pid: string, rid: string) => doc(db, 'pockets', pid, 'recurring', rid);
 export const receiptsCol = (pid: string) => collection(db, 'pockets', pid, 'receipts');
 export const receiptRef = (pid: string, eid: string) => doc(db, 'pockets', pid, 'receipts', eid);
+export const shoppingCol = (pid: string) => collection(db, 'pockets', pid, 'shopping');
+export const shoppingRef = (pid: string, iid: string) => doc(db, 'pockets', pid, 'shopping', iid);
 export const invitesCol = () => collection(db, 'invites');
 export const inviteRef = (code: string) => doc(db, 'invites', code);
 

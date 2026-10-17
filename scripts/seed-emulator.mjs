@@ -194,6 +194,26 @@ await env.withSecurityRulesDisabled(async (ctx) => {
     createdAt: now,
     updatedAt: now,
   });
+  // A shared shopping list in Home.
+  const shop = [
+    ['Milk', 'week', false, ps],
+    ['Eggs', 'week', false, aa],
+    ['Basmati rice', 'week', false, ps],
+    ['Washing-up liquid', 'week', true, aa],
+    ['Bin bags', 'month', false, aa],
+    ['Light bulbs', 'month', false, ps],
+  ];
+  for (const [i, [name, when, done, by]] of shop.entries()) {
+    await setDoc(doc(db, 'pockets', 'home', 'shopping', `s${i + 1}`), {
+      name,
+      when,
+      done,
+      addedByUid: by,
+      ...(done ? { doneByUid: ps } : {}),
+      createdAt: Timestamp.fromMillis(now.toMillis() + i),
+      updatedAt: now,
+    });
+  }
 });
 await env.cleanup();
 console.log(`Seeded ${month} and ${prev}. Log in as prernaa@example.com / password123`);

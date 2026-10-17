@@ -113,3 +113,22 @@ test('shows the preview from Welcome and ends on Create account', async ({ page 
   await page.getByRole('button', { name: 'Create account' }).click();
   await expect(page).toHaveURL(/\/signup$/);
 });
+
+test('shares a shopping list: add, tick off, then log it as an expense', async ({ page }) => {
+  await signIn(page, 'prernaa@example.com');
+  await page.locator('.shop-card').click();
+  await expect(page.locator('.page-title')).toHaveText('To buy');
+  await page.getByLabel('Add an item').fill('Coriander');
+  await page.getByLabel('Add an item').press('Enter');
+  const item = page.getByRole('checkbox', { name: 'Coriander' });
+  await expect(item).toHaveAttribute('aria-checked', 'false');
+  await item.click();
+  await expect(item).toHaveAttribute('aria-checked', 'true');
+  await page.locator('.shop-row.done', { hasText: 'Coriander' }).getByRole('button', { name: 'Add expense' }).click();
+  const sheet = page.locator('.expense-sheet');
+  await expect(sheet).toBeVisible();
+  // Type the price; Save then asks for a category, with the name already filled in.
+  await sheet.locator('.amount-key[aria-label="3"]').click();
+  await sheet.getByRole('button', { name: 'Save expense' }).click();
+  await expect(sheet.getByLabel('What was it for?')).toHaveValue('Coriander');
+});

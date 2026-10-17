@@ -14,6 +14,7 @@ import { ByPerson } from './home/ByPerson';
 import { CurrencyCards } from './home/CurrencyCards';
 import { Insight } from './home/Insight';
 import { MonthHeader } from './home/MonthHeader';
+import { ShoppingCard } from './home/ShoppingCard';
 import { WeeklySpend } from './home/WeeklySpend';
 import { WhereItWent } from './home/WhereItWent';
 import { NewPocketSheet } from './pockets/NewPocketSheet';
@@ -42,6 +43,7 @@ export function Home() {
         <PocketDeck onOpenMenu={() => setSwitcher(true)} onMore={() => setSwitcher(true)} />
         <MonthHeader month={month} onChange={setMonth} />
         <CurrencyCards pocket={pocket} month={month} expenses={expenses} prevExpenses={prevExpenses} empty={empty} selected={cur} onSelect={setCur} />
+        <ShoppingCard pocket={pocket} />
         {loading ? (
           <>
             <div className="skel skel-card" />

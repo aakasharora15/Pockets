@@ -236,6 +236,29 @@ service cloud.firestore {
         allow create, update: if isMember(pid) && validRecurring(request.resource.data);
       }
 
+      // ---------- shopping list ----------
+      // Shared by everyone in the Pocket: anyone can add, tick off, rename or remove an item.
+
+      function validShopping(d) {
+        return d.keys().hasOnly(['name', 'when', 'done', 'addedByUid', 'doneByUid', 'createdAt', 'updatedAt'])
+          && isName(d.name)
+          && d.when in ['week', 'month']
+          && d.done is bool
+          && d.addedByUid is string
+          && (!('doneByUid' in d) || d.doneByUid is string);
+      }
+
+      match /shopping/{iid} {
+        allow read, delete: if isMember(pid);
+        allow create: if isMember(pid) && validShopping(request.resource.data)
+          && request.resource.data.addedByUid == me()
+          && request.resource.data.done == false && !('doneByUid' in request.resource.data);
+        allow update: if isMember(pid) && validShopping(request.resource.data)
+          && request.resource.data.addedByUid == resource.data.addedByUid
+          // Ticking an item off records who did it, and only as yourself.
+          && (!('doneByUid' in changes()) || !('doneByUid' in request.resource.data) || request.resource.data.doneByUid == me());
+      }
+
       // ---------- receipt photos ----------
       // One compressed JPEG per expense, kept out of the expense document so lists stay light.
 

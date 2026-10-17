@@ -74,6 +74,22 @@ export interface Expense {
   pending?: boolean;
 }
 
+/** When a shopping list item is needed: this week or some time this month. */
+export type ShoppingWhen = 'week' | 'month';
+
+/** One thing to buy on a Pocket's shared list. */
+export interface ShoppingItem {
+  id: string;
+  name: string;
+  when: ShoppingWhen;
+  done: boolean;
+  addedByUid: string;
+  /** Who ticked it off, while it's done. */
+  doneByUid?: string;
+  createdAt: Timestamp | null;
+  updatedAt: Timestamp | null;
+}
+
 /** A monthly repeat: logged on `day` each month (the last day in shorter months). */
 export interface Recurring {
   id: string;

@@ -33,6 +33,7 @@ const Budgets = lazyScreen(() => import('./screens/settings/Budgets'), 'Budgets'
 const Categories = lazyScreen(() => import('./screens/settings/Categories'), 'Categories');
 const Currencies = lazyScreen(() => import('./screens/settings/Currencies'), 'Currencies');
 const Recurring = lazyScreen(() => import('./screens/settings/Recurring'), 'Recurring');
+const Shopping = lazyScreen(() => import('./screens/Shopping'), 'Shopping');
 const Settings = lazyScreen(() => import('./screens/settings/Settings'), 'Settings');
 const Tags = lazyScreen(() => import('./screens/tags/Tags'), 'Tags');
 const TagView = lazyScreen(() => import('./screens/tags/TagView'), 'TagView');
@@ -166,6 +167,7 @@ function MainRoutes() {
               <Route path="/calendar" element={<Calendar />} />
               <Route path="/settings" element={<Settings />} />
             </Route>
+            <Route path="/list" element={<Shopping />} />
             <Route path="/settings/people" element={<People />} />
             <Route path="/settings/currencies" element={<Currencies />} />
             <Route path="/settings/budgets" element={<Budgets />} />

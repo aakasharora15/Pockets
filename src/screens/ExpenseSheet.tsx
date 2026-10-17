@@ -55,7 +55,7 @@ export function ExpenseSheet({ request }: { request: ExpenseSheetRequest }) {
     original?.currency ?? (viewCurrency && pocket.currencies.includes(viewCurrency) ? viewCurrency : (lastCurrency(pocket) ?? pocket.currencies[0])),
   );
   const [typed, setTyped] = useState(original ? minorToTyped(original.amountMinor, original.currency) : '');
-  const [name, setName] = useState(original?.name ?? '');
+  const [name, setName] = useState(original?.name ?? (request.mode === 'new' ? (request.name ?? '') : ''));
   const [categoryId, setCategoryId] = useState<string | null>(original?.categoryId ?? null);
   // Who paid: the person this expense counts against in a shared Pocket.
   const [who, setWho] = useState(original?.byUid ?? user.uid);
