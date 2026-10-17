@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import type { Category, Expense, Member } from '../../data/types';
 import { expensesToCsv } from '../csv';
 import { addMonths, daysInMonth, groupLabel, longDate, monthShort, sheetDateLabel, toDayKey, weekdayDate } from '../dates';
@@ -54,6 +54,17 @@ describe('money', () => {
     expect(typedToMinor('8.45', 'GBP')).toBe(845);
     expect(typedToMinor('2999', 'INR')).toBe(299900);
     expect(typedToMinor('', 'GBP')).toBe(0);
+  });
+  it('currencies without decimals: whole amounts only, still stored in hundredths', () => {
+    expect(pressKey('1500', '.', 'JPY')).toBe('1500');
+    expect(typedToMinor('1500', 'JPY')).toBe(150000);
+    expect(formatMoney(150000, 'JPY')).toBe('¥1,500');
+    expect(formatMoney(1234500, 'KRW')).toBe('₩12,345');
+    expect(formatWhole(150000, 'JPY')).toBe('¥1,500');
+  });
+  it('letter symbols get a space', () => {
+    expect(formatMoney(1250, 'CHF')).toBe('CHF\u00a012.50');
+    expect(formatMoney(1250, 'AED')).toBe('AED\u00a012.50');
   });
   it('shows typed amounts with grouping', () => {
     expect(displayTyped('2999', 'INR')).toBe('2,999');
@@ -149,5 +160,25 @@ describe('csv', () => {
     expect(lines[0]).toBe('date,name,category,currency,amount,paid by,note,tag,repeats monthly');
     expect(lines[1]).toBe("2026-09-01,'=SUM(A1),Other,INR,4500,TR,,,");
     expect(lines[2]).toBe('2026-09-18,"Tesco, weekly",Groceries,GBP,86.40,Prernaa Singh,"Big ""shop""",Goa trip,yes');
+  });
+});
+
+describe("numbers in the phone's style", () => {
+  it('a German phone writes euros as 1.234,56 € and types with a comma', async () => {
+    vi.resetModules();
+    vi.stubGlobal('navigator', { languages: ['de-DE'], language: 'de-DE' });
+    const money = await import('../money');
+    expect(money.formatMoney(123456, 'EUR')).toBe('1.234,56\u00a0€');
+    expect(money.displayTyped('1234.5', 'EUR')).toBe('1.234,5');
+    vi.unstubAllGlobals();
+    vi.resetModules();
+  });
+  it('an English phone keeps lakh grouping for rupees', async () => {
+    vi.resetModules();
+    vi.stubGlobal('navigator', { languages: ['en-GB'], language: 'en-GB' });
+    const money = await import('../money');
+    expect(money.formatMoney(28060000, 'INR')).toBe('₹2,80,600');
+    vi.unstubAllGlobals();
+    vi.resetModules();
   });
 });

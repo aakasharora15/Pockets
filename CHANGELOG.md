@@ -2,6 +2,13 @@
 
 ## Unreleased
 
+### Added
+
+- **25 more currencies, 33 in all.** Europe: Swiss franc, Swedish, Norwegian and Danish krone/krona, Polish złoty, Czech koruna, Hungarian forint, Romanian leu, Turkish lira. Asia and the Gulf: Japanese yen, Chinese yuan, Hong Kong and New Taiwan dollars, South Korean won, Thai baht, Malaysian ringgit, Indonesian rupiah, Philippine peso, Vietnamese đồng, UAE dirham, Saudi riyal, and the Pakistani, Sri Lankan and Nepalese rupees and Bangladeshi taka. Yen, won, đồng, rupiah and forint take whole amounts only.
+- **Numbers in your phone's style.** On a phone set to another language, amounts follow its conventions: 1.234,56 € in German, with a comma on the keypad. English phones look as before, rupees still in lakhs.
+- **Easier currency choice.** The currency list has a search box, puts your currencies and your phone's local currency first, and setup starts with the local currency already ticked.
+- The combined total says which currencies it can't include when no daily exchange rate is published for them (đồng, dirham and a few others).
+
 ### Changed
 
 - **Add expense starts ready to type.** It opens in the currency you're looking at on Home or Calendar, so the keypad works straight away; tap Pound or Rupee to switch. One Save button at the bottom, which stays in reach as the sheet scrolls, and the sheet is solid rather than see-through.

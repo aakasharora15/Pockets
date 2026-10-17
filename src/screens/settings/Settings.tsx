@@ -280,13 +280,15 @@ export function Settings() {
           title="Combined total"
           message="Adds a card on Home with everything converted into one currency, each expense at its own day's exchange rate. Your separate totals don't change. Set on this phone only."
           actions={[
-            ...pocket.currencies.map((c) => ({
-              label: `${combined === c ? '✓ ' : ''}Show all in ${currency(c).plural.toLowerCase()} (${currency(c).symbol})`,
-              onClick: () => {
-                setCombined(pocket.id, c);
-                setSheet(null);
-              },
-            })),
+            ...pocket.currencies
+              .filter((c) => currency(c).rates)
+              .map((c) => ({
+                label: `${combined === c ? '✓ ' : ''}Show all in ${currency(c).plural.toLowerCase()} (${currency(c).symbol})`,
+                onClick: () => {
+                  setCombined(pocket.id, c);
+                  setSheet(null);
+                },
+              })),
             ...(combined
               ? [
                   {

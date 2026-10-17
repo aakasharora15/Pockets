@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Avatar } from '../../components/Avatar';
 import { BackButton } from '../../components/Chrome';
 import { completeSetup } from '../../data/pockets';
-import { CURRENCIES, type CurrencyCode } from '../../lib/currencies';
+import { CurrencyList } from '../../components/CurrencyList';
+import { suggestedCurrency, type CurrencyCode } from '../../lib/currencies';
 import { Icon } from '../../lib/icons';
 import { firstName, initialsFor } from '../../lib/initials';
 import { useLock } from '../../state/lock';
@@ -48,7 +49,9 @@ function loadDraft(fallbackName: string): Draft {
   } catch {
     /* ignore */
   }
-  return { step: 1, name: fallbackName, currencies: [], start: invited ? 'join' : 'personal', pocketName: 'Home', keepPersonal: false };
+  // The phone's local currency starts ticked; one tap to change.
+  const local = suggestedCurrency();
+  return { step: 1, name: fallbackName, currencies: local ? [local] : [], start: invited ? 'join' : 'personal', pocketName: 'Home', keepPersonal: false };
 }
 
 /** First-run setup: name → currencies → app PIN → just me, create or join a shared Pocket. */
@@ -172,32 +175,16 @@ export function Setup() {
             <span className="flow-sub">Pick one or more. The first one you pick is your main currency.</span>
           </div>
           <div className="setup-list">
-            <div className="group-card">
-              {CURRENCIES.map((c, i) => {
-                const on = draft.currencies.includes(c.code);
-                const main = draft.currencies[0] === c.code;
-                return (
-                  <button
-                    key={c.code}
-                    className="cur-row"
-                    aria-pressed={on}
-                    onClick={() =>
-                      setDraft((d) => ({
-                        ...d,
-                        currencies: on ? d.currencies.filter((x) => x !== c.code) : [...d.currencies, c.code],
-                      }))
-                    }
-                  >
-                    <div className="symbol-tile">{c.symbol}</div>
-                    <div className={`cur-body${i ? ' sep' : ''}`}>
-                      <span className="cur-name">{c.name}</span>
-                      {main && <span className="badge">Main</span>}
-                      <span className={`check-circle${on ? ' on' : ''}`}>{on && <Icon name="check" weight="bold" />}</span>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
+            <CurrencyList
+              mainBadge
+              selected={draft.currencies}
+              onToggle={(code) =>
+                setDraft((d) => ({
+                  ...d,
+                  currencies: d.currencies.includes(code) ? d.currencies.filter((x) => x !== code) : [...d.currencies, code],
+                }))
+              }
+            />
           </div>
           <button className="primary-btn bottom-primary press" disabled={draft.currencies.length === 0} onClick={() => go(pinState === 'unlocked' ? 4 : 3)}>
             {draft.currencies.length ? `Continue · ${draft.currencies.length} selected` : 'Continue'}

@@ -79,8 +79,8 @@ export function PinDots({ filled, error }: { filled: number; error?: boolean }) 
   );
 }
 
-/** Glass amount keypad (expense sheet). "." is hidden for currencies without decimals (₹). */
-export function AmountPad({ onKey: send, decimals }: { onKey: (k: string) => void; decimals: boolean }) {
+/** Glass amount keypad (expense sheet). The decimal key shows the phone's sign ("." or ","), and is hidden for currencies without decimals (¥). */
+export function AmountPad({ onKey: send, decimals, decimalSign = '.' }: { onKey: (k: string) => void; decimals: boolean; decimalSign?: string }) {
   const onKey = (k: string) => {
     tap();
     send(k);
@@ -98,7 +98,7 @@ export function AmountPad({ onKey: send, decimals }: { onKey: (k: string) => voi
           );
         return (
           <Key key={k} className="amount-key" label={k === '.' ? 'Decimal point' : k} onPress={() => onKey(k)}>
-            {k}
+            {k === '.' ? decimalSign : k}
           </Key>
         );
       })}

@@ -17,6 +17,7 @@ import { ReceiptViewer } from './ReceiptViewer';
 import { usePockets } from '../state/pockets';
 import { useMe } from '../state/session';
 import { useUi, type ExpenseSheetRequest } from '../state/ui';
+import { decimalSign, symbolAfter } from '../lib/locale';
 
 const lastCurrencyKey = (pid: string) => `spendr.lastCurrency.${pid}`;
 
@@ -259,7 +260,11 @@ export function ExpenseSheet({ request }: { request: ExpenseSheetRequest }) {
           })}
         </div>
 
-        <button className={`amount num${typed ? '' : ' placeholder'}`} onClick={() => setDetent('medium')} aria-label="Amount">
+        <button
+          className={`amount num${typed ? '' : ' placeholder'}${cur && symbolAfter(cur) ? ' sym-after' : ''}`}
+          onClick={() => setDetent('medium')}
+          aria-label="Amount"
+        >
           <span className="amount-sym">{typed && cur ? currency(cur).symbol : ''}</span>
           <span className="amount-num">{cur ? displayTyped(typed, cur) : '0'}</span>
           {detent === 'medium' && <span className="caret-bar" />}
@@ -270,6 +275,7 @@ export function ExpenseSheet({ request }: { request: ExpenseSheetRequest }) {
             <div className="amount-hint">{cur ? '' : hint}</div>
             <AmountPad
               decimals={!cur || currency(cur).dp > 0}
+              decimalSign={cur ? decimalSign(cur) : '.'}
               onKey={(k) => {
                 if (!cur) return;
                 setTyped((t) => pressKey(t, k, cur));

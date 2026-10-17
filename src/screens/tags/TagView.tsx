@@ -14,6 +14,7 @@ import { formatMoney, formatNumber } from '../../lib/money';
 import { byCategory, totalIn } from '../../lib/stats';
 import { useCurrentPocket, usePockets } from '../../state/pockets';
 import { useUi } from '../../state/ui';
+import { symbolAfter } from '../../lib/locale';
 
 /** One tag (often a trip): totals per currency, by category, and every expense with the tag. */
 export function TagView() {
@@ -88,7 +89,7 @@ export function TagView() {
               {codes.map((code) => (
                 <div key={code} className="card tag-total">
                   <span className="tag-total-label">In {currency(code).plural.toLowerCase()}</span>
-                  <div className="tag-total-amount num">
+                  <div className={`tag-total-amount num${symbolAfter(code) ? ' sym-after' : ''}`}>
                     <span className="tag-total-sym">{currency(code).symbol}</span>
                     <span className="tag-total-num">{formatNumber(totalIn(expenses, code), code, code === 'INR' ? 0 : undefined)}</span>
                   </div>

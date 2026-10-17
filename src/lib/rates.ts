@@ -96,7 +96,8 @@ export async function monthRates(base: CurrencyCode, month: string): Promise<Dai
 }
 
 async function fetchRates(base: CurrencyCode, from: string, to: string): Promise<DailyRates> {
-  const quotes = CURRENCIES.map((c) => c.code).filter((c) => c !== base);
+  // Only currencies with a published daily rate; others count as missing rather than failing the lot.
+  const quotes = CURRENCIES.filter((c) => c.rates && c.code !== base).map((c) => c.code);
   const url = `${API}?from=${from}&to=${to}&base=${base}&quotes=${quotes.join(',')}`;
   const res = await fetch(url, { headers: { Accept: 'application/json' } });
   if (!res.ok) throw new Error(`Rates ${res.status}`);

@@ -55,7 +55,8 @@ service cloud.firestore {
       return v is string && v.size() > 0 && v.size() <= 4;
     }
     function currencyCodes() {
-      return ['GBP', 'INR', 'USD', 'EUR', 'AUD', 'CAD', 'SGD', 'NZD'];
+      return ['GBP', 'INR', 'USD', 'EUR', 'AUD', 'CAD', 'SGD', 'NZD', 'CHF', 'SEK', 'NOK', 'DKK', 'PLN', 'CZK', 'HUF', 'RON', 'TRY',
+              'JPY', 'CNY', 'HKD', 'KRW', 'TWD', 'THB', 'MYR', 'IDR', 'PHP', 'VND', 'AED', 'SAR', 'PKR', 'BDT', 'LKR', 'NPR'];
     }
     function isTag(v) {
       return v is string && v.size() > 0 && v.size() <= 40;

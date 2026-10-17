@@ -17,6 +17,7 @@ import { monthSummary } from './calendar/summary';
 import { Amount } from './home/CurrencyCards';
 import { MonthHeader } from './home/MonthHeader';
 import { firstName } from '../lib/initials';
+import { symbolAfter } from '../lib/locale';
 
 const WEEKDAYS = ['MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT', 'SUN'];
 
@@ -90,9 +91,9 @@ export function Calendar() {
         <span className={`cal-summary-label${s.over ? ' budget-over' : ''}`}>
           {cur.plural} · {s.label}
         </span>
-        <span className="cal-summary-amount num">
+        <span className={`cal-summary-amount num${symbolAfter(c) ? ' sym-after' : ''}`}>
           <span className="cur-card-sym">{cur.symbol}</span>
-          <Amount className="cal-summary-num" value={formatNumber(s.amount, c, cur.dp)} />
+          <Amount className="cal-summary-num" value={formatNumber(s.amount, c, cur.dp)} code={c} />
         </span>
         <span className="cal-summary-sub">{s.sub}</span>
       </div>
@@ -177,7 +178,7 @@ export function Calendar() {
               return (
                 <div key={code} className="card">
                   <div className="day-label">Spent on {dayMonth(selected)}</div>
-                  <div className="day-amount num">
+                  <div className={`day-amount num${symbolAfter(code) ? ' sym-after' : ''}`}>
                     <span className="day-sym">{currency(code).symbol}</span>
                     <span className="day-num">{formatNumber(total, code)}</span>
                   </div>

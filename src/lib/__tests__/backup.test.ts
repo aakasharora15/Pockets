@@ -31,7 +31,7 @@ const good = {
           tag: 'India Dec 2026',
         },
         { id: 'bad/id', currency: 'GBP', amountMinor: 100, name: 'x', categoryId: 'other', byUid: 'u1', byInitials: 'PS', date: '2026-09-18' },
-        { id: 'e3', currency: 'AED', amountMinor: 100, name: 'x', categoryId: 'other', byUid: 'u1', byInitials: 'PS', date: '2026-09-18' },
+        { id: 'e3', currency: 'XYZ', amountMinor: 100, name: 'x', categoryId: 'other', byUid: 'u1', byInitials: 'PS', date: '2026-09-18' },
         { id: 'e4', currency: 'GBP', amountMinor: 12.5, name: 'x', categoryId: 'other', byUid: 'u1', byInitials: 'PS', date: '2026-09-18' },
       ],
       recurring: [

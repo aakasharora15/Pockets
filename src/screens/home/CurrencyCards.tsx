@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import { CardPager } from '../../components/CardPager';
 import { useUi } from '../../state/ui';
 import { MonthDots } from './MonthDots';
+import { decimalSign, symbolAfter, withSymbol } from '../../lib/locale';
 
 /**
  * Month totals, one card per currency: the total, how it compares with last month and the budget on
@@ -54,7 +55,7 @@ export function CurrencyCards({
       <div key={code} className="cur-card month-card">
         <button
           className="month-card-tap"
-          aria-label={`${c.plural}: ${c.symbol}${amount}. Open the calendar`}
+          aria-label={`${c.plural}: ${withSymbol(code, amount)}. Open the calendar`}
           onClick={() => {
             onSelect(code);
             navigate('/calendar');
@@ -62,9 +63,9 @@ export function CurrencyCards({
         />
         <div className="month-card-main">
           <span className="cur-card-label">{c.plural}</span>
-          <div className="cur-card-amount num">
+          <div className={`cur-card-amount num${symbolAfter(code) ? ' sym-after' : ''}`}>
             <span className="cur-card-sym">{c.symbol}</span>
-            <Amount className={`cur-card-num${fit}`} value={amount} />
+            <Amount className={`cur-card-num${fit}`} value={amount} code={code} />
           </div>
           {!empty && t !== null && t !== 0 && (
             <div className="trend" style={{ color: t < 0 ? 'var(--good)' : 'var(--bad)' }}>
@@ -118,8 +119,8 @@ export function CurrencyCards({
 }
 
 /** A formatted amount with its decimals dimmed: 12<dim>.50</dim>. */
-export function Amount({ className, value }: { className: string; value: string }) {
-  const dot = value.lastIndexOf('.');
+export function Amount({ className, value, code }: { className: string; value: string; code: string }) {
+  const dot = value.lastIndexOf(decimalSign(code));
   if (dot < 0) return <span className={className}>{value}</span>;
   return (
     <span className={className}>
@@ -136,16 +137,21 @@ function CombinedCard({ code, expenses, empty }: { code: CurrencyCode; expenses:
   const others = expenses.some((e) => e.currency !== code);
   let note = 'Each expense at its own day’s rate';
   if (error) note = 'Needs a connection to get exchange rates';
-  else if (missing) note = `${missing} not included yet: no rate for their date`;
-  else if (!others && !empty) note = `Everything this month is in ${c.plural.toLowerCase()}`;
+  else if (missing) {
+    // Some currencies have no published daily rate at all; say which, rather than "not yet".
+    const noRate = [...new Set(expenses.map((e) => e.currency))].filter((x) => x !== code && !currency(x).rates);
+    note = noRate.length
+      ? `${noRate.map((x) => currency(x).plural).join(' and ')} not included: no daily exchange rate is published`
+      : `${missing} not included yet: no rate for their date`;
+  } else if (!others && !empty) note = `Everything this month is in ${c.plural.toLowerCase()}`;
   return (
     <div className="cur-card combined-card">
       <div className="cur-card-head">
         <span className="cur-card-label">All in {c.plural.toLowerCase()}</span>
       </div>
-      <div className={`cur-card-amount num${loading && !empty ? ' loading' : ''}`}>
+      <div className={`cur-card-amount num${loading && !empty ? ' loading' : ''}${symbolAfter(code) ? ' sym-after' : ''}`}>
         <span className="cur-card-sym">≈{c.symbol}</span>
-        <Amount className="cur-card-num" value={formatNumber(empty || error ? 0 : total, code, c.dp)} />
+        <Amount className="cur-card-num" value={formatNumber(empty || error ? 0 : total, code, c.dp)} code={code} />
       </div>
       <span className="budget-text">{note}</span>
     </div>

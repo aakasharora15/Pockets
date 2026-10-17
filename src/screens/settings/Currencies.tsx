@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { BackButton } from '../../components/Chrome';
 import { updatePocket } from '../../data/pockets';
-import { CURRENCIES, type CurrencyCode } from '../../lib/currencies';
-import { Icon } from '../../lib/icons';
+import { CurrencyList } from '../../components/CurrencyList';
+import type { CurrencyCode } from '../../lib/currencies';
 import { useCurrentPocket } from '../../state/pockets';
 import { useMe } from '../../state/session';
 import { useUi } from '../../state/ui';
@@ -39,21 +39,7 @@ export function Currencies() {
           <span className="page-title">Currencies</span>
           <span className="page-sub">Choose the currencies {who}. Only these appear on Home, in New expense and in filters.</span>
         </div>
-        <div className="group-card shadow">
-          {CURRENCIES.map((c, i) => {
-            const on = pocket.currencies.includes(c.code);
-            return (
-              <button key={c.code} className="cur-row press-row" aria-pressed={on} disabled={!isOwner} onClick={() => toggle(c.code)}>
-                <div className="symbol-tile settings-symbol">{c.symbol}</div>
-                <div className={`cur-body${i ? ' sep' : ''}`}>
-                  <span className="cur-name">{c.name}</span>
-                  <span className="cur-code">{c.code}</span>
-                  {on && <Icon name="check" weight="bold" size={18} color="var(--accent)" />}
-                </div>
-              </button>
-            );
-          })}
-        </div>
+        <CurrencyList selected={pocket.currencies} onToggle={(code) => void toggle(code)} disabled={!isOwner} />
         <div className="footnote">
           {phones}Turning a currency off hides it; its expenses stay in your history and exports. At least one must stay on.
           {!isOwner && ' Only the owner can change these.'}

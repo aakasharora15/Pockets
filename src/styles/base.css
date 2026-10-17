@@ -295,3 +295,12 @@ textarea::placeholder {
   -webkit-mask-image: linear-gradient(180deg, #000 85%, transparent);
   mask-image: linear-gradient(180deg, #000 85%, transparent);
 }
+
+/* Where the phone writes the symbol after the number (1.234,56 €), big amounts follow suit. */
+.sym-after > :first-child {
+  order: 3;
+  margin-left: 0.18em;
+}
+.sym-after > .caret-bar {
+  order: 2;
+}

@@ -152,7 +152,11 @@ describe('pockets', () => {
   });
 
   it('rejects unknown currencies', async () => {
-    await assertFails(updateDoc(doc(as(OWNER), 'pockets', HOME), { currencies: ['AED'] }));
+    await assertFails(updateDoc(doc(as(OWNER), 'pockets', HOME), { currencies: ['XYZ'] }));
+  });
+
+  it('accepts the newer currencies (yen, dirham)', async () => {
+    await assertSucceeds(updateDoc(doc(as(OWNER), 'pockets', HOME), { currencies: ['GBP', 'JPY', 'AED'] }));
   });
 
   it('any member can set budgets', async () => {
@@ -275,7 +279,7 @@ describe('expenses', () => {
     const db = as(OWNER);
     await assertFails(setDoc(doc(db, 'pockets', HOME, 'expenses', 'x1'), expense({ amountMinor: 12.5 })));
     await assertFails(setDoc(doc(db, 'pockets', HOME, 'expenses', 'x2'), expense({ amountMinor: 0 })));
-    await assertFails(setDoc(doc(db, 'pockets', HOME, 'expenses', 'x3'), expense({ currency: 'AED' })));
+    await assertFails(setDoc(doc(db, 'pockets', HOME, 'expenses', 'x3'), expense({ currency: 'XYZ' })));
     await assertFails(setDoc(doc(db, 'pockets', HOME, 'expenses', 'x4'), expense({ date: '18/09/2026' })));
   });
 });

@@ -1,8 +1,9 @@
 import { currency, minorFactor } from './currencies';
+import { decimalSign, numberLocale, withSymbol } from './locale';
 
 /**
  * Money is always stored as integer minor units, a hundredth of the main unit (pence, paise,
- * cents). Totals are per currency and never mixed.
+ * cents), even for currencies shown without decimals. Totals are per currency and never mixed.
  */
 
 const formatters = new Map<string, Intl.NumberFormat>();
@@ -11,7 +12,7 @@ function numberFormat(code: string, dp: number): Intl.NumberFormat {
   const key = `${code}:${dp}`;
   let f = formatters.get(key);
   if (!f) {
-    f = new Intl.NumberFormat(currency(code).locale, { minimumFractionDigits: dp, maximumFractionDigits: dp });
+    f = new Intl.NumberFormat(numberLocale(code), { minimumFractionDigits: dp, maximumFractionDigits: dp });
     formatters.set(key, f);
   }
   return f;
@@ -28,19 +29,19 @@ export function formatNumber(minor: number, code: string, dp = shownDp(minor, co
   return numberFormat(code, dp).format(minor / minorFactor(code));
 }
 
-/** "£2,486.50", "₹18,299". */
+/** "£2,486.50", "₹18,299", or "2.486,50 €" on a German phone. */
 export function formatMoney(minor: number, code: string): string {
-  return currency(code).symbol + formatNumber(minor, code);
+  return withSymbol(code, formatNumber(minor, code));
 }
 
 /** Rounded to whole units: "£714", "₹18,299". */
 export function formatWhole(minor: number, code: string): string {
-  return currency(code).symbol + formatNumber(Math.round(minor / minorFactor(code)) * minorFactor(code), code, 0);
+  return withSymbol(code, formatNumber(Math.round(minor / minorFactor(code)) * minorFactor(code), code, 0));
 }
 
 /** Whole units, rounded down so spending is never overstated: £2,486.50 → "£2,486". */
 export function formatWholeDown(minor: number, code: string): string {
-  return currency(code).symbol + formatNumber(Math.floor(minor / minorFactor(code)) * minorFactor(code), code, 0);
+  return withSymbol(code, formatNumber(Math.floor(minor / minorFactor(code)) * minorFactor(code), code, 0));
 }
 
 /** Short label for chart bars: "£653", "₹4.5k". */
@@ -50,7 +51,7 @@ export function formatShort(minor: number, code: string): string {
   if (c.code === 'INR') {
     return major >= 1000 ? `₹${Math.round(major / 100) / 10}k` : `₹${Math.round(major)}`;
   }
-  return c.symbol + numberFormat(code, 0).format(Math.round(major));
+  return withSymbol(code, numberFormat(code, 0).format(Math.round(major)));
 }
 
 /** Major units string for CSV ("86.40", "4500"). Plain, no grouping. */
@@ -98,10 +99,10 @@ export function minorToTyped(minor: number, code: string): string {
   return (minor / minorFactor(code)).toFixed(dp);
 }
 
-/** Typed string for display with grouping: "2999" → "2,999", "64.0" → "64.0". */
+/** Typed string for display in the phone's style: "2999" → "2,999" (or "2.999"), "64.0" → "64.0" (or "64,0"). */
 export function displayTyped(typed: string, code: string): string {
   if (!typed) return '0';
   const [int, dec] = typed.split('.');
-  const grouped = new Intl.NumberFormat(currency(code).locale, { maximumFractionDigits: 0 }).format(Number(int || '0'));
-  return dec === undefined ? grouped : `${grouped}.${dec}`;
+  const grouped = new Intl.NumberFormat(numberLocale(code), { maximumFractionDigits: 0 }).format(Number(int || '0'));
+  return dec === undefined ? grouped : `${grouped}${decimalSign(code)}${dec}`;
 }
