@@ -72,7 +72,7 @@ export function Settings() {
   const { user, profile } = useMe();
   const { glass, setGlass, theme, setTheme, showToast, month, combinedFor, setCombined, online } = useUi();
   const waiting = useOutbox().filter((e) => e.uid === user.uid);
-  const { lockNow } = useLock();
+  const { lockNow, state: pinState } = useLock();
   const navigate = useNavigate();
   // Home's Export pill opens straight onto the export choices.
   const opened = (useLocation().state as { sheet?: 'export' } | null)?.sheet ?? null;
@@ -254,7 +254,7 @@ export function Settings() {
             value={!online ? 'Offline' : waiting.length ? `${waiting.length} waiting` : 'Up to date'}
             onClick={() => setSheet('sync')}
           />
-          <SettingsRow icon="lock-simple" tint={TINT.neutral} label="Lock app now" chevron={false} onClick={lockNow} />
+          {pinState === 'unlocked' && <SettingsRow icon="lock-simple" tint={TINT.neutral} label="Lock app now" chevron={false} onClick={lockNow} />}
         </Group>
         <Group title="Appearance">
           <SettingsMenuRow first icon="moon" tint={TINT.theme} label="Theme" value={theme} options={THEMES} onChange={setTheme} />

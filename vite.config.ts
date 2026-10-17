@@ -56,7 +56,7 @@ export default defineConfig({
       workbox: {
         globPatterns: ['**/*.{js,css,html,png,svg,webmanifest}'],
         // The receipt reader is large and optional: fetched the first time it's used, then cached.
-        globIgnores: ['ocr/**'],
+        globIgnores: ['ocr/**', 'preview/**'],
         runtimeCaching: [
           {
             urlPattern: ({ url }) => url.pathname.startsWith('/ocr/'),

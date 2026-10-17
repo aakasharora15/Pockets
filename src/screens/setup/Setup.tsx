@@ -57,7 +57,7 @@ function loadDraft(fallbackName: string): Draft {
 /** First-run setup: name → currencies → app PIN → just me, create or join a shared Pocket. */
 export function Setup() {
   const { user, logOut } = useSession();
-  const { createPin, state: pinState } = useLock();
+  const { createPin, skipPin, state: pinState } = useLock();
   const { setCurrent } = usePockets();
   const { showToast, setInvitePocketId } = useUi();
   const navigate = useNavigate();
@@ -115,6 +115,10 @@ export function Setup() {
           await createPin(pin);
           go(4);
         }}
+        onSkip={() => {
+          skipPin();
+          go(4);
+        }}
       />
     );
   }
@@ -126,7 +130,7 @@ export function Setup() {
           if (draft.step === 1) {
             sessionStorage.removeItem(KEY);
             void logOut();
-          } else if (draft.step === 4 && pinState === 'unlocked') go(2);
+          } else if (draft.step === 4 && (pinState === 'unlocked' || pinState === 'off')) go(2);
           else go((draft.step - 1) as Draft['step']);
         }}
       />
@@ -186,7 +190,11 @@ export function Setup() {
               }
             />
           </div>
-          <button className="primary-btn bottom-primary press" disabled={draft.currencies.length === 0} onClick={() => go(pinState === 'unlocked' ? 4 : 3)}>
+          <button
+            className="primary-btn bottom-primary press"
+            disabled={draft.currencies.length === 0}
+            onClick={() => go(pinState === 'unlocked' || pinState === 'off' ? 4 : 3)}
+          >
             {draft.currencies.length ? `Continue · ${draft.currencies.length} selected` : 'Continue'}
           </button>
         </>

@@ -48,6 +48,9 @@ export function Welcome() {
             </div>
           ))}
         </div>
+        <button className="link welcome-preview press" onClick={() => navigate('/preview')}>
+          See how it works
+        </button>
       </div>
       <div className="flow-foot">
         <button className="primary-btn bottom-primary press" onClick={() => navigate('/signup')}>

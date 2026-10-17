@@ -88,3 +88,28 @@ test('opens every tab and a Settings page (screens that load on demand)', async 
   await page.getByText('Monthly budgets').click();
   await expect(page).toHaveURL(/\/settings\/budgets$/);
 });
+
+test('skips the PIN with Not now and turns it on later in Account', async ({ page }) => {
+  await page.goto('/login');
+  await page.getByLabel('Email').fill('aakash@example.com');
+  await page.getByLabel('Password').fill(PASSWORD);
+  await page.locator('button[type=submit]').click();
+  await expect(page.locator('.pin-title')).toHaveText(/Set an app PIN/);
+  await page.getByRole('button', { name: 'Not now' }).click();
+  await expect(page.locator('.deck-front')).toBeVisible();
+  // No PIN, so reopening later goes straight in.
+  await reopenLater(page);
+  await expect(page.locator('.deck-front')).toBeVisible();
+  await expect(page.locator('.pin-title')).toHaveCount(0);
+});
+
+test('shows the preview from Welcome and ends on Create account', async ({ page }) => {
+  await page.goto('/welcome');
+  await page.getByRole('button', { name: 'See how it works' }).click();
+  await expect(page.locator('.preview-title').first()).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Get started' })).toBeVisible();
+  await page.getByRole('tab', { name: 'Share a Pocket' }).click();
+  await expect(page.getByRole('tab', { name: 'Share a Pocket' })).toHaveAttribute('aria-selected', 'true');
+  await page.getByRole('button', { name: 'Create account' }).click();
+  await expect(page).toHaveURL(/\/signup$/);
+});

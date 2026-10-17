@@ -9,6 +9,7 @@ import { authMessage } from '../../lib/authErrors';
 import { Icon } from '../../lib/icons';
 import { initialsFor } from '../../lib/initials';
 import { setPin } from '../../lib/pin';
+import { useLock } from '../../state/lock';
 import { usePockets } from '../../state/pockets';
 import { useMe, useSession } from '../../state/session';
 import { useUi } from '../../state/ui';
@@ -23,6 +24,8 @@ export function Account() {
   const { logOut } = useSession();
   const { pockets, allPockets, setCurrent } = usePockets();
   const { showToast } = useUi();
+  const { state: pinState, createPin } = useLock();
+  const pinOff = pinState === 'off';
   const navigate = useNavigate();
   const [editing, setEditing] = useState(false);
   const [changingPin, setChangingPin] = useState(false);
@@ -36,8 +39,11 @@ export function Account() {
         <SetPinScreen
           onBack={() => setChangingPin(false)}
           onDone={async (pin) => {
-            await setPin(user.uid, pin);
+            // No PIN yet (skipped at setup): this turns it on. Otherwise it replaces the old one.
+            if (pinOff) await createPin(pin);
+            else await setPin(user.uid, pin);
             setChangingPin(false);
+            showToast(pinOff ? 'App PIN on' : 'PIN changed');
           }}
         />
       </div>
@@ -77,7 +83,7 @@ export function Account() {
             value={provider}
             chevron={false}
           />
-          <SettingsRow icon="lock-key" label="App PIN" value="Change" onClick={() => setChangingPin(true)} />
+          <SettingsRow icon="lock-key" label="App PIN" value={pinOff ? 'Off · Set up' : 'Change'} onClick={() => setChangingPin(true)} />
         </div>
         <div className="group">
           <span className="section-label">Your Pockets</span>

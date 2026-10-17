@@ -53,3 +53,16 @@ export function withSymbol(code: string, number: string): string {
   // Letter symbols get a space ("CHF 12.50"); signs sit tight ("£12.50").
   return /\p{L}$/u.test(sym) ? `${sym}\u00a0${number}` : `${sym}${number}`;
 }
+
+/** The phone's country (ISO region code, "DE", "IN"), from its language settings, or null. */
+export function deviceRegion(): string | null {
+  try {
+    for (const tag of navigator.languages ?? [navigator.language]) {
+      const region = new Intl.Locale(tag).maximize().region;
+      if (region) return region;
+    }
+  } catch {
+    /* Older browsers without Intl.Locale. */
+  }
+  return null;
+}

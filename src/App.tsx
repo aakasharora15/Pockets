@@ -10,6 +10,7 @@ import { configMissing } from './firebase';
 import { firstName } from './lib/initials';
 import { lazyScreen } from './lib/lazy';
 import { AuthForm } from './screens/auth/AuthForm';
+import { Preview } from './screens/auth/Preview';
 import { Welcome } from './screens/auth/Welcome';
 import { ExpenseSheet } from './screens/ExpenseSheet';
 import { Home } from './screens/Home';
@@ -82,6 +83,7 @@ function Gate() {
     return (
       <Routes>
         <Route path="/welcome" element={<Welcome />} />
+        <Route path="/preview" element={<Preview />} />
         <Route path="/signup" element={<AuthForm mode="signup" />} />
         <Route path="/login" element={<AuthForm mode="login" />} />
         <Route path="/join/:code" element={<RememberJoin />} />
@@ -106,7 +108,7 @@ function Gate() {
       </Suspense>
     );
 
-  if (lock.state === 'none') return <SetPinScreen onDone={lock.createPin} />;
+  if (lock.state === 'none') return <SetPinScreen onDone={lock.createPin} onSkip={lock.skipPin} />;
 
   if (loading) return <Loading waitingFor="your Pockets" />;
 

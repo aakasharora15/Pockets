@@ -23,10 +23,12 @@ interface SetProps {
   step?: number;
   onBack?: () => void;
   onDone: (pin: string) => Promise<void> | void;
+  /** Offers "Not now" (the PIN is optional; it can be set later in Settings). */
+  onSkip?: () => void;
 }
 
 /** Set the app PIN. Entered twice; a mismatch starts again. */
-export function SetPinScreen({ step, onBack, onDone }: SetProps) {
+export function SetPinScreen({ step, onBack, onDone, onSkip }: SetProps) {
   const [first, setFirst] = useState<string | null>(null);
   const [digits, setDigits] = useState('');
   const [error, setError] = useState(false);
@@ -74,6 +76,11 @@ export function SetPinScreen({ step, onBack, onDone }: SetProps) {
       </div>
       <PinDots filled={digits.length} error={error} />
       <PinPad onKey={press} />
+      {onSkip && first === null && (
+        <button className="pin-forgot press" onClick={onSkip}>
+          Not now
+        </button>
+      )}
     </div>
   );
 }

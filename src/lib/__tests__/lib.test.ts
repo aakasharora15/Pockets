@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import type { Category, Expense, Member } from '../../data/types';
+import { DEFAULT_CATEGORIES, defaultCategoriesFor } from '../categories';
 import { expensesToCsv } from '../csv';
 import { addMonths, daysInMonth, groupLabel, longDate, monthShort, sheetDateLabel, toDayKey, weekdayDate } from '../dates';
 import { initialsFor, uniqueInitials } from '../initials';
@@ -180,5 +181,22 @@ describe("numbers in the phone's style", () => {
     expect(money.formatMoney(28060000, 'INR')).toBe('₹2,80,600');
     vi.unstubAllGlobals();
     vi.resetModules();
+  });
+});
+
+describe('starter categories by country', () => {
+  const ids = (r: string | null) => defaultCategoriesFor(r).map((c) => c.id);
+  it('the UK (and an unknown country) get the original set', () => {
+    expect(ids('GB')).toEqual(DEFAULT_CATEGORIES.map((c) => c.id));
+    expect(ids(null)).toEqual(DEFAULT_CATEGORIES.map((c) => c.id));
+  });
+  it('elsewhere drops UK-only bills and adds what suits', () => {
+    expect(ids('DE')).not.toContain('counciltax');
+    expect(ids('DE')).toContain('amazon');
+    expect(ids('IN')).toEqual(expect.arrayContaining(['fuel', 'domestichelp', 'mobile']));
+    expect(ids('JP')).not.toContain('water');
+  });
+  it('Other is always there, and always last', () => {
+    for (const r of ['GB', 'DE', 'IN', 'JP', 'AE', null]) expect(ids(r).at(-1)).toBe('other');
   });
 });

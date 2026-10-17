@@ -20,6 +20,25 @@ function seenRecently(uid: string): boolean {
   }
 }
 
+const OFF_KEY = (uid: string) => `spendr.pinOff.${uid}`;
+
+function pinOff(uid: string): boolean {
+  try {
+    return localStorage.getItem(OFF_KEY(uid)) === '1';
+  } catch {
+    return false;
+  }
+}
+
+function setPinOff(uid: string, off: boolean) {
+  try {
+    if (off) localStorage.setItem(OFF_KEY(uid), '1');
+    else localStorage.removeItem(OFF_KEY(uid));
+  } catch {
+    /* storage unavailable: asked again next time */
+  }
+}
+
 function markSeen(uid: string | null) {
   try {
     if (uid) localStorage.setItem(SEEN_KEY, JSON.stringify({ uid, at: Date.now() }));
@@ -30,7 +49,8 @@ function markSeen(uid: string | null) {
 }
 import { useSession } from './session';
 
-type PinState = 'checking' | 'none' | 'locked' | 'unlocked';
+/** 'off': no PIN, by choice ("Not now"); the app opens without one until a PIN is set in Settings. */
+type PinState = 'checking' | 'none' | 'off' | 'locked' | 'unlocked';
 
 interface Lock {
   state: PinState;
@@ -41,6 +61,8 @@ interface Lock {
   resetPin: () => Promise<void>;
   /** Gives up on the PIN: clears it and signs out. */
   forgot: () => Promise<void>;
+  /** "Not now": carry on without a PIN on this phone; one can be set later in Settings › Account. */
+  skipPin: () => void;
 }
 
 const Ctx = createContext<Lock | null>(null);
@@ -75,7 +97,7 @@ export function LockProvider({ children }: { children: ReactNode }) {
         return;
       }
       const has = await hasPin(uid);
-      if (live) setState(!has ? 'none' : seenRecently(uid) ? 'unlocked' : 'locked');
+      if (live) setState(!has ? (pinOff(uid) ? 'off' : 'none') : seenRecently(uid) ? 'unlocked' : 'locked');
     })();
     return () => {
       live = false;
@@ -117,7 +139,13 @@ export function LockProvider({ children }: { children: ReactNode }) {
     createPin: async (pin) => {
       if (!uid) return;
       await setPin(uid, pin);
+      setPinOff(uid, false);
       setState('unlocked');
+    },
+    skipPin: () => {
+      if (!uid) return;
+      setPinOff(uid, true);
+      setState('off');
     },
     lockNow: () => {
       markSeen(null);

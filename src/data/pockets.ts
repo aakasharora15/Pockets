@@ -1,7 +1,8 @@
 import { arrayRemove, arrayUnion, collection, deleteField, doc, getDocs, query, serverTimestamp, where, writeBatch, type WriteBatch } from 'firebase/firestore';
 import { db } from '../firebase';
 import { trackExpenseWrite } from './pending';
-import { DEFAULT_CATEGORIES, DEFAULTS_VERSION, ORDER_STEP } from '../lib/categories';
+import { defaultCategoriesFor, DEFAULTS_VERSION, ORDER_STEP } from '../lib/categories';
+import { deviceRegion } from '../lib/locale';
 import type { CurrencyCode } from '../lib/currencies';
 import {
   BATCH_LIMIT,
@@ -46,7 +47,8 @@ export function addPocketCreation(batch: WriteBatch, p: NewPocket): string {
     role: 'owner',
     joinedAt: serverTimestamp(),
   });
-  DEFAULT_CATEGORIES.forEach((c, i) => {
+  // Starter categories that suit the owner's country (from the phone's settings).
+  defaultCategoriesFor(deviceRegion()).forEach((c, i) => {
     batch.set(categoryRef(ref.id, c.id), {
       name: c.name,
       icon: c.icon,
