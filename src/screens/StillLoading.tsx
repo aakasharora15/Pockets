@@ -13,30 +13,48 @@ const SLOW_MS = 10_000;
  * offers a reload, or a repair that throws away this phone's copy of the data and fetches it again.
  * Kept in place across the startup steps, so the time counts from the first placeholder.
  */
-export function Loading({ waitingFor }: { waitingFor: string }) {
+export function Loading({ waitingFor, quiet }: { waitingFor: string; quiet?: boolean }) {
   const [slow, setSlow] = useState(false);
   useEffect(() => {
     const t = window.setTimeout(() => setSlow(true), SLOW_MS);
     return () => window.clearTimeout(t);
   }, []);
-  return slow ? <StillLoading waitingFor={waitingFor} /> : <HomeSkeleton />;
+  // Quiet: the steps before anything is known about the account show a plain screen, not placeholders.
+  return slow ? <StillLoading waitingFor={waitingFor} /> : quiet ? <div className="screen" /> : <HomeSkeleton />;
 }
 
-/** Removes Firestore's local copy and the app's cached files, then reloads. The PIN and the outbox live elsewhere. */
+/** Resolves with the promise, or with undefined after `ms`: storage that's stuck must not stop a repair. */
+function within<T>(ms: number, p: Promise<T>): Promise<T | undefined> {
+  return Promise.race([p.catch(() => undefined), new Promise<undefined>((r) => window.setTimeout(r, ms))]);
+}
+
+/**
+ * Removes Firestore's local copy and the app's cached files, then reloads. The PIN and the outbox live
+ * elsewhere. Every step has a time limit, since storage that's stuck is often why we're here. The copy
+ * is also marked for deletion at the next start (index.html), before Firestore opens it, which works
+ * even when it can't be deleted now.
+ */
 async function repair() {
+  const names = [`firestore/[DEFAULT]/${db.app.options.projectId}/main`];
+  const listed = await within(2000, indexedDB.databases?.() ?? Promise.resolve([]));
+  for (const d of listed ?? []) if (d.name?.startsWith('firestore/') && !names.includes(d.name)) names.push(d.name);
   try {
-    await terminate(db);
-    await clearIndexedDbPersistence(db);
+    localStorage.setItem('spendr.repair', JSON.stringify(names));
   } catch {
-    // Another window still has it open: delete the databases directly.
-    const dbs = (await indexedDB.databases?.().catch(() => [])) ?? [];
-    for (const d of dbs) if (d.name?.startsWith('firestore/')) indexedDB.deleteDatabase(d.name);
+    /* storage unavailable: the steps below still run */
   }
-  const regs = (await navigator.serviceWorker?.getRegistrations().catch(() => [])) ?? [];
-  await Promise.all(regs.map((r) => r.unregister()));
+  if (
+    await within(
+      3000,
+      terminate(db).then(() => true),
+    )
+  )
+    await within(3000, clearIndexedDbPersistence(db));
+  const regs = (await within(2000, navigator.serviceWorker?.getRegistrations() ?? Promise.resolve([]))) ?? [];
+  await within(2000, Promise.all(regs.map((r) => r.unregister())));
   if ('caches' in window) {
-    const names = await caches.keys();
-    await Promise.all(names.filter((n) => n !== 'spendr-ocr').map((n) => caches.delete(n)));
+    const keys = (await within(2000, caches.keys())) ?? [];
+    await within(2000, Promise.all(keys.filter((n) => n !== 'spendr-ocr').map((n) => caches.delete(n))));
   }
   window.location.reload();
 }

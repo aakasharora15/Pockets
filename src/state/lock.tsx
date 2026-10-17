@@ -1,6 +1,7 @@
 import { getRedirectResult } from 'firebase/auth';
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 import { auth } from '../firebase';
+import { markListenError } from '../data/syncStatus';
 import { checkPin, clearPin, hasPin, LOCK_AFTER_MS, setPin } from '../lib/pin';
 
 /** Set while a Google re-check goes through a full-page redirect, so the reset finishes on return. */
@@ -96,7 +97,14 @@ export function LockProvider({ children }: { children: ReactNode }) {
         if (live) setState('none');
         return;
       }
-      const has = await hasPin(uid);
+      let has: boolean;
+      try {
+        has = await hasPin(uid);
+      } catch {
+        // Storage stuck: stay waiting; after a few seconds the Still loading screen offers a way out.
+        markListenError('pin storage stuck');
+        return;
+      }
       if (live) setState(!has ? (pinOff(uid) ? 'off' : 'none') : seenRecently(uid) ? 'unlocked' : 'locked');
     })();
     return () => {

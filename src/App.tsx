@@ -78,7 +78,7 @@ function Gate() {
   const lock = useLock();
   const { loading } = usePockets();
 
-  if (user === undefined) return <div className="screen" />;
+  if (user === undefined) return <Loading quiet waitingFor="your sign-in" />;
 
   if (user === null) {
     return (
@@ -95,7 +95,7 @@ function Gate() {
 
   // The PIN lives on this phone, so ask for it straight away, before the account has loaded from the
   // server (that can take a few seconds), rather than showing Home and then swapping to the PIN.
-  if (lock.state === 'checking') return <div className="screen" />;
+  if (lock.state === 'checking') return <Loading quiet waitingFor="the app lock" />;
   if (lock.state === 'locked') return <UnlockScreen onUnlock={lock.unlock} onReset={lock.resetPin} onSignOut={() => void lock.forgot()} />;
 
   if (profile === undefined) {

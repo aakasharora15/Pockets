@@ -13,6 +13,11 @@
 - **The app PIN is optional.** Tap Not now on the PIN screen to skip it; turn it on later in Settings › Account › App PIN.
 - The combined total says which currencies it can't include when no daily exchange rate is published for them (đồng, dirham and a few others).
 
+### Fixed
+
+- **Never stuck on a blank screen at start-up.** If the phone's storage doesn't answer while Spendr checks your sign-in or app PIN (iPhone can leave it stuck), Still loading now appears after 10 seconds with Try again and Repair, instead of an empty screen forever. A stuck PIN check never skips the PIN.
+- **Repair works even when storage is stuck.** Each step has a time limit, and this phone's copy of the data is deleted at the next start, before anything opens it.
+
 ### Changed
 
 - **Add expense starts ready to type.** It opens in the currency you're looking at on Home or Calendar, so the keypad works straight away; tap Pound or Rupee to switch. One Save button at the bottom, which stays in reach as the sheet scrolls, and the sheet is solid rather than see-through.

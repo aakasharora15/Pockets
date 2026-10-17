@@ -12,12 +12,22 @@ interface PinRecord {
   iterations: number;
 }
 
+/** Thrown when this phone's storage doesn't answer (iPhone can leave it stuck until the app is closed). */
+export class StorageStuck extends Error {}
+
 function openDb(): Promise<IDBDatabase> {
   return new Promise((resolve, reject) => {
+    const timer = window.setTimeout(() => reject(new StorageStuck('PIN storage did not open')), 6000);
     const req = indexedDB.open(DB, 1);
     req.onupgradeneeded = () => req.result.createObjectStore(STORE);
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error);
+    req.onsuccess = () => {
+      window.clearTimeout(timer);
+      resolve(req.result);
+    };
+    req.onerror = () => {
+      window.clearTimeout(timer);
+      reject(req.error);
+    };
   });
 }
 
@@ -40,10 +50,12 @@ async function derive(pin: string, salt: Uint8Array, iterations: number): Promis
   return b64(bits);
 }
 
+/** Whether this phone has a PIN for the account. Throws StorageStuck rather than guessing "no PIN". */
 export async function hasPin(uid: string): Promise<boolean> {
   try {
     return !!(await tx<PinRecord | undefined>('readonly', (s) => s.get(uid)));
-  } catch {
+  } catch (e) {
+    if (e instanceof StorageStuck) throw e;
     return false;
   }
 }

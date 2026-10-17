@@ -132,3 +132,24 @@ test('shares a shopping list: add, tick off, then log it as an expense', async (
   await sheet.getByRole('button', { name: 'Save expense' }).click();
   await expect(sheet.getByLabel('What was it for?')).toHaveValue('Coriander');
 });
+
+test('stuck PIN storage shows Still loading (never skips the PIN), and Repair gets back in', async ({ page }) => {
+  await signIn(page, 'aakash@example.com', '9753');
+  // Make this phone's PIN storage never answer, as iPhone sometimes does, while the flag is set.
+  await page.addInitScript(() => {
+    const open = indexedDB.open.bind(indexedDB);
+    indexedDB.open = ((name: string, version?: number) =>
+      localStorage.getItem('test.hang') && name === 'spendr-device' ? ({} as IDBOpenDBRequest) : open(name, version)) as typeof indexedDB.open;
+  });
+  await page.evaluate(() => localStorage.setItem('test.hang', '1'));
+  await page.reload();
+  await expect(page.getByText('Still loading')).toBeVisible({ timeout: 20_000 });
+  await expect(page.locator('.deck-front')).toHaveCount(0);
+  await expect(page.locator('.pin-title')).toHaveCount(0);
+  await expect(page.getByText(/Waiting for the app lock/)).toBeVisible();
+  // Storage answers again: Repair reloads into the app.
+  await page.evaluate(() => localStorage.removeItem('test.hang'));
+  await page.getByRole('button', { name: /Repair/ }).click();
+  await expect(page.locator('.deck-front, .pin-title').first()).toBeVisible({ timeout: 20_000 });
+  expect(await page.evaluate(() => localStorage.getItem('spendr.repair'))).toBeNull();
+});

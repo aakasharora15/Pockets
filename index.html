@@ -15,9 +15,22 @@
     <title>Spendr</title>
     <script>
       // Theme before first paint (see src/lib/theme.ts). The light theme needs dark status bar text.
+      // Repair (see src/screens/StillLoading.tsx): delete this phone's copy of the data before anything opens it.
+      (function () {
+        try {
+          var repair = localStorage.getItem('spendr.repair');
+          if (!repair) return;
+          localStorage.removeItem('spendr.repair');
+          JSON.parse(repair).forEach(function (name) {
+            indexedDB.deleteDatabase(name);
+          });
+        } catch (e) {}
+      })();
       (function () {
         var s = 'dark';
-        try { s = localStorage.getItem('spendr.theme') || 'dark'; } catch (e) {}
+        try {
+          s = localStorage.getItem('spendr.theme') || 'dark';
+        } catch (e) {}
         var t = s === 'auto' ? (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark') : s === 'light' ? 'light' : 'dark';
         document.documentElement.dataset.theme = t;
         // Safari (and every iPhone browser, which all use Safari's engine) draws the blur behind glass;
@@ -31,7 +44,9 @@
         // and kept only if you confirm it looks right (see main.tsx); 'off' turns it off.
         if (navigator.standalone === true) {
           var fit = null;
-          try { fit = localStorage.getItem('spendr.fit'); } catch (e) {}
+          try {
+            fit = localStorage.getItem('spendr.fit');
+          } catch (e) {}
           var tall = Math.max(screen.width, screen.height) - Math.max(innerWidth, innerHeight) >= 20;
           if (fit === 'on' || (fit !== 'off' && tall)) document.documentElement.classList.add('fit-screen');
           if (fit !== 'on' && fit !== 'off' && tall) document.documentElement.dataset.fitTrial = '1';
